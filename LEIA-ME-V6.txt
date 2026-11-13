@@ -1,0 +1,26 @@
+NOVA ORDEM — PRÉVIA V6
+
+Conteúdo
+- index.html: site atualizado com a identidade visual da V5 e navegação reorganizada.
+- assets/: imagens e elementos visuais preservados da versão-base.
+- supabase-config.js e integracao-nova-ordem.js: integração anterior de criação de personagem preservada.
+- ATUALIZACAO-CRIACAO-PERSONAGEM.sql: arquivo SQL original preservado.
+
+O que mudou nesta prévia
+- Página inicial com quatro entradas: Cosmologia, Sistemas, Personagens e Funções.
+- Área Sistemas com os 13 sistemas e páginas de consulta preenchidas com as regras confirmadas até agora.
+- Área Funções com Treinamentos e Forja.
+- Página de Talentos com as 17 especializações e categorias especiais de NPC separadas.
+- Equipamentos da Agência apresentados como conteúdo de revelação gradual, sem antecipar o catálogo.
+
+Limites desta prévia
+- Os formulários de Treinamento e Forja salvam demonstrações somente no armazenamento local do navegador. Ainda não enviam para o banco de dados nem geram aprovação administrativa.
+- A integração de criação de personagens foi preservada da V5, mas depende de configurar corretamente o Supabase e aplicar as migrações necessárias no projeto correspondente.
+- Algumas regras que ainda não têm parâmetros fechados foram descritas sem inventar números ou condições. Exemplos provisórios foram identificados como tais.
+- Esta é uma prévia para avaliação visual e funcional, não uma publicação em produção.
+
+Para testar
+1. Extraia o ZIP.
+2. Abra index.html em um navegador moderno.
+3. Navegue por Sistemas, Personagens e Funções.
+4. Em Funções, teste os formulários de Treinamento e Forja. Os registros ficam apenas neste navegador.
