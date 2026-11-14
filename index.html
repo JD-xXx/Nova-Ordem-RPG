@@ -38,6 +38,29 @@ nav button:hover,nav button.active{background:#0b2940;box-shadow:inset 2px 0 #55
 .welcome-marketing{padding:8px 0 4px}.welcome-kicker{font:10px var(--mono);letter-spacing:2px;color:#79cfff;margin:0 0 10px}.welcome-marketing>h2{font:800 clamp(30px,4vw,48px)/1.1 var(--display);margin:0 0 12px;color:#edf8ff}.welcome-marketing>h2 span{color:#69c8ff}.welcome-copy{max-width:1000px;font-size:16px;line-height:1.75;color:#c1d5e5;margin:0 0 24px}.welcome-marketing>h3{font:700 25px var(--display);color:#d9f2ff;margin:0 0 12px}.welcome-marketing .feature-grid{margin:12px 0 18px}.marketing-foot{font-size:14px;line-height:1.75;color:#a9c6d9;border-left:2px solid #55bfff;padding:4px 0 4px 15px;margin:18px 0 26px}.story-band{margin-top:20px}.compact-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.compact-actions button{min-height:68px;display:grid;grid-template-columns:30px 1fr;grid-template-rows:auto auto;align-content:center;text-align:left;column-gap:10px;border:1px solid #2583bd;background:#091f32;color:#d9f4ff;padding:11px 14px;cursor:pointer}.compact-actions button span{grid-row:1/3;align-self:center;font-size:21px;color:#83d5ff}.compact-actions button b{font:600 15px var(--display)}.compact-actions button small{font:10px var(--sans);color:#9fb9cc}.compact-actions button:hover{background:#103653}.secondary-actions{margin-top:10px}.compact-actions button:focus-visible{outline:2px solid #8bd8ff;outline-offset:2px}@media(max-width:650px){.welcome-marketing>h2{font-size:32px}.welcome-copy{font-size:14px}.welcome-marketing .feature-grid{grid-template-columns:1fr}.compact-actions{grid-template-columns:1fr 1fr}.compact-actions button{padding:10px;grid-template-columns:24px 1fr}.compact-actions button b{font-size:13px}.compact-actions button small{font-size:9px}}
 
 .cc-top{display:flex;justify-content:space-between;gap:12px;color:#8fa4bb;font-size:10px;letter-spacing:1.5px;margin:22px 0 12px}.cc-progress{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px;margin-bottom:18px}.cc-progress button{background:#101c29;border:1px solid #26394b;color:#8294a8;padding:9px 3px;border-radius:7px;cursor:pointer}.cc-progress button b{display:block;font-size:13px}.cc-progress button small{display:block;font-size:9px;margin-top:5px}.cc-progress button.active{border-color:#4b9bc9;background:#15334a;color:#eaf7ff}.cc-progress button.done{border-color:#35634f;color:#9bd6b4}.cc-card{background:#0d1722;border:1px solid #26394b;border-radius:12px;padding:clamp(16px,3vw,28px)}.cc-card h3{font-size:24px;margin:8px 0 16px}.cc-card p{color:#b5c1ce;line-height:1.6}.cc-rolls{display:flex;gap:12px;margin:18px 0}.cc-rolls>div{flex:1;background:#142435;border:1px solid #2b465e;border-radius:9px;padding:14px;text-align:center}.cc-rolls small,.cc-rolls strong{display:block}.cc-rolls strong{font-size:32px;color:#e8f5ff;margin-top:8px}.cc-choices,.cc-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.cc-choice{padding:12px;background:#142435;border:1px solid #30485c;color:#dbe8f4;border-radius:7px}.cc-choice.selected{border-color:#58a6d5;background:#173c56}.cc-status{padding:13px;margin:14px 0;background:#122b28;border:1px solid #315b50;border-radius:8px;color:#c4ead9}.cc-field{display:block;margin:12px 0;color:#c3d0dc;font-size:12px}.cc-field input,.cc-field textarea{display:block;width:100%;margin-top:7px;background:#09121c;border:1px solid #304255;border-radius:6px;padding:11px;color:#edf5fc;font:inherit}.cc-specs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.cc-specs label{background:#142435;padding:10px;border-radius:6px;color:#d7e3ed;font-size:13px}.cc-nav{display:flex;justify-content:space-between;gap:12px;margin-top:25px;padding-top:18px;border-top:1px solid #26394b}.cc-nav button{padding:11px 16px}.cc-hint{font-size:11px;color:#8293a5!important;margin-top:14px}.cc-summary{background:#101f2d;border:1px solid #2a4054;border-radius:8px;padding:16px}.cc-summary h3{margin-top:0}.cc-summary p{border-bottom:1px solid #26394b;padding-bottom:7px;font-size:13px;overflow-wrap:anywhere}@media(max-width:650px){.cc-progress{grid-template-columns:repeat(4,minmax(0,1fr))}.cc-progress button small{font-size:8px}.cc-grid,.cc-choices{grid-template-columns:1fr}.cc-specs{grid-template-columns:1fr}}
+
+/* V8.1 — alerta cenográfico da seção Thanatos */
+#thanatos-alert[hidden]{display:none!important}
+#thanatos-alert{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:22px;background:radial-gradient(ellipse at center,#260909 0%,#100303 58%,#050101 100%);color:#ffe5e5;font-family:var(--sans);}
+#thanatos-alert .ta-window{position:relative;width:min(820px,100%);max-height:calc(100vh - 44px);overflow:auto;border:1px solid #a51d27;background:linear-gradient(150deg,#210909 0%,#130505 58%,#090202 100%);box-shadow:0 0 0 1px #4a1118,0 22px 90px #000; padding:clamp(26px,5vw,58px);}
+#thanatos-alert .ta-close{position:absolute;right:12px;top:11px;width:27px;height:27px;padding:0;display:grid;place-items:center;border:1px solid #68232a;background:#190707;color:#d98b8b;font:16px/1 var(--sans);cursor:pointer;opacity:.78;}
+#thanatos-alert .ta-close:hover{opacity:1;background:#3a0d12;color:#fff;}
+#thanatos-alert .ta-content{max-width:650px;margin:auto;text-align:center;}
+#thanatos-alert .ta-symbol{font-size:clamp(44px,8vw,68px);line-height:1;color:#ff303b;text-shadow:0 0 22px #e21b2c66;margin:0 0 18px;}
+#thanatos-alert .ta-kicker{font:600 11px var(--mono);letter-spacing:3px;color:#ff6a70;margin:0 0 12px;}
+#thanatos-alert h2{font:800 clamp(28px,5vw,44px)/1.12 var(--display);letter-spacing:1px;color:#ff303b;margin:0 0 22px;}
+#thanatos-alert .ta-compromised{font:800 clamp(20px,3.4vw,30px)/1.25 var(--display);color:#ff4a52;margin:0 0 18px;}
+#thanatos-alert p{font-size:15px;line-height:1.8;color:#e7a2a5;margin:10px auto;}
+#thanatos-alert .ta-rule{height:1px;background:linear-gradient(90deg,transparent,#9e252d,transparent);margin:25px 0;}
+#thanatos-alert .ta-observing{font:700 clamp(20px,3vw,27px)/1.35 var(--display);color:#ff343e;letter-spacing:.4px;margin:22px 0 25px;}
+#thanatos-alert .ta-protection{display:flex;align-items:center;justify-content:center;gap:11px;flex-wrap:wrap;color:#ff424b;font:700 12px var(--mono);letter-spacing:1px;margin-top:22px;}
+#thanatos-alert .ta-protection-icon{font-size:22px;}
+#thanatos-alert .ta-protection-note{font:11px var(--mono);line-height:1.7;color:#c66a70;margin-top:8px;}
+#thanatos-alert .ta-status{display:flex;justify-content:center;align-items:center;gap:9px;margin-top:30px;color:#d56c72;font:10px var(--mono);letter-spacing:1.5px;}
+#thanatos-alert .ta-pulse{width:9px;height:9px;border-radius:50%;background:#ff2633;box-shadow:0 0 0 0 #ff263377;animation:taPulse 1.65s infinite;}
+@keyframes taPulse{0%{box-shadow:0 0 0 0 #ff263388;opacity:1}70%{box-shadow:0 0 0 10px #ff263300;opacity:.72}100%{box-shadow:0 0 0 0 #ff263300;opacity:1}}
+@media(prefers-reduced-motion:reduce){#thanatos-alert .ta-pulse{animation:none}}
+
 </style></head><body><aside class="side"><div class="brand"><div class="logo">N<span>O</span></div><div><b>NOVA ORDEM</b><small>AGÊNCIA INTERDIMENSIONAL</small></div></div><div class="navtitle">CENTRAL DE DADOS</div><nav id="nav"></nav><div class="sidefoot"><i></i>SISTEMA OPERACIONAL<br><br>DATABASE BUILD 0.6.0</div></aside><main class="main"><header class="top"><div class="crumb">AGÊNCIA / <b id="crumb">VISÃO GERAL</b></div><div class="topright"><input class="search" id="search" placeholder="Pesquisar..." type="search"><button class="admin" id="admin">ÁREA ADMIN</button></div></header><section class="hero" id="hero"><div class="eyebrow">ARQUIVO INSTITUCIONAL · ACESSO PÚBLICO</div><h1>NOVA<br><em>ORDEM</em></h1><p>Um mundo. Infinitas possibilidades. Nenhum destino garantido.</p><br><small>EXPLORE O UNIVERSO DA NOVA ORDEM</small></section><div class="wrap"><div class="heading"><div class="eyebrow" id="code">ARQUIVO 00 / CENTRAL</div><h2 id="title">Visão geral</h2><p id="desc">Central de consulta dos registros da Nova Ordem.</p></div><div id="content"></div><footer><span>NOVA ORDEM /// AGÊNCIA INTERDIMENSIONAL</span><span>DOCUMENTAÇÃO DO RPG · BUILD 0.6.0</span></footer></div></main><button class="back-float" id="backFloat" type="button" aria-label="Voltar à página anterior" title="Voltar">←</button><div class="modalbg" id="modalbg" hidden><section class="modal"><div class="modalhead"><div><div class="eyebrow">CONTROLE INTERNO</div><h2>Área administrativa</h2></div><button class="close" id="close" type="button">FECHAR ×</button></div><div class="notice"><b>Importante:</b> esta primeira versão salva alterações apenas neste navegador. Para vários administradores editarem o mesmo site público, será necessário adicionar login e banco de dados compartilhado numa próxima etapa.</div><form id="edit"><label>TÍTULO DA PÁGINA<input name="title"></label><label>DESCRIÇÃO<input name="desc"></label><label>TEXTO PRINCIPAL<textarea name="body"></textarea></label><button class="save">SALVAR NESTE NAVEGADOR</button></form><p style="font-size:10px;color:#8995a5">Esta edição rápida não altera todos os módulos nem publica automaticamente mudanças para outros visitantes.</p></section></div>
 <script>
 const pages={
@@ -193,6 +216,39 @@ document.addEventListener('click',e=>{
 if(typeof go==='function')go('overview');
 })();
 
+</script>
+
+<div id="thanatos-alert" hidden role="dialog" aria-modal="true" aria-labelledby="ta-title" aria-describedby="ta-description">
+  <section class="ta-window">
+    <button class="ta-close" type="button" aria-label="Fechar alerta" title="Fechar">×</button>
+    <div class="ta-content">
+      <div class="ta-symbol" aria-hidden="true">⚠</div>
+      <div class="ta-kicker">PROTOCOLO DE SEGURANÇA · NOTIFICAÇÃO</div>
+      <h2 id="ta-title">ALERTA CRÍTICO</h2>
+      <div class="ta-compromised">SEU DISPOSITIVO FOI COMPROMETIDO.</div>
+      <p id="ta-description">Uma anomalia desconhecida foi detectada durante a consulta deste registro.</p>
+      <div class="ta-rule"></div>
+      <p>A origem do acesso não pôde ser identificada.</p>
+      <div class="ta-observing">ALGO ESTÁ OBSERVANDO ESTA CONSULTA.</div>
+      <div class="ta-rule"></div>
+      <div class="ta-protection"><span class="ta-protection-icon" aria-hidden="true">⛨</span> PROTEÇÃO DO SISTEMA DESATIVADA</div>
+      <div class="ta-protection-note">A função de proteção foi desabilitada por uma origem desconhecida.</div>
+      <div class="ta-status"><span class="ta-pulse" aria-hidden="true"></span> ESTADO DE SEGURANÇA: INDETERMINADO</div>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+ const alertLayer=document.getElementById("thanatos-alert");
+ if(!alertLayer)return;
+ const closeButton=alertLayer.querySelector(".ta-close");
+ let pendingThanatos=false;
+ function showThanatosAlert(){pendingThanatos=true;alertLayer.hidden=false;document.body.style.overflow="hidden";closeButton.focus({preventScroll:true});}
+ function closeThanatosAlert(){alertLayer.hidden=true;document.body.style.overflow="";if(pendingThanatos&&typeof go==="function"){pendingThanatos=false;go("lore-thanatos");}}
+ closeButton.addEventListener("click",closeThanatosAlert);
+ document.addEventListener("click",function(event){const target=event.target.closest("[data-go=\"lore-thanatos\"]");if(!target)return;event.preventDefault();event.stopPropagation();event.stopImmediatePropagation();showThanatosAlert();},true);
+})();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./supabase-config.js"></script>
