@@ -795,6 +795,12 @@
       const row = result.data;
       let state = row.ficha_data && row.ficha_data.draftState;
       if (!state) {
+        try {
+          const local = JSON.parse(sessionStorage.getItem(ACTIVE_DRAFT_KEY) || 'null');
+          if (local && local.characterId === row.id && local.userId === row.player_id) state = local.state;
+        } catch (_) {}
+      }
+      if (!state) {
         const raceMap = {'Humanos':1,'Híbridos':2,'Químios':3,'Ciborgues':4};
         const chiMap = {'Baixa':1,'Normal':2,'Alta':3};
         const extra = row.ficha_data || {};
