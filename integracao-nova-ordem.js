@@ -627,7 +627,7 @@
     const element = root();
     if (!element || !element.querySelector('.cc-top') ||
         !element.querySelector('.cc-card') || !creator() ||
-        opening || characterId) return;
+        opening || busy || characterId) return;
 
     opening = true;
     try {
