@@ -47,8 +47,8 @@
 
   var robot = '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 5v6M20 5h8" stroke="#123d62" stroke-width="2.5" stroke-linecap="round"/><rect x="7" y="12" width="34" height="27" rx="9" fill="#eaf8ff" stroke="#164b75" stroke-width="2"/><path d="M7 22H4m40 0h-3" stroke="#164b75" stroke-width="2.5" stroke-linecap="round"/><rect x="12" y="18" width="24" height="13" rx="5" fill="#143d60"/><circle cx="18" cy="24.5" r="2.2" fill="#8de0ff"/><circle cx="30" cy="24.5" r="2.2" fill="#8de0ff"/><path d="M19 35h10" stroke="#4a9dca" stroke-width="2" stroke-linecap="round"/></svg>';
   var avatar = '<span class="ark-avatar">' + robot + '</span>';
-  var pages = window.pages || null;
-  var navItems = window.navItems || null;
+  var pageRegistry = (typeof pages !== 'undefined' ? pages : window.pages);
+  var navigationRegistry = (typeof navItems !== 'undefined' ? navItems : window.navItems);
   var state = {messages: [], opened: false, index: [], page: 'overview'};
   var pageTitles = {
     overview: 'Início', lore: 'Cosmologia', agency: 'A Agência',
@@ -163,11 +163,11 @@
     ];
     confirmed.forEach(function (entry) { addKnowledge(entry[0],entry[1],entry[2],entry[3]); });
 
-    if (typeof window.render === 'function' && window.pages) {
-      Object.keys(window.pages).forEach(function (id) {
+    if (typeof window.render === 'function' && pageRegistry) {
+      Object.keys(pageRegistry).forEach(function (id) {
         if (id === 'ark') return;
         try {
-          var page = window.pages[id];
+          var page = pageRegistry[id];
           var html = window.render(id, page);
           var holder = document.createElement('div');
           holder.innerHTML = html || '';
@@ -292,21 +292,21 @@
       '<div class="ark-disclaimer">Esta versão consulta as informações confirmadas e a documentação presente no site. Quando um detalhe não estiver documentado, o A.R.K. informa a limitação em vez de inventar uma resposta.</div>';
   }
   function registerPage() {
-    if (!window.pages || !window.navItems || typeof window.render !== 'function') return false;
-    window.pages.ark = {
+    if (!pageRegistry || !navigationRegistry || typeof window.render !== 'function') return false;
+    pageRegistry.ark = {
       title:'Central do A.R.K.',
       desc:'Assistente virtual para consulta dos sistemas e orientação pela plataforma.',
       code:'ARQUIVO 16 / ASSISTÊNCIA'
     };
-    if (!window.navItems.some(function (item) { return item[0] === 'ark'; })) {
-      window.navItems.push(['ark','🤖 Central do A.R.K.']);
+    if (!navigationRegistry.some(function (item) { return item[0] === 'ark'; })) {
+      navigationRegistry.push(['ark','🤖 Central do A.R.K.']);
     }
     var previousRender = window.render;
     window.render = function (id,page) {
       if (id === 'ark') return centralPageMarkup();
       return previousRender(id,page);
     };
-    if (typeof window.go === 'function') window.go(window.current || 'overview',true);
+    if (typeof window.go === 'function') window.go(typeof current !== 'undefined' ? current : 'overview',true);
     return true;
   }
 
@@ -335,7 +335,7 @@
     registerPage();
     buildKnowledgeIndex();
     if (!state.messages.length) {
-      addMessage('Central de conhecimento pronta. Pergunte sobre uma regra, raça, sistema ou função do site.','bot');
+      addMessage('Olá! Sou o A.R.K., guia virtual da Agência. Você está na seção "' + currentPage().title + '". Posso orientar sua navegação ou consultar as regras e sistemas documentados da Nova Ordem. O que deseja saber?','bot');
     }
     renderAllChats();
     setContext();
