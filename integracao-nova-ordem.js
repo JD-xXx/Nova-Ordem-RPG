@@ -8,6 +8,8 @@
   }
 
   const db = window.supabase.createClient(cfg.url, cfg.anonKey);
+  // Evita que o manipulador de prévia processe cliques antes da integração real.
+  window.NOVA_ORDEM_INTEGRATION_ACTIVE = true;
   const raceNames = {1:'Humanos', 2:'Híbridos', 3:'Químios', 4:'Ciborgues'};
   const raceNumbers = {
     'Humanos':1, 'Humano':1, 'Híbridos':2, 'Híbrido':2,
