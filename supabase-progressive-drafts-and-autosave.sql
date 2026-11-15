@@ -108,7 +108,7 @@ returns trigger
 language plpgsql
 security definer
 set search_path = ''
-as $
+as $$
 declare
   v_new_draft boolean := false;
   v_draft_count integer;
@@ -135,7 +135,7 @@ begin
   end if;
   return new;
 end;
-$;
+$$;
 
 drop trigger if exists characters_draft_limit_guard on public.characters;
 create trigger characters_draft_limit_guard
