@@ -18,6 +18,7 @@
   let opening = false;
   let busy = false;
   let completed = false;
+  let recoveryMode = false;
   let observer = null;
 
   const $ = (selector, base) => (base || document).querySelector(selector);
@@ -58,8 +59,88 @@
         '<div class="cc-nav" style="margin-top:18px">' +
           '<button class="save" type="button" data-no-auth="login">ENTRAR</button>' +
           '<button class="close" type="button" data-no-auth="signup">CRIAR CONTA</button>' +
+          '<button class="close" type="button" data-no-auth="recovery">ESQUECI A SENHA</button>' +
         '</div>' +
       '</section>';
+  }
+
+  function passwordRecoveryScreen(message) {
+    const el = root();
+    if (!el) return;
+    el.innerHTML =
+      '<section class="cc-card" style="max-width:620px;margin:24px auto;padding:24px">' +
+        '<div class="eyebrow">AGÊNCIA A ORDEM · SEGURANÇA DA CONTA</div>' +
+        '<h3>Redefinir senha</h3>' +
+        '<p>Digite uma nova senha para recuperar o acesso à sua conta.</p>' +
+        (message ? '<p role="alert" style="color:#f0a0a5">' + escapeHtml(message) + '</p>' : '') +
+        '<form data-no-recovery-form>' +
+          '<label class="cc-field">Nova senha' +
+            '<input data-no-new-password type="password" autocomplete="new-password" minlength="6" required placeholder="Digite sua nova senha">' +
+          '</label>' +
+          '<label class="cc-field">Confirmar nova senha' +
+            '<input data-no-confirm-password type="password" autocomplete="new-password" minlength="6" required placeholder="Digite novamente a nova senha">' +
+          '</label>' +
+          '<div class="cc-nav" style="margin-top:18px">' +
+            '<button class="save" type="submit">SALVAR NOVA SENHA</button>' +
+          '</div>' +
+        '</form>' +
+      '</section>';
+  }
+
+  async function requestPasswordRecovery() {
+    if (busy) return;
+    const emailInput = $('[data-no-email]');
+    const email = emailInput && emailInput.value.trim();
+    if (!email) {
+      authScreen('Informe o e-mail da conta para receber o link de recuperação.');
+      return;
+    }
+    busy = true;
+    try {
+      const result = await db.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + window.location.pathname
+      });
+      if (result.error) throw result.error;
+      authScreen('Se esse e-mail estiver cadastrado, você receberá um link para redefinir sua senha. Confira também a caixa de spam.');
+    } catch (error) {
+      authScreen(error.message || 'Não foi possível enviar o link de recuperação.');
+    } finally {
+      busy = false;
+    }
+  }
+
+  async function saveRecoveredPassword(form) {
+    if (busy) return;
+    const passwordInput = $('[data-no-new-password]', form);
+    const confirmInput = $('[data-no-confirm-password]', form);
+    const password = passwordInput ? passwordInput.value : '';
+    const confirmation = confirmInput ? confirmInput.value : '';
+    if (password.length < 6) {
+      passwordRecoveryScreen('A senha precisa ter pelo menos 6 caracteres.');
+      return;
+    }
+    if (password !== confirmation) {
+      passwordRecoveryScreen('As senhas não coincidem. Digite e confirme novamente.');
+      return;
+    }
+    busy = true;
+    try {
+      const result = await db.auth.updateUser({password:password});
+      if (result.error) throw result.error;
+      recoveryMode = false;
+      try {
+        const cleanUrl = new URL(window.location.href);
+        cleanUrl.hash = '';
+        cleanUrl.searchParams.delete('code');
+        cleanUrl.searchParams.delete('type');
+        window.history.replaceState({}, document.title, cleanUrl.pathname + cleanUrl.search);
+      } catch (_) {}
+      showMessage('Sua senha foi atualizada. Você já pode entrar na sua conta usando a nova senha.', 'Senha alterada com sucesso');
+    } catch (error) {
+      passwordRecoveryScreen(error.message || 'Não foi possível atualizar a senha. Solicite um novo link de recuperação.');
+    } finally {
+      busy = false;
+    }
   }
 
   async function rpc(name, args) {
@@ -362,7 +443,11 @@
       event.preventDefault();
       event.stopPropagation();
       event.stopImmediatePropagation();
-      await authenticate(authButton.dataset.noAuth);
+      if (authButton.dataset.noAuth === 'recovery') {
+        await requestPasswordRecovery();
+      } else {
+        await authenticate(authButton.dataset.noAuth);
+      }
       return;
     }
 
@@ -383,6 +468,14 @@
     } finally {
       button.disabled = false;
     }
+  }, true);
+
+  document.addEventListener('submit', async event => {
+    const form = event.target;
+    if (!form || !form.matches || !form.matches('[data-no-recovery-form]')) return;
+    event.preventDefault();
+    event.stopPropagation();
+    await saveRecoveredPassword(form);
   }, true);
 
   document.addEventListener('change', event => {
@@ -436,6 +529,24 @@
     }
   }
 
+  function hasRecoveryMarker() {
+    const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+    const searchParams = new URLSearchParams(window.location.search);
+    return hashParams.get('type') === 'recovery' || searchParams.get('type') === 'recovery';
+  }
+
+  db.auth.onAuthStateChange((event, session) => {
+    if (event === 'PASSWORD_RECOVERY') {
+      recoveryMode = true;
+      if (root()) passwordRecoveryScreen();
+      return;
+    }
+    if (!session) {
+      characterId = null;
+      completed = false;
+    }
+  });
+
   function boot() {
     const element = root();
     if (!element) return;
@@ -443,14 +554,9 @@
     if (observer) observer.disconnect();
     observer = new MutationObserver(() => detectCreator());
     observer.observe(element, {childList:true, subtree:true});
-    detectCreator();
-
-    db.auth.onAuthStateChange((_event, session) => {
-      if (!session) {
-        characterId = null;
-        completed = false;
-      }
-    });
+    if (hasRecoveryMarker()) recoveryMode = true;
+    if (recoveryMode) passwordRecoveryScreen();
+    else detectCreator();
   }
 
   if (document.readyState === 'loading') {
