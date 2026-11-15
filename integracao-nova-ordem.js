@@ -208,7 +208,13 @@
     try {
       const result = mode === 'login'
         ? await db.auth.signInWithPassword({email, password})
-        : await db.auth.signUp({email, password});
+        : await db.auth.signUp({
+            email,
+            password,
+            options: {
+              emailRedirectTo: window.location.origin + window.location.pathname
+            }
+          });
 
       if (result.error) throw result.error;
       if (mode === 'signup' && !result.data.session) {
