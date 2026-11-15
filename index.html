@@ -200,21 +200,40 @@ document.addEventListener('submit',e=>{if(e.target.id!=='v6-training'&&e.target.
 // PRÉVIA DO ASSISTENTE DE CRIAÇÃO — sem conexão ou gravação em banco de dados.
 pages['character-creation']={title:'Criação de personagem',desc:'Assistente de criação · modo de pré-visualização',code:'PERSONAGENS / NOVA FICHA'};
 const ccSteps=['Raça','Reserva de Chi','Informações básicas','Habilidades sobrenaturais','Raridade do Talento','Especializações','Descrição do Talento','Ficha final'];
-const cc={step:0,rolls:[],race:null,secondRoll:null,rarity:null,fields:{},specializations:[]};
-const ccSpecs=['Controle','Corroer','Criação','Elemental','Aceleração','Ocultar','Cinése','Poder','Psíquico','Controle de Alcance','Alcance','Transformação','Estado','Suporte','Tóxico','Vazio','Dobra'];
+const cc={step:0,rolls:[],race:null,secondRoll:null,rarity:null,fields:{},specializations:[],cyberneticModules:[]};
+const ccSpecs=["Controle","Corroer","Criação","Elemental","Aceleração","Ocultar","Cinese","Poder","Psíquico","Controle de Alcance","Alcance","Transformação","Estado","Suporte","Tóxico","Vazio","Warp"];
 function ccEsc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function ccField(label,name,placeholder='',type='text'){return `<label class="cc-field">${label}<input data-cc-field="${name}" type="${type}" placeholder="${placeholder}" value="${ccEsc(cc.fields[name]||'')}"></label>`}
 function ccArea(label,name,placeholder=''){return `<label class="cc-field">${label}<textarea data-cc-field="${name}" rows="4" placeholder="${placeholder}">${ccEsc(cc.fields[name]||'')}</textarea></label>`}
+function ccModuleSummary(){
+ if(cc.race===4){
+  const modules=Array.isArray(cc.cyberneticModules)?cc.cyberneticModules:[];
+  if(!modules.length)return '<p><b>Módulos cibernéticos:</b> Nenhum módulo proposto.</p>';
+  return '<div><b>Módulos cibernéticos:</b>'+modules.map((module,index)=>'<p><b>Módulo '+(index+1)+':</b> '+ccEsc(module.name||'')+' — '+ccEsc(module.description||'')+'</p>').join('')+'</div>';
+ }
+ return '<p><b>Raridade:</b> '+ccEsc(cc.rarity?.value||'Não definida')+'</p><p><b>Especializações:</b> '+ccEsc(cc.specializations.join(', ')||'Não selecionadas')+'</p>';
+}
 function ccRender(){let i=cc.step,body='';
+ const stepIndexes=cc.race===4?[0,1,2,3,7]:cc.race===1?[0,1,2,7]:[0,1,2,3,4,5,6,7];
+ const stepPosition=Math.max(0,stepIndexes.indexOf(i));
+ const stepTitle=i===3&&cc.race===4?'Módulos Cibernéticos':ccSteps[i];
  if(i===0){body=`<p>Role dois D4. Escolha um dos resultados para definir a raça do personagem.</p><div class="cc-rolls"><div><small>RESULTADO 1</small><strong>${cc.rolls[0]??'—'}</strong></div><div><small>RESULTADO 2</small><strong>${cc.rolls[1]??'—'}</strong></div></div><button class="save" data-cc-action="race-roll">ROLAR DOIS D4</button>${cc.rolls.length?`<p class="cc-hint">Escolha um resultado:</p><div class="cc-choices">${cc.rolls.map((v,n)=>`<button class="cc-choice ${cc.race===v?'selected':''}" data-cc-action="race-pick" data-value="${v}">Resultado ${n+1}: ${v}</button>`).join('')}</div>`:''}${cc.race?`<div class="cc-status">Raça selecionada: <b>${['','Humano','Híbrido','Químio','Ciborgue'][cc.race]}</b></div>`:''}`}
  if(i===1){let isHuman=cc.race===1,isCyborg=cc.race===4;body=isHuman?`<p>Para Humanos, esta etapa apresenta o aprimoramento físico, já que o Chi biológico permanece inativo.</p><button class="save" data-cc-action="second-roll">ROLAR D3 DE APRIMORAMENTO</button>${cc.secondRoll?`<div class="cc-status">Resultado: <b>${['','Baixo','Médio','Alto'][cc.secondRoll]}</b></div>`:''}`:isCyborg?`<div class="cc-status">Ciborgues não realizam rolagem de reserva de Chi nesta etapa.</div><p>O desenvolvimento do personagem depende de sua estrutura tecnológica.</p>`:`<p>Role um D3 para definir a reserva inicial de Chi.</p><button class="save" data-cc-action="second-roll">ROLAR D3</button>${cc.secondRoll?`<div class="cc-status">Reserva de Chi: <b>${['','Baixa','Média','Alta'][cc.secondRoll]}</b></div>`:''}`}
  if(i===2){body=`<p>Preencha os dados básicos. Origem, história e introdução na Lore são definidos livremente pelo jogador.</p><div class="cc-grid">${ccField('Nome','name','Nome do personagem')}${ccField('Idade','age','Idade','number')}${ccField('Altura','height','Ex.: 1,80 m')}${ccField('Gênero','gender','Gênero')}${ccField('Peso','weight','Peso')}${ccField('Habilidades comuns','skills','Ex.: idiomas, pilotagem...')}${ccField('Profissão / Ocupação','occupation','Profissão ou atividade do personagem')}</div>${ccArea('Personalidade','personality','Como o personagem se comporta?')}${ccArea('Aparência','appearance','Descrição física e visual')}${ccArea('Origem e história','history','Origem, trajetória e como entra na Lore')}`}
- if(i===3){body=`<p>Registre as habilidades sobrenaturais, técnicas ou capacidades especiais que fazem parte do conceito do personagem.</p>${ccArea('Habilidades sobrenaturais','supernatural','Descreva as habilidades e suas limitações, se houver.')}`}
+ if(i===3){
+ if(cc.race===4){
+  const modules=Array.isArray(cc.cyberneticModules)?cc.cyberneticModules:[];
+  body='<p>Proponha até cinco módulos mecânicos para o Ciborgue. Cada módulo precisa de um nome e uma descrição de funcionamento. As categorias são livres: exemplos como ofensivo, defensivo, mobilidade e suporte não formam uma lista obrigatória.</p>' +
+   '<div class="cc-module-list">'+modules.map((module,index)=>'<article class="cc-module-card"><div class="cc-module-head"><b>MÓDULO '+(index+1)+'</b><button class="close" type="button" data-cc-action="cybernetic-module-remove" data-value="'+index+'">REMOVER</button></div><label class="cc-field">Nome do módulo<input data-cc-module-field="name" data-module-index="'+index+'" maxlength="80" value="'+ccEsc(module.name||'')+'" placeholder="Ex.: Propulsor dorsal"></label><label class="cc-field">Descrição de funcionamento<textarea data-cc-module-field="description" data-module-index="'+index+'" rows="4" maxlength="1200" placeholder="Explique o que o módulo faz e como funciona.">'+ccEsc(module.description||'')+'</textarea></label></article>').join('')+'</div>'+
+   (modules.length<5?'<button class="save" type="button" data-cc-action="cybernetic-module-add">ADICIONAR MÓDULO ('+modules.length+'/5)</button>':'<p class="cc-hint">Limite de cinco módulos atingido.</p>')+
+   '<p class="cc-hint">A administração avaliará os módulos junto com a ficha. Não é necessário escolher categorias diferentes.</p>';
+ } else {body=`<p>Registre as habilidades sobrenaturais, técnicas ou capacidades especiais que fazem parte do conceito do personagem.</p>${ccArea('Habilidades sobrenaturais','supernatural','Descreva as habilidades e suas limitações, se houver.')}`;}
+}
  if(i===4){body=`<p>Role um D4 para determinar a raridade. Três resultados correspondem a Comum e um resultado corresponde a Raro.</p><button class="save" data-cc-action="rarity-roll">ROLAR D4</button>${cc.rarity?`<div class="cc-status">D4: <b>${cc.rarity.roll}</b> — Raridade: <b>${cc.rarity.value}</b></div>`:''}`}
  if(i===5){body=`<p>Selecione a especialização compatível com o Talento do personagem. A escolha deve respeitar as regras do sistema.</p><div class="cc-specs">${ccSpecs.map(x=>`<label><input type="checkbox" data-cc-spec="${x}" ${cc.specializations.includes(x)?'checked':''}> ${x}</label>`).join('')}</div>`}
  if(i===6){body=`<p>Explique o conceito do Talento: sua origem, funcionamento, possibilidades e limitações. A administração avaliará coerência e equilíbrio.</p>${ccArea('Descrição do Talento','talentDescription','Como funciona? O que permite fazer? Quais são suas limitações?')}`}
- if(i===7){body=`<div class="cc-status">Esta é uma prévia da ficha. Nada será enviado ou salvo em banco de dados.</div><div class="cc-summary"><h3>${ccEsc(cc.fields.name||'Personagem sem nome')}</h3><p><b>Raça:</b> ${cc.race?['','Humano','Híbrido','Químio','Ciborgue'][cc.race]:'Não definida'}</p><p><b>Reserva / aprimoramento:</b> ${cc.race===4?'Não se aplica':cc.secondRoll?(['','Baixa','Média','Alta'][cc.secondRoll]):'Não definido'}</p><p><b>Raridade:</b> ${cc.rarity?.value||'Não definida'}</p><p><b>Especializações:</b> ${cc.specializations.join(', ')||'Não selecionadas'}</p>${['age','height','gender','weight','skills','occupation','personality','appearance','history','supernatural','talentDescription'].map(k=>cc.fields[k]?`<p><b>${({age:'Idade',height:'Altura',gender:'Gênero',weight:'Peso',skills:'Habilidades comuns',occupation:'Profissão / Ocupação',personality:'Personalidade',appearance:'Aparência',history:'Origem e história',supernatural:'Habilidades sobrenaturais',talentDescription:'Descrição do Talento'})[k]}:</b> ${ccEsc(cc.fields[k])}</p>`:'').join('')}</div><p class="cc-hint">A etapa final está em modo demonstrativo. O envio para análise será conectado ao banco de dados posteriormente.</p>`}
- return `<div class="cc-top"><span>ETAPA ${i+1} DE 8</span><span>MODO DE PRÉ-VISUALIZAÇÃO</span></div><div class="cc-progress">${ccSteps.map((x,n)=>`<button class="${n===i?'active':n<i?'done':''}" data-cc-action="jump" data-value="${n}" title="${x}"><b>${n+1}</b><small>${x}</small></button>`).join('')}</div><section class="cc-card"><div class="eyebrow">CRIAÇÃO DE PERSONAGEM</div><h3>${ccSteps[i]}</h3>${body}<div class="cc-nav"><button class="close" data-cc-action="back" ${i===0?'disabled':''}>← VOLTAR</button><button class="save" data-cc-action="next">${i===7?'VOLTAR AO INÍCIO':'PRÓXIMA ETAPA →'}</button></div></section><p class="cc-hint">Prévia local: suas escolhas permanecem apenas enquanto esta página estiver aberta. Nenhuma ficha é gravada.</p>`;
+ if(i===7){body=`<div class="cc-status">Confira os dados. Ao concluir, sua ficha será enviada para análise da administração.</div><div class="cc-summary"><h3>${ccEsc(cc.fields.name||'Personagem sem nome')}</h3><p><b>Raça:</b> ${cc.race?['','Humano','Híbrido','Químio','Ciborgue'][cc.race]:'Não definida'}</p><p><b>Reserva / aprimoramento:</b> ${cc.race===4?'Não se aplica':cc.secondRoll?(['','Baixa','Média','Alta'][cc.secondRoll]):'Não definido'}</p>${ccModuleSummary()}${['age','height','gender','weight','skills','occupation','personality','appearance','history','supernatural','talentDescription'].map(k=>cc.fields[k]?`<p><b>${({age:'Idade',height:'Altura',gender:'Gênero',weight:'Peso',skills:'Habilidades comuns',occupation:'Profissão / Ocupação',personality:'Personalidade',appearance:'Aparência',history:'Origem e história',supernatural:'Habilidades sobrenaturais',talentDescription:'Descrição do Talento'})[k]}:</b> ${ccEsc(cc.fields[k])}</p>`:'').join('')}</div><p class="cc-hint">O envio encaminha a ficha para avaliação administrativa; a aprovação não é automática.</p>`}
+ return `<div class="cc-top"><span>ETAPA ${stepPosition+1} DE ${stepIndexes.length}</span><span>SALVAMENTO AUTOMÁTICO ATIVO</span></div><div class="cc-progress">${stepIndexes.map((stepIndex,n)=>{const label=stepIndex===3&&cc.race===4?'Módulos Cibernéticos':ccSteps[stepIndex];return `<button class="${stepIndex===i?'active':stepIndex<i?'done':''}" data-cc-action="jump" data-value="${stepIndex}" title="${label}"><b>${n+1}</b><small>${label}</small></button>`}).join('')}</div><section class="cc-card"><div class="eyebrow">CRIAÇÃO DE PERSONAGEM</div><h3>${stepTitle}</h3>${body}<div class="cc-nav"><button class="close" data-cc-action="back" ${i===0?'disabled':''}>← VOLTAR</button><button class="save" data-cc-action="next">${i===7?'VOLTAR AO INÍCIO':'PRÓXIMA ETAPA →'}</button></div></section><p class="cc-hint">O salvamento automático mantém seu rascunho atualizado no banco. Você também pode salvá-lo manualmente.</p>`;
 }
 const baseRender=renderV6;
 function v82Table(headers, rows){return `<div class="tablebox"><table><thead><tr>${headers.map(x=>`<th>${x}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map(x=>`<td>${x}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`}
@@ -270,7 +289,7 @@ document.addEventListener('click',e=>{
  root.querySelectorAll('[data-prog-panel]').forEach(p=>{p.hidden=p.dataset.progPanel!==id});
 });
 document.addEventListener('submit',e=>{if(e.target.id!=='v82-work')return;e.preventDefault();const data=Object.fromEntries(new FormData(e.target).entries());data.status='Pendente de análise';data.createdAt=new Date().toLocaleString('pt-BR');const key='no-v82-work-records';const list=JSON.parse(localStorage.getItem(key)||'[]');list.unshift(data);localStorage.setItem(key,JSON.stringify(list));document.getElementById('v82-work-status').innerHTML='<div class="callout">Registro enviado para a fila local de demonstração. Status: <b>Pendente de análise</b>. Nenhum pagamento foi realizado.</div>';e.target.reset();});
-document.addEventListener('input',e=>{let el=e.target;if(el.matches('[data-cc-field]'))cc.fields[el.dataset.ccField]=el.value;});
+document.addEventListener('input',e=>{let el=e.target;if(el.matches('[data-cc-field]'))cc.fields[el.dataset.ccField]=el.value;if(el.matches('[data-cc-module-field]')){const index=Number(el.dataset.moduleIndex);const key=el.dataset.ccModuleField;if(Number.isInteger(index)&&['name','description'].includes(key)&&cc.cyberneticModules[index])cc.cyberneticModules[index][key]=el.value;}});
 document.addEventListener('change',e=>{let el=e.target;if(el.matches('[data-cc-spec]')){let v=el.dataset.ccSpec;if(el.checked)cc.specializations=[v];if(!el.checked)cc.specializations=cc.specializations.filter(x=>x!==v);}});
 document.addEventListener('click',e=>{
  const b=e.target.closest('[data-cc-action]');
@@ -298,7 +317,8 @@ window.NovaOrdemCharacterCreator = {
       ...cc,
       rolls: [...cc.rolls],
       fields: {...cc.fields},
-      specializations: [...cc.specializations]
+      specializations: [...cc.specializations],
+      cyberneticModules: (cc.cyberneticModules || []).map(module => ({...module}))
     };
   },
   update(patch = {}) {
@@ -318,6 +338,7 @@ window.NovaOrdemCharacterCreator = {
     cc.rarity = null;
     cc.fields = {};
     cc.specializations = [];
+    cc.cyberneticModules = [];
     this.render();
   }
 };
