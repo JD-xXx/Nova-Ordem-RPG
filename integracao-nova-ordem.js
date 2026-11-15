@@ -707,7 +707,7 @@
       .no-draft{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:13px;border:1px solid #2a3a4e;background:#0c1420;border-radius:8px}
       .no-draft small{display:block;color:#91a3b9;margin-top:4px}
       .no-ark{display:flex;align-items:center;gap:15px;padding:17px;border:1px solid rgba(96,164,224,.35);background:linear-gradient(120deg,rgba(28,63,96,.35),rgba(12,20,31,.92));border-radius:12px;margin:12px 0 20px}
-      .no-ark-bot{width:58px;height:58px;flex:0 0 58px;display:grid;place-items:center;border:1px solid #6ba8dc;border-radius:14px;background:linear-gradient(145deg,#233d56,#0c1724);color:#bfe4ff;font:800 22px var(--display);box-shadow:0 0 22px #4c9bd533}
+      .no-ark-bot{position:relative;width:58px;height:58px;flex:0 0 58px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:1px solid #6ba8dc;border-radius:14px;background:linear-gradient(145deg,#233d56,#0c1724);color:#bfe4ff;box-shadow:0 0 22px #4c9bd533}.no-ark-antenna{position:absolute;top:-7px;width:2px;height:8px;background:#8bcaff}.no-ark-visor{width:34px;height:17px;display:flex;align-items:center;justify-content:space-evenly;border:1px solid #80c7ff;border-radius:6px;background:#07121e;box-shadow:inset 0 0 9px #4ca9ff66}.no-ark-visor i{width:5px;height:5px;border-radius:50%;background:#9bdcff;box-shadow:0 0 6px #79c7ff}.no-ark-bot small{font:700 8px var(--mono);letter-spacing:.08em;color:#bfe4ff}
       .no-ark b{color:#a9d8ff;letter-spacing:.08em}
       .no-ark p{margin:5px 0 0;color:#c4d1df;line-height:1.6;font-size:13px}
       .no-profile-card input{display:block;width:100%;margin-top:6px;padding:11px;border:1px solid #34465d;border-radius:6px;background:#080e17;color:#eef5ff}
@@ -732,7 +732,7 @@
   }
 
   function arkPanel(message) {
-    return '<div class="no-ark"><div class="no-ark-bot" aria-hidden="true">A.R.K.</div><div><b>A.R.K. · ASSISTENTE DA AGÊNCIA</b><p>' + escapeHtml(message) + '</p></div></div>';
+    return '<div class="no-ark"><div class="no-ark-bot" aria-hidden="true"><span class="no-ark-antenna"></span><span class="no-ark-visor"><i></i><i></i></span><small>A.R.K.</small></div><div><b>A.R.K. · ASSISTENTE DA AGÊNCIA</b><p>' + escapeHtml(message) + '</p></div></div>';
   }
 
   async function renderProfilePage(message) {
