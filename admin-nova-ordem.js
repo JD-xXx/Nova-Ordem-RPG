@@ -464,6 +464,20 @@
     }
   });
 
+  function bindAdminEntry() {
+    var button = document.getElementById('admin');
+    if (!button) return;
+    button.textContent = 'ÁREA ADMIN';
+    button.setAttribute('aria-label', 'Abrir painel administrativo da Agência');
+    button.title = 'Abrir o painel administrativo protegido';
+    // Substitui a antiga janela de edição local: o acesso agora passa pelo painel protegido.
+    button.onclick = function (event) {
+      if (event) event.preventDefault();
+      if (typeof window.go === 'function') window.go('admin');
+      else loadAdminPage();
+    };
+  }
+
   function updateAccess() {
     if (!db) { setAdminNavigation(false); return; }
     verifyAdmin().then(function (allowed) {
@@ -481,7 +495,7 @@
   installStyles();
   document.addEventListener('DOMContentLoaded', function () {
     installNavigationGuard();
-    installGuide();
+    bindAdminEntry();
     updateAccess();
     if (db && db.auth && db.auth.onAuthStateChange) {
       db.auth.onAuthStateChange(function () {
