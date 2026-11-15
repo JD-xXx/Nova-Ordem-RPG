@@ -260,7 +260,8 @@
         const state = creator().getState();
         sessionStorage.setItem(ACTIVE_DRAFT_KEY, JSON.stringify({userId, characterId, state}));
         if (autosaveTimer) clearTimeout(autosaveTimer);
-        autosaveTimer = setTimeout(() => saveDraftRemotely(state), 850);
+        const draftId = characterId;
+        autosaveTimer = setTimeout(() => saveDraftRemotely(state, draftId), 850);
       });
     } catch (_) {}
   }
@@ -834,12 +835,13 @@
     else renderProfilePage('Senha alterada com sucesso.');
   }
 
-  async function saveDraftRemotely(state) {
-    if (!characterId || !state) return;
+  async function saveDraftRemotely(state, draftId) {
+    const targetId = draftId || characterId;
+    if (!targetId || !state) return;
     try {
       const fields = state.fields || {};
       await rpc('save_character_extra_data', {
-        p_character_id:characterId,
+        p_character_id:targetId,
         p_ficha_data:{
           draftState:state,
           occupation:String(fields.occupation || '').trim(),
@@ -850,7 +852,7 @@
       });
       if (!validateBasics(state)) {
         await rpc('save_character_basics', {
-          p_character_id:characterId,
+          p_character_id:targetId,
           p_name:String(fields.name).trim(),
           p_age:Number(fields.age),
           p_height:heightCm(fields.height),
