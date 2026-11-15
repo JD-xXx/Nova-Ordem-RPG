@@ -1,10 +1,10 @@
--- Nova Ordem: capacidades mecânicas exclusivas de Ciborgues.
+-- Nova Ordem: módulos cibernéticos personalizáveis para Ciborgues.
+-- Cada jogador pode propor até 5 módulos; a administração avalia a ficha.
+-- Categorias são texto livre/exemplificativas, não um catálogo obrigatório.
 -- Execute esta migration no Supabase SQL Editor após revisar.
--- A coluna é separada de supernatural_skills porque representa capacidades
--- produzidas por componentes mecânicos, não por Chi ou Talentos.
 
 ALTER TABLE public.characters
-ADD COLUMN IF NOT EXISTS cybernetic_skills text[] NOT NULL DEFAULT ARRAY[]::text[];
+ADD COLUMN IF NOT EXISTS cybernetic_modules jsonb NOT NULL DEFAULT '[]'::jsonb;
 
 CREATE OR REPLACE FUNCTION public.submit_character(p_character_id uuid)
 RETURNS boolean
@@ -16,7 +16,7 @@ DECLARE
     v_character public.characters%ROWTYPE;
     v_specializations text[];
     v_supernatural text[];
-    v_cybernetic text[];
+    v_cybernetic jsonb;
     v_allowed text[] := ARRAY[
         'Controle',
         'Corroer',
@@ -83,8 +83,8 @@ BEGIN
     );
 
     v_cybernetic := COALESCE(
-        v_character.cybernetic_skills,
-        ARRAY[]::text[]
+        v_character.cybernetic_modules,
+        '[]'::jsonb
     );
 
     -- HUMANOS
@@ -97,8 +97,8 @@ BEGIN
             RAISE EXCEPTION 'Humanos não podem possuir habilidades sobrenaturais.';
         END IF;
 
-        IF pg_catalog.cardinality(v_cybernetic) > 0 THEN
-            RAISE EXCEPTION 'Apenas Ciborgues podem possuir habilidades cibernéticas.';
+        IF v_cybernetic <> '[]'::jsonb THEN
+            RAISE EXCEPTION 'Apenas Ciborgues podem possuir módulos cibernéticos.';
         END IF;
 
         IF pg_catalog.cardinality(v_specializations) > 0
@@ -119,8 +119,8 @@ BEGIN
             RAISE EXCEPTION 'A raridade do Talento precisa ser Comum ou Raro.';
         END IF;
 
-        IF pg_catalog.cardinality(v_cybernetic) > 0 THEN
-            RAISE EXCEPTION 'Habilidades cibernéticas são exclusivas de Ciborgues.';
+        IF v_cybernetic <> '[]'::jsonb THEN
+            RAISE EXCEPTION 'Módulos cibernéticos são exclusivos de Ciborgues.';
         END IF;
 
         IF v_character.talent_rarity = 'Comum'
@@ -163,6 +163,24 @@ BEGIN
            OR pg_catalog.cardinality(v_specializations) > 0
         THEN
             RAISE EXCEPTION 'Ciborgues não possuem Talentos ou especializações.';
+        END IF;
+
+        IF pg_catalog.jsonb_typeof(v_cybernetic) <> 'array' THEN
+            RAISE EXCEPTION 'Os módulos cibernéticos precisam ser enviados em formato de lista.';
+        END IF;
+
+        IF pg_catalog.jsonb_array_length(v_cybernetic) > 5 THEN
+            RAISE EXCEPTION 'Ciborgues podem possuir no máximo 5 módulos cibernéticos.';
+        END IF;
+
+        IF EXISTS (
+            SELECT 1
+            FROM pg_catalog.jsonb_array_elements(v_cybernetic) AS module(item)
+            WHERE pg_catalog.jsonb_typeof(module.item) <> 'object'
+               OR pg_catalog.btrim(COALESCE(module.item ->> 'name', '')) = ''
+               OR pg_catalog.btrim(COALESCE(module.item ->> 'description', '')) = ''
+        ) THEN
+            RAISE EXCEPTION 'Cada módulo precisa ter um nome e uma descrição de funcionamento.';
         END IF;
 
     ELSE
