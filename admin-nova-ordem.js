@@ -8,7 +8,7 @@
     ? window.supabase.createClient(cfg.url, cfg.anonKey)
     : null;
   var contentRoot = function () { return document.getElementById('content'); };
-  var state = { rows: [], profiles: {}, filter: 'submitted', search: '', selected: null, message: '', busy: false, isAdmin: false };
+  var state = { rows: [], profiles: {}, filter: 'submitted', search: '', selected: null, message: '', busy: false, isAdmin: false, counts: {draft:0,submitted:0,approved:0,rejected:0}, rolls: [], history: [], detailLoading: false };
   var statusLabels = {
     draft: 'Rascunho',
     submitted: 'Aguardando análise',
@@ -113,6 +113,9 @@
     var noteHtml = row.review_note
       ? '<div class="no-admin-note"><b>Observação administrativa anterior</b><p>' + esc(row.review_note) + '</p></div>'
       : '';
+    var rollsHtml = state.detailLoading ? '<p class="no-admin-muted">Carregando rolagens e histórico...</p>' :
+      '<div class="no-admin-detail-section"><h4>Rolagens registradas</h4>' + (state.rolls.length ? '<div class="no-admin-module-list">' + state.rolls.map(function (roll) { return '<article><b>' + esc(roll.roll_type || 'Rolagem') + '</b><p>Resultado escolhido: ' + esc(roll.chosen_result || 'Não definido') + '</p><pre>' + esc(JSON.stringify(roll.outcomes || {}, null, 2)) + '</pre></article>'; }).join('') + '</div>' : '<p class="no-admin-muted">Nenhuma rolagem registrada.</p>') + '</div>' +
+      '<div class="no-admin-detail-section"><h4>Histórico de alterações</h4>' + (state.history.length ? '<div class="no-admin-module-list">' + state.history.map(function (entry) { return '<article><b>' + esc(entry.action || 'Alteração') + '</b><p>' + esc(entry.created_at ? new Date(entry.created_at).toLocaleString('pt-BR') : '') + ' · Responsável: ' + esc(entry.actor_id || entry.player_id || 'Sistema') + '</p></article>'; }).join('') + '</div>' : '<p class="no-admin-muted">Nenhum registro de histórico encontrado.</p>') + '</div>';
     var actions = row.status === 'submitted'
       ? '<div class="no-admin-review"><label for="no-admin-review-note">Motivo / orientação para devolução</label><textarea id="no-admin-review-note" rows="3" maxlength="2000" placeholder="Explique o que precisa ser corrigido para devolver a ficha ao jogador."></textarea><div class="no-admin-actions"><button type="button" class="no-admin-primary" data-admin-approve="' + esc(row.id) + '">APROVAR FICHA</button><button type="button" class="no-admin-secondary" data-admin-return="' + esc(row.id) + '">DEVOLVER PARA AJUSTES</button></div></div>'
       : '<p class="no-admin-muted">Esta ficha não está aguardando avaliação. As ações de aprovação e devolução ficam indisponíveis.</p>';
@@ -135,7 +138,7 @@
       '<div class="no-admin-detail-section"><h4>Aparência</h4><p>' + esc(row.appearance || 'Não informada') + '</p></div>' +
       '<div class="no-admin-detail-section"><h4>História / origem</h4><p>' + esc(row.backstory || 'Não informada') + '</p></div>' +
       '<div class="no-admin-detail-section"><h4>Módulos cibernéticos</h4>' + modulesHtml + '</div>' +
-      noteHtml +
+      noteHtml + rollsHtml +
       '<details class="no-admin-raw"><summary>Dados complementares da ficha</summary><pre>' + esc(JSON.stringify(ficha, null, 2)) + '</pre></details>' +
       actions + '</section>';
   }
@@ -144,8 +147,7 @@
     var root = contentRoot();
     if (!root) return;
     var rows = state.rows;
-    var counts = {draft:0,submitted:0,approved:0,rejected:0};
-    rows.forEach(function (row) { if (counts[row.status] != null) counts[row.status]++; });
+    var counts = state.counts;
     var filtered = rows.filter(function (row) {
       var matchesStatus = state.filter === 'all' || row.status === state.filter;
       var player = state.profiles[row.player_id] || '';
@@ -217,6 +219,13 @@
       if (result.error) throw result.error;
       var profiles = await db.from('profiles').select('id,display_name');
       if (profiles.error) throw profiles.error;
+      var countResults = await Promise.all(['draft','submitted','approved','rejected'].map(function (status) {
+        return db.from('characters').select('id', {count:'exact', head:true}).eq('status', status);
+      }));
+      countResults.forEach(function (item, index) {
+        if (item.error) throw item.error;
+        state.counts[['draft','submitted','approved','rejected'][index]] = item.count || 0;
+      });
       state.profiles = {};
       (profiles.data || []).forEach(function (profile) { state.profiles[profile.id] = profile.display_name || profile.id; });
       state.rows = result.data || [];
@@ -226,6 +235,25 @@
       state.busy = false;
       state.message = error.message || 'Falha ao carregar as fichas.';
       renderDashboard();
+    }
+  }
+
+  async function loadDetailRecords(id) {
+    if (!db || !id) return;
+    try {
+      var results = await Promise.all([
+        db.from('character_rolls').select('id,roll_type,outcomes,chosen_result,created_at').eq('character_id', id).order('created_at', {ascending:false}),
+        db.from('character_history').select('id,action,actor_id,player_id,old_data,new_data,created_at').eq('character_id', id).order('created_at', {ascending:false}).limit(30)
+      ]);
+      if (results[0].error) throw results[0].error;
+      if (results[1].error) throw results[1].error;
+      state.rolls = results[0].data || [];
+      state.history = results[1].data || [];
+    } catch (error) {
+      state.message = 'Ficha carregada, mas houve uma falha ao consultar rolagens ou histórico: ' + (error.message || 'erro desconhecido');
+    } finally {
+      state.detailLoading = false;
+      if (state.selected === id) renderDashboard();
     }
   }
 
@@ -400,7 +428,11 @@
     var view = target.closest('[data-admin-view]');
     if (view) {
       state.selected = view.getAttribute('data-admin-view');
+      state.rolls = [];
+      state.history = [];
+      state.detailLoading = true;
       renderDashboard();
+      loadDetailRecords(state.selected);
       return;
     }
     if (target.closest('[data-admin-close-detail]')) {
@@ -416,7 +448,8 @@
     if (target.closest('[data-admin-profile]')) { if (window.go) window.go('profile'); return; }
     var ask = target.closest('[data-ark-guide-ask]');
     if (ask && window.NovaOrdemARK) {
-      window.NovaOrdemARK.open();
+      var panel = document.getElementById('ark-panel');
+      if (!panel || !panel.classList.contains('ark-open')) window.NovaOrdemARK.open();
       window.NovaOrdemARK.ask(ask.getAttribute('data-ark-guide-ask'));
     }
   });
