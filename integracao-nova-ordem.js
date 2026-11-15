@@ -565,6 +565,7 @@
     button.disabled = true;
     try {
       await handleCreatorAction(button);
+      if (characterId && creator()) persistActiveDraft();
     } catch (error) {
       console.error('[Nova Ordem] Erro:', error);
       alert(error.message || 'Não foi possível concluir essa etapa.');
