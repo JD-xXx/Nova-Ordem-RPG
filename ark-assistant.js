@@ -306,6 +306,43 @@
       if (id === 'ark') return centralPageMarkup();
       return previousRender(id,page);
     };
+
+    // O navegador original chama a função lexical render() dentro de go().
+    // Por isso, a Central precisa de um desvio explícito no próprio go().
+    if (typeof window.go === 'function' && !window.go.__arkWrapped) {
+      var previousGo = window.go;
+      var arkGo = function (id,fromHistory) {
+        if (id !== 'ark') return previousGo.apply(this,arguments);
+        if (typeof current !== 'undefined' && !fromHistory && current !== 'ark' && typeof pageHistory !== 'undefined') pageHistory.push(current);
+        if (typeof current !== 'undefined') current = 'ark';
+        var page = pageRegistry.ark;
+        var crumb = document.getElementById('crumb');
+        var heading = document.getElementById('title');
+        var description = document.getElementById('desc');
+        var codeNode = document.getElementById('code');
+        var hero = document.getElementById('hero');
+        var content = document.getElementById('content');
+        var nav = document.getElementById('nav');
+        if (crumb) crumb.textContent = page.title.toUpperCase();
+        if (heading) heading.textContent = page.title;
+        if (description) description.textContent = page.desc;
+        if (codeNode) codeNode.textContent = page.code;
+        if (hero) hero.style.display = 'none';
+        if (nav) {
+          nav.innerHTML = navigationRegistry.map(function (item) {
+            return '<button class="' + (item[0] === 'ark' ? 'active' : '') + '" data-id="' + esc(item[0]) + '">' + esc(item[1]) + '</button>';
+          }).join('');
+          nav.querySelectorAll('button').forEach(function (button) {
+            button.onclick = function () { window.go(button.dataset.id); };
+          });
+        }
+        if (content) content.innerHTML = centralPageMarkup();
+        setContext();
+        renderMessages(document.getElementById('ark-main-messages'));
+      };
+      arkGo.__arkWrapped = true;
+      window.go = arkGo;
+    }
     if (typeof window.go === 'function') window.go(typeof current !== 'undefined' ? current : 'overview',true);
     return true;
   }
