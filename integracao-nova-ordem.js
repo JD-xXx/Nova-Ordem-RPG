@@ -232,15 +232,14 @@
       return;
     }
 
-    const userResult = await db.auth.getUser();
-    const userId = userResult.data && userResult.data.user && userResult.data.user.id;
-    if (!userId) throw new Error('Não foi possível identificar a conta conectada.');
-    const draftsResult = await db.from('characters').select('id,name,updated_at').eq('player_id', userId).eq('status', 'draft');
-    if (draftsResult.error) throw draftsResult.error;
-    const drafts = draftsResult.data || [];
-    if (drafts.length >= 5) {
-      const names = drafts.map((draft, index) => (index + 1) + '. ' + (draft.name || 'Ficha sem nome')).join('\\n');
-      throw new Error('Você já possui o limite de 5 rascunhos. Nenhum novo rascunho foi criado.\\n\\nRascunhos encontrados:\\n' + names + '\\n\\nVocê pode manter até 5 rascunhos simultaneamente.');
+    const progress = await rpc('get_character_creation_progress');
+    const draftCount = Number(progress && progress.draft_count);
+    const draftLimit = Number(progress && progress.draft_limit);
+    if (!Number.isInteger(draftCount) || !Number.isInteger(draftLimit)) {
+      throw new Error('Não foi possível verificar suas vagas de rascunho. Atualize o banco de dados antes de criar uma ficha.');
+    }
+    if (draftCount >= draftLimit) {
+      throw new Error('Você atingiu seu limite atual de ' + draftLimit + ' rascunhos. As vagas adicionais são liberadas após aprovações.');
     }
     const id = await rpc('create_character_draft');
     characterId = typeof id === 'string' ? id : (id && (id.id || id.character_id));
@@ -252,22 +251,91 @@
 
   function persistActiveDraft() {
     if (!characterId || !creator()) return;
+    const draftId = characterId;
+    let state;
     try {
-      const user = db.auth.getSession();
-      user.then(({data}) => {
-        const userId = data && data.session && data.session.user && data.session.user.id;
-        if (!userId || !characterId) return;
-        const state = creator().getState();
-        sessionStorage.setItem(ACTIVE_DRAFT_KEY, JSON.stringify({userId, characterId, state}));
-        if (autosaveTimer) clearTimeout(autosaveTimer);
-        const draftId = characterId;
-        autosaveTimer = setTimeout(() => saveDraftRemotely(state, draftId), 850);
-      });
-    } catch (_) {}
+      state = JSON.parse(JSON.stringify(creator().getState()));
+    } catch (error) {
+      console.warn('[Nova Ordem] Não foi possível preparar o estado do rascunho:', error);
+      return;
+    }
+    db.auth.getSession().then(({data, error}) => {
+      if (error) throw error;
+      const userId = data && data.session && data.session.user && data.session.user.id;
+      if (!userId) return;
+      try {
+        sessionStorage.setItem(ACTIVE_DRAFT_KEY, JSON.stringify({userId, characterId:draftId, state}));
+      } catch (_) {}
+      if (autosaveTimer) clearTimeout(autosaveTimer);
+      autosaveTimer = setTimeout(() => {
+        setDraftSaveStatus('Salvando automaticamente…');
+        saveDraftRemotely(state, draftId)
+          .then(() => setDraftSaveStatus('Salvo automaticamente no banco.'))
+          .catch(error => {
+            console.warn('[Nova Ordem] Não foi possível salvar o progresso remoto do rascunho:', error);
+            setDraftSaveStatus('Não foi possível salvar no banco. Verifique sua conexão.', true);
+          });
+      }, 850);
+    }).catch(error => {
+      console.warn('[Nova Ordem] Não foi possível preparar o salvamento:', error);
+      setDraftSaveStatus('Não foi possível iniciar o salvamento.', true);
+    });
   }
 
   function clearActiveDraft() {
     try { sessionStorage.removeItem(ACTIVE_DRAFT_KEY); } catch (_) {}
+  }
+
+  function setDraftSaveStatus(message, failed) {
+    const status = $('[data-no-save-status]');
+    if (!status) return;
+    status.textContent = message;
+    status.style.color = failed ? '#f0a0a5' : '#9fc9a9';
+  }
+
+  async function saveDraftManually(button) {
+    if (busy || !characterId || !creator()) return;
+    const draftId = characterId;
+    let state;
+    try {
+      state = JSON.parse(JSON.stringify(creator().getState()));
+    } catch (_) {
+      alert('Não foi possível preparar os dados desta ficha.');
+      return;
+    }
+    busy = true;
+    if (button) button.disabled = true;
+    setDraftSaveStatus('Salvando rascunho…');
+    try {
+      await saveDraftRemotely(state, draftId);
+      setDraftSaveStatus('Rascunho salvo no banco com sucesso.');
+    } catch (error) {
+      console.error('[Nova Ordem] Erro ao salvar rascunho manualmente:', error);
+      setDraftSaveStatus('Falha ao salvar o rascunho.', true);
+      alert(error.message || 'Não foi possível salvar o rascunho no banco.');
+    } finally {
+      busy = false;
+      if (button) button.disabled = false;
+    }
+  }
+
+  function syncCreatorControls() {
+    const el = root();
+    if (!el || currentPage !== 'character-creation' || !characterId || !creator()) return;
+    const state = creator().getState();
+    const nextButton = el.querySelector('[data-cc-action="next"]');
+    if (nextButton) nextButton.textContent = Number(state.step) >= 7 ? 'ENVIAR FICHA' : 'PRÓXIMO';
+
+    let bar = el.querySelector('[data-no-draft-actions]');
+    if (!bar) {
+      bar = document.createElement('div');
+      bar.dataset.noDraftActions = 'true';
+      bar.className = 'no-draft-actions';
+      bar.innerHTML = '<button class="close" type="button" data-no-save-draft>SALVAR COMO RASCUNHO</button><span data-no-save-status role="status" aria-live="polite">O salvamento automático está ativo.</span>';
+      const nav = nextButton && nextButton.parentElement;
+      if (nav && nav.parentNode) nav.parentNode.insertBefore(bar, nav.nextSibling);
+      else el.appendChild(bar);
+    }
   }
 
   async function restoreActiveDraft(session) {
@@ -296,6 +364,7 @@
       if (window.go) window.go('character-creation');
       if (!characterId) await createDraft();
       if (creator()) creator().render();
+      syncCreatorControls();
     } catch (error) {
       showMessage(error.message || 'Não foi possível iniciar a ficha.');
     } finally { busy = false; }
@@ -547,6 +616,15 @@
     const target = event.target;
     if (!target || !target.closest) return;
 
+    const manualSaveButton = target.closest('[data-no-save-draft]');
+    if (manualSaveButton) {
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+      await saveDraftManually(manualSaveButton);
+      return;
+    }
+
     const openDraftButton = target.closest('[data-no-open-draft]');
     if (openDraftButton) { event.preventDefault(); event.stopPropagation(); event.stopImmediatePropagation(); await openDraft(openDraftButton.dataset.noOpenDraft); return; }
 
@@ -576,7 +654,10 @@
     button.disabled = true;
     try {
       await handleCreatorAction(button);
-      if (characterId && creator()) persistActiveDraft();
+      if (characterId && creator()) {
+        persistActiveDraft();
+        syncCreatorControls();
+      }
     } catch (error) {
       console.error('[Nova Ordem] Erro:', error);
       alert(error.message || 'Não foi possível concluir essa etapa.');
@@ -612,7 +693,7 @@
 
   document.addEventListener('input', event => {
     if (characterId && creator() && event.target && event.target.closest('#content')) persistActiveDraft();
-  }, true);
+  }, false);
 
   document.addEventListener('change', event => {
     const target = event.target;
@@ -643,6 +724,10 @@
     persistActiveDraft();
   }, true);
 
+  document.addEventListener('change', event => {
+    if (characterId && creator() && event.target && event.target.closest('#content')) persistActiveDraft();
+  }, false);
+
   function detectCreator() { return; }
 
 
@@ -670,6 +755,10 @@
     addMobileNavigation();
     currentPage = 'overview';
     originalGo('overview', true);
+    if (observer) observer.disconnect();
+    observer = new MutationObserver(() => syncCreatorControls());
+    const contentRoot = root();
+    if (contentRoot) observer.observe(contentRoot, {childList:true, subtree:true, characterData:true});
   }
 
   function addMobileNavigation() {
@@ -713,6 +802,9 @@
       .no-ark b{color:#a9d8ff;letter-spacing:.08em}
       .no-ark p{margin:5px 0 0;color:#c4d1df;line-height:1.6;font-size:13px}
       .no-profile-card input{display:block;width:100%;margin-top:6px;padding:11px;border:1px solid #34465d;border-radius:6px;background:#080e17;color:#eef5ff}
+      .no-draft-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:14px 0 20px;padding:12px;border:1px solid #2a3a4e;border-radius:8px;background:#0b1420}
+      .no-draft-actions [data-no-save-draft]{min-height:40px}
+      .no-draft-actions [data-no-save-status]{font-size:12px;color:#9fc9a9;line-height:1.5}
     `;
     document.head.appendChild(style);
     button.addEventListener('click', () => {
@@ -753,21 +845,34 @@
       .eq('player_id', user.id)
       .eq('status','draft')
       .order('updated_at',{ascending:false});
+    let progress = null;
+    let progressError = null;
+    try {
+      progress = await rpc('get_character_creation_progress');
+    } catch (error) {
+      progressError = error;
+    }
     if (draftsResult.error) {
       el.innerHTML = '<section class="no-profile-card"><h3>Perfil do jogador</h3><p>Não foi possível carregar seus rascunhos: ' + escapeHtml(draftsResult.error.message) + '</p></section>';
       return;
     }
     if (currentPage !== 'profile') return;
     const drafts = draftsResult.data || [];
+    const draftLimit = progress && Number.isInteger(Number(progress.draft_limit)) ? Number(progress.draft_limit) : null;
+    const approvedCount = progress && Number(progress.approved_count) || 0;
+    const activeCount = progress && Number(progress.active_character_count) || 0;
     const draftHtml = drafts.length ? drafts.map((draft,index) =>
       '<article class="no-draft"><div><b>' + escapeHtml(draft.name || ('Rascunho ' + (index+1))) + '</b><small>Atualizado em ' + escapeHtml(draft.updated_at ? new Date(draft.updated_at).toLocaleString('pt-BR') : 'data indisponível') + '</small></div><button class="save" type="button" data-no-open-draft="' + escapeHtml(draft.id) + '">ABRIR FICHA</button></article>'
     ).join('') : '<p>Você ainda não possui rascunhos. Quando iniciar uma ficha, ela aparecerá aqui.</p>';
+    const progressHtml = progress
+      ? '<p>Vagas de rascunho: <b>' + drafts.length + '/' + draftLimit + '</b>. Aprovações acumuladas: <b>' + approvedCount + '/2</b>.</p><p>Personagens aprovados no RPG: <b>' + activeCount + '/2</b>.</p>'
+      : '<p role="alert">As regras progressivas ainda não estão disponíveis no banco. Aplique o arquivo supabase-progressive-drafts-and-autosave.sql no projeto Nova Ordem - Testes antes de criar ou editar rascunhos. ' + escapeHtml(progressError && progressError.message || '') + '</p>';
     el.innerHTML =
       '<section class="no-profile-card"><div class="eyebrow">AGÊNCIA A ORDEM · PORTAL DO JOGADOR</div><h3>Seu perfil</h3><p>Conta conectada: <b>' + escapeHtml(user.email || 'usuário autenticado') + '</b></p>' +
       (message ? '<p role="status">' + escapeHtml(message) + '</p>' : '') +
       '<div class="no-profile-actions"><button class="save" type="button" data-no-start>Criar personagem</button><button class="close" type="button" data-no-logout>Sair da conta</button></div></section>' +
       '<section class="no-profile-card"><h3>Segurança da conta</h3><form data-no-change-password><label class="cc-field">Nova senha<input data-no-change-password-value type="password" minlength="6" autocomplete="new-password" required placeholder="Digite a nova senha"></label><label class="cc-field">Confirmar senha<input data-no-change-password-confirm type="password" minlength="6" autocomplete="new-password" required placeholder="Digite novamente"></label><div class="no-profile-actions"><button class="save" type="submit">ALTERAR SENHA</button></div></form></section>' +
-      '<section class="no-profile-card"><h3>Meus rascunhos <small>(' + drafts.length + '/5)</small></h3><p>As fichas que ainda não foram enviadas ficam disponíveis aqui para você continuar depois.</p><div class="no-draft-list">' + draftHtml + '</div></section>';
+      '<section class="no-profile-card"><h3>Meus rascunhos <small>(' + drafts.length + '/' + (draftLimit == null ? '—' : draftLimit) + ')</small></h3>' + progressHtml + '<p>As fichas que ainda não foram enviadas ficam disponíveis aqui para você continuar depois.</p><div class="no-draft-list">' + draftHtml + '</div></section>';
   }
 
   function renderCharacterIntro(message) {
@@ -829,6 +934,7 @@
       window.go('character-creation');
       if (creator()) creator().update(state);
       persistActiveDraft();
+      syncCreatorControls();
     } catch (error) {
       alert(error.message || 'Não foi possível abrir esse rascunho.');
     } finally { busy = false; }
@@ -846,37 +952,42 @@
 
   async function saveDraftRemotely(state, draftId) {
     const targetId = draftId || characterId;
-    if (!targetId || !state) return;
-    try {
-      const fields = state.fields || {};
-      await rpc('save_character_extra_data', {
-        p_character_id:targetId,
-        p_ficha_data:{
-          draftState:state,
-          occupation:String(fields.occupation || '').trim(),
-          talentDescription:String(fields.talentDescription || '').trim(),
-          specializations:Array.isArray(state.specializations) ? state.specializations : [],
-          humanChiEnhancement:state.race === 1 ? ({1:'Baixa',2:'Normal',3:'Alta'}[state.secondRoll] || null) : null
-        }
-      });
-      if (!validateBasics(state)) {
-        await rpc('save_character_basics', {
-          p_character_id:targetId,
-          p_name:String(fields.name).trim(),
-          p_age:Number(fields.age),
-          p_height:heightCm(fields.height),
-          p_gender:String(fields.gender).trim(),
-          p_weight:Number(String(fields.weight).replace(',','.')),
-          p_personality:String(fields.personality || '').trim(),
-          p_appearance:String(fields.appearance || '').trim(),
-          p_backstory:String(fields.history || '').trim(),
-          p_common_skills:splitList(fields.skills),
-          p_supernatural_skills:isHybrid(state) ? splitList(fields.supernatural) : []
-        });
+    if (!targetId || !state) throw new Error('Não há rascunho ativo para salvar.');
+    const fields = state.fields || {};
+
+    // Persiste também fichas incompletas, inclusive quando apenas o nome foi preenchido.
+    await rpc('save_character_draft_progress', {
+      p_character_id:targetId,
+      p_draft_state:state
+    });
+
+    await rpc('save_character_extra_data', {
+      p_character_id:targetId,
+      p_ficha_data:{
+        draftState:state,
+        occupation:String(fields.occupation || '').trim(),
+        talentDescription:String(fields.talentDescription || '').trim(),
+        specializations:Array.isArray(state.specializations) ? state.specializations : [],
+        humanChiEnhancement:state.race === 1 ? ({1:'Baixa',2:'Normal',3:'Alta'}[state.secondRoll] || null) : null
       }
-    } catch (error) {
-      console.warn('[Nova Ordem] Não foi possível salvar o progresso remoto do rascunho:', error);
+    });
+
+    if (!validateBasics(state)) {
+      await rpc('save_character_basics', {
+        p_character_id:targetId,
+        p_name:String(fields.name || '').trim(),
+        p_age:Number(fields.age),
+        p_height:heightCm(fields.height),
+        p_gender:String(fields.gender || '').trim(),
+        p_weight:Number(String(fields.weight || '').replace(',','.')),
+        p_personality:String(fields.personality || '').trim(),
+        p_appearance:String(fields.appearance || '').trim(),
+        p_backstory:String(fields.history || '').trim(),
+        p_common_skills:splitList(fields.skills),
+        p_supernatural_skills:isHybrid(state) ? splitList(fields.supernatural) : []
+      });
     }
+    return true;
   }
 
   function hasRecoveryMarker() {
