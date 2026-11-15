@@ -668,6 +668,8 @@
       if (id === 'character-creation') renderCharacterIntro();
     };
     addMobileNavigation();
+    currentPage = 'overview';
+    originalGo('overview', true);
   }
 
   function addMobileNavigation() {
