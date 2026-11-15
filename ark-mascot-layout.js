@@ -14,11 +14,12 @@
     '.ark-scene--compact{padding:10px 13px;gap:10px;margin:15px 0}.ark-scene--compact .ark-scene-robot{width:82px;height:92px;flex-basis:82px}.ark-scene--compact .ark-scene-bubble{font-size:12px;padding:10px 12px}',
     '.ark-scene--peek{margin:12px 0 22px auto;max-width:620px;transform:translateX(10px);border-color:rgba(125,93,111,.42);background:linear-gradient(110deg,rgba(35,22,31,.94),rgba(10,12,19,.97))}.ark-scene--peek .ark-scene-robot{width:94px;height:104px;flex-basis:94px;transform:translateX(8px)}.ark-scene--peek .ark-scene-bubble{border-color:rgba(151,99,116,.36);background:rgba(12,10,16,.86);color:#d4c5ce}.ark-scene--peek .ark-scene-bubble:before{color:#d59cac}',
     '.ark-scene-trio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:17px 0}',
+    '.ark-table-explainer{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(230px,.85fr);gap:12px;align-items:center;margin:14px 0}.ark-table-explainer>.ark-scene{margin:0;height:100%;align-self:stretch}.ark-table-explainer>.tablebox{min-width:0}',
     '.ark-scene-trio .ark-scene{display:block;margin:0;padding:11px;text-align:center}.ark-scene-trio .ark-scene-robot{width:84px;height:92px;margin:0 auto 4px}.ark-scene-trio .ark-scene-bubble{text-align:left;font-size:11px;padding:9px}.ark-scene-trio .ark-scene-bubble:before{font-size:8px}.ark-scene-trio .ark-scene-bubble p{font-size:11px;line-height:1.55}',
     '#backFloat{position:fixed;right:20px;bottom:20px;z-index:8;display:none;align-items:center;justify-content:center;gap:8px;width:auto;height:auto;min-height:44px;padding:10px 16px;border:1px solid #62bce9;border-radius:8px;background:linear-gradient(120deg,#123653,#091725);color:#e8f6ff;font:600 10px var(--mono,monospace);letter-spacing:.8px;box-shadow:0 8px 24px #0009;cursor:pointer}',
     '#backFloat:hover{background:#174567;border-color:#a0ddff;transform:translateY(-2px)}#backFloat:focus-visible{outline:2px solid #83d1ff;outline-offset:3px}',
     '@keyframes ark-hover{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}',
-    '@media(max-width:700px){.ark-scene{gap:9px;padding:11px}.ark-scene-robot{width:82px;height:92px;flex-basis:82px}.ark-scene-bubble{font-size:12px;padding:10px}.ark-scene-trio{grid-template-columns:1fr}.ark-scene-trio .ark-scene{display:flex;align-items:center;text-align:left}.ark-scene-trio .ark-scene-robot{width:72px;height:80px;flex-basis:72px;margin:0}.ark-scene-trio .ark-scene-bubble{flex:1}.ark-scene--peek{transform:none;margin-left:0}.ark-scene--peek .ark-scene-robot{width:75px;height:84px;flex-basis:75px}#backFloat{right:14px;bottom:14px;min-height:42px;padding:9px 13px}}',
+    '@media(max-width:700px){.ark-table-explainer{grid-template-columns:1fr}.ark-scene{gap:9px;padding:11px}.ark-scene-robot{width:82px;height:92px;flex-basis:82px}.ark-scene-bubble{font-size:12px;padding:10px}.ark-scene-trio{grid-template-columns:1fr}.ark-scene-trio .ark-scene{display:flex;align-items:center;text-align:left}.ark-scene-trio .ark-scene-robot{width:72px;height:80px;flex-basis:72px;margin:0}.ark-scene-trio .ark-scene-bubble{flex:1}.ark-scene--peek{transform:none;margin-left:0}.ark-scene--peek .ark-scene-robot{width:75px;height:84px;flex-basis:75px}#backFloat{right:14px;bottom:14px;min-height:42px;padding:9px 13px}}',
     '@media(prefers-reduced-motion:reduce){.ark-scene-robot{animation:none}#backFloat{transition:none}}'
   ].join('\n');
   var style = document.createElement('style');
@@ -89,60 +90,153 @@
       '</div>';
     rows.parentNode.insertBefore(holder.firstElementChild, rows.nextSibling);
   }
+  function addAfterIndex(content, selector, index, key, message, variant) {
+    var nodes = content.querySelectorAll(selector);
+    if (nodes[index]) addAfter(nodes[index], key, message, variant || 'compact');
+  }
+  function wrapWithScene(target, key, message) {
+    if (!target || !target.parentNode) return;
+    var content = document.getElementById('content');
+    if (!content || content.querySelector('[data-ark-key="' + key + '"]')) return;
+    if (target.parentNode.classList && target.parentNode.classList.contains('ark-table-explainer')) return;
+    var wrapper = document.createElement('div');
+    wrapper.className = 'ark-table-explainer';
+    target.parentNode.insertBefore(wrapper, target);
+    wrapper.appendChild(target);
+    var holder = document.createElement('div');
+    holder.innerHTML = scene(key, message, 'compact');
+    wrapper.appendChild(holder.firstElementChild);
+  }
   function placeScenes(content, id) {
     if (!content) return;
     if (id === 'overview') {
       var welcome = content.querySelector('.welcome-marketing');
       if (welcome) {
-        var intro = welcome.querySelector('.welcome-copy');
-        addAfter(intro, 'home-intro', 'Olá! Eu sou o A.R.K., um dos programas de defesa e assistência da Agência. Vou acompanhar sua exploração pela Nova Ordem e explicar os registros conforme você avança.');
-        var innovation = welcome.querySelector('.innovation-copy');
-        addAfter(innovation, 'home-tools', 'Nesta área ficam as ferramentas interativas. Os treinamentos registram atividades de desenvolvimento; a Forja recebe projetos; e o Trabalho registra jornadas profissionais.', 'compact');
-        var grid = welcome.querySelector('.innovation-grid');
-        addAfter(grid, 'home-tools-detail', 'Se alguma ferramenta ainda estiver em desenvolvimento, eu aviso. Não vou apresentar funções incompletas como se já estivessem disponíveis.', 'compact');
+        addAfter(welcome.querySelector('.welcome-copy'), 'home-intro', 'Olá! Eu sou o A.R.K., um dos programas de defesa e assistência da Agência. Vou acompanhar sua exploração pela Nova Ordem e explicar os registros conforme você avança.');
+        addAfter(welcome.querySelector('.innovation-copy'), 'home-tools', 'Nesta área ficam as ferramentas interativas. Os treinamentos registram atividades de desenvolvimento; a Forja recebe projetos; e o Trabalho registra jornadas profissionais.', 'compact');
+        addAfter(welcome.querySelector('.innovation-grid'), 'home-tools-detail', 'Se alguma ferramenta ainda estiver em desenvolvimento, eu aviso. Não vou apresentar funções incompletas como se já estivessem disponíveis.', 'compact');
       }
       var oldIntro = content.querySelector('.intro-lead');
       if (oldIntro) addAfter(oldIntro, 'home-intro-fallback', 'Olá! Eu sou o A.R.K., guia virtual da Agência. Explore os registros e encontre minhas orientações ao longo da página.', 'compact');
       return;
     }
     if (id === 'systems') {
-      var cards = content.querySelector('.cards');
-      addAfter(cards, 'systems-guide', 'Os sistemas são módulos diferentes que trabalham em conjunto. Abra um registro para consultar suas regras. O botão de voltar fica no canto inferior da página.', '');
+      addAfter(content.querySelector('.cards'), 'systems-guide', 'Estes são os arquivos centrais do RPG. Cada cartão abre um sistema próprio; alguns se relacionam, mas cada um tem uma função diferente. Vou explicar os pontos importantes dentro dos próprios registros.', 'compact');
+      addAfterIndex(content, '.cards', 0, 'systems-howto', 'Por exemplo: Chi explica a energia; Talentos explica as manifestações congênitas; Combate explica como as ações se resolvem. Para entender uma situação completa, normalmente precisamos consultar mais de um sistema.', 'compact');
+      return;
+    }
+    if (id === 'combat') {
+      addAfter(content.querySelector('.panel'), 'combat-intro-example', 'Exemplo prático: A tenta acertar B. B escolhe esquivar. Se o ataque tirar 9 e a esquiva 5, a diferença é 4: 40% do ataque ainda alcança B e 60% é evitado. É uma aplicação da tabela abaixo, não uma regra nova.', 'compact');
+      wrapWithScene(content.querySelector('.no87-table'), 'combat-dodge-table', 'Leia esta tabela como uma comparação entre dois resultados: quanto maior a diferença a favor da esquiva, menor a parcela do ataque que acerta. Se a esquiva igualar ou superar o ataque, o ataque é evitado por completo.');
+      addAfterIndex(content, '.no87-section', 1, 'combat-damage-example', 'Imagine que uma técnica tenha força de impacto e também uma propriedade especial. O dano bruto representa o impacto; o efeito é o que a técnica faz além de atingir. A defesa pode reduzir o impacto sem necessariamente apagar a propriedade.', 'compact');
+      addAfterIndex(content, '.no87-section', 5, 'combat-perfect-example', 'Um resultado natural 10 no ataque ativa o Ataque Perfeito conforme o registro. Já o bônus de Técnica Máxima não transforma um resultado em 10: o resultado final continua limitado a 9.', 'compact');
+      return;
+    }
+    if (id === 'chi') {
+      addAfter(content.querySelector('.panel'), 'chi-intro-example', 'Ter Chi não significa saber utilizá-lo. Todos os seres vivos possuem Chi, mas pessoas comuns podem ter essa energia inativa. Percepção, controle e treinamento são etapas diferentes.', 'compact');
+      addAfterIndex(content, '.rows', 0, 'chi-emission-example', 'Na prática, uma técnica simples e breve tende a exigir menos Chi do que uma manifestação complexa, potente ou mantida por muito tempo. O custo considera esses três fatores, não uma tarifa fixa para toda habilidade.', 'compact');
+      addAfterIndex(content, '.rows', 1, 'chi-recovery-example', 'Se um personagem gastar energia demais, descansar e meditar são formas de recuperação. Continuar tentando executar técnicas durante a exaustão pode comprometer o controle e deixá-lo vulnerável.', 'compact');
       return;
     }
     if (id === 'talents') {
-      var intro = content.querySelector('.panel');
-      addAfter(intro, 'talents-intro', 'Antes de escolher uma manifestação, lembre-se: Talentos são congênitos. A classe descreve como a habilidade se manifesta; a especialização define seu campo de atuação.', 'compact');
+      addAfter(content.querySelector('.panel'), 'talents-intro', 'Antes de escolher uma manifestação, lembre-se: Talentos são congênitos. A classe descreve como a habilidade se manifesta; a especialização define seu campo de atuação.', 'compact');
+      addAfterIndex(content, '.rows', 0, 'talents-class-example', 'Exemplo: se uma habilidade age diretamente no corpo do usuário, sua manifestação pode ser Corporal. Se influencia algo externo, pode ser Influência. A classificação depende do funcionamento real da habilidade, não apenas do nome escolhido.', 'compact');
+      addAfter(content.querySelector('.special-grid'), 'talents-specialization-example', 'Uma especialização delimita o tipo de manifestação. Ela não elimina os limites do Talento nem dispensa controle, treinamento e coerência com a classe.', 'compact');
       addTalentTrio(content);
       return;
     }
+    if (id === 'progression') {
+      addAfter(content.querySelector('.panel'), 'progression-intro-example', 'Um personagem pode se desenvolver por caminhos diferentes: participar de uma missão, treinar ou contribuir em um evento são atividades distintas. A progressão não precisa ser uma sequência exclusiva de combates.', 'compact');
+      addAfterIndex(content, '.rows', 0, 'progression-paths-example', 'Exemplo: um herói que participa de uma missão de proteção pode avançar por esse caminho; outro personagem pode optar por treinamento individual. A atividade precisa cumprir os critérios do registro e ser avaliada conforme as regras.', 'compact');
+      addAfterIndex(content, '.rows', 1, 'progression-level-example', 'Não confunda nível com Rank. Nível representa progressão do personagem; Rank é uma classificação hierárquica com critérios próprios.', 'compact');
+      return;
+    }
+    if (id === 'races') {
+      addAfter(content.querySelector('.cards'), 'races-overview-example', 'As categorias não são apenas aparências diferentes. Elas têm características biológicas e limites próprios. A escolha deve combinar com a história e com as capacidades descritas na ficha.', 'compact');
+      addAfterIndex(content, '.rows', 0, 'races-comparison-example', 'Como referência física do sistema, um Químio equivale aproximadamente a dez humanos e um Híbrido a cinco. Essa comparação não significa que toda característica seja multiplicada automaticamente.', 'compact');
+      return;
+    }
+    if (id === 'honor') {
+      addAfter(content.querySelector('.panel'), 'honor-karma-example', 'Honra e Karma não são duas escalas da mesma coisa. Uma registra ações positivas e reconhecimento; a outra registra condutas negativas relevantes e consequências. Uma pontuação não é convertida na outra.', 'compact');
+      var honorTables = content.querySelectorAll('.tablebox');
+      if (honorTables[0]) wrapWithScene(honorTables[0], 'honor-stars-table', 'As estrelas representam o grau de procura associado ao Karma. Consulte a tabela como classificação, não como uma recompensa por completar missões.');
+      if (honorTables[1]) wrapWithScene(honorTables[1], 'honor-suits-table', 'Esta segunda tabela é diferente: mostra os requisitos de Honra para os trajes da Agência. Por isso, uma ficha pode ter Honra relevante para os trajes sem que isso reduza seu Karma.');
+      return;
+    }
+    if (id === 'karma') {
+      addAfter(content.querySelector('.panel'), 'karma-intro-example', 'Exemplo: uma ação criminosa de grande impacto pode ser avaliada pela Administração considerando gravidade, consequências e importância narrativa. Não é uma soma automática por repetir delitos pequenos.', 'compact');
+      var karmaTable = content.querySelector('table');
+      if (karmaTable) wrapWithScene(karmaTable, 'karma-stars-table', 'As estrelas dependem dos requisitos de nível e Karma indicados na tabela. Ter muitos pontos sem cumprir o nível mínimo não basta para alcançar a faixa seguinte.');
+      addAfterIndex(content, '.rows', 0, 'karma-consequences-example', 'A classificação de procurado pode aparecer em notícias e registros da Lore. Ela representa notoriedade e investigação, não um bônus de poder para o personagem.', 'compact');
+      return;
+    }
+    if (id === 'equipment') {
+      addAfter(content.querySelector('.panel'), 'equipment-intro-example', 'Um equipamento não ganha uma capacidade só porque a descrição diz que ele é muito avançado. Materiais, mecanismos, funcionamento, Rank e condição precisam ser explicados e avaliados.', 'compact');
+      addAfterIndex(content, '.rows', 0, 'equipment-condition-example', 'Rank e condição são critérios separados. Um item pode ter Rank alto e estar danificado, ou Rank baixo e estar em perfeito estado.', 'compact');
+      return;
+    }
+    if (id === 'crafting') {
+      addAfter(content.querySelector('.panel'), 'crafting-intro-example', 'Exemplo: um jogador pode propor uma ferramenta ou proteção, mas precisa explicar materiais, funcionamento, recursos e processo de fabricação. A proposta ainda passa pela avaliação prevista no sistema.', 'compact');
+      addAfterIndex(content, '.rows', 0, 'crafting-materials-example', 'A escolha de materiais deve considerar propriedades e disponibilidade. Um material raro ou resistente não torna o projeto automaticamente aprovado nem elimina custos de produção.', 'compact');
+      return;
+    }
+    if (id === 'economy') {
+      addAfter(content.querySelector('.panel'), 'economy-intro-example', 'Os valores de referência ajudam a manter uma economia coerente. Eles não significam que todo personagem recebe automaticamente um salário: trabalho, atividade e registro precisam ser considerados.', 'compact');
+      wrapWithScene(content.querySelector('.tablebox'), 'economy-reference-table', 'Use esta tabela para comparar valores de referência. Antes de comprar ou vender algo, considere o item concreto e as condições registradas, sem presumir um preço universal.');
+      return;
+    }
+    if (id === 'organizations') {
+      addAfter(content.querySelector('.panel'), 'organizations-intro-example', 'Uma organização não é apenas um nome ou uma bandeira. Observe sua origem, seus objetivos, sua escala de atuação e a forma como recruta ou se relaciona com os personagens.', 'compact');
+      addAfterIndex(content, '.no87-section', 0, 'organization-order-example', 'A Ordem tem uma atuação institucional ampla e uma história ligada à resistência e à proteção. Um personagem pode se relacionar com a Agência sem que todo personagem do RPG seja obrigado a fazer parte dela.', 'compact');
+      addAfterIndex(content, '.no87-section', 1, 'organization-lua-example', 'A Lua Sangrenta possui uma visão própria sobre a realidade e objetivos diferentes dos da Ordem. Ao interpretar um grupo, diferencie o que seus membros acreditam daquilo que a narrativa confirma como verdade.', 'compact');
+      return;
+    }
+    if (id === 'missions') {
+      addAfter(content.querySelector('.cards'), 'missions-types-example', 'Exemplo: uma missão de Salvação pode ter como objetivo proteger uma cidade; uma de Destruição pode ter como objetivo destruí-la. O tipo indica o objetivo narrativo, não garante o sucesso de quem participa.', 'compact');
+      addAfter(content.querySelector('.callout'), 'missions-outcome-example', 'A conclusão depende das ações, da situação e da avaliação da missão. Participar não significa receber automaticamente o resultado desejado.', 'compact');
+      return;
+    }
+    if (id === 'ranks') {
+      addAfter(content.querySelector('.panel'), 'ranks-intro-example', 'Um personagem pode ter nível elevado sem ocupar automaticamente um Rank superior. Nível, patente e função respondem a critérios diferentes.', 'compact');
+      addAfterIndex(content, '.rows', 0, 'ranks-hierarchy-example', 'Uma promoção não deve ser tratada como consequência automática de força. O registro considera requisitos e avaliação administrativa, além de vagas quando aplicável.', 'compact');
+      return;
+    }
+    if (id === 'characters') {
+      addAfter(content.querySelector('.panel'), 'characters-creation-example', 'O jogador define a origem, a história e a apresentação do personagem. A Administração não exige uma origem padronizada: avalia coerência com a Lore e equilíbrio da ficha.', 'compact');
+      addAfterIndex(content, '.rows', 0, 'characters-review-example', 'Se uma ficha precisar de ajustes, a devolução deve explicar o que precisa ser revisto. Aprovação não significa que todos os personagens precisem seguir o mesmo caminho narrativo.', 'compact');
+      return;
+    }
+    if (id === 'protocol') {
+      addAfter(content.querySelector('.panel'), 'protocol-intro-example', 'O protocolo orienta a convivência e os procedimentos do RPG. Ele não substitui a leitura dos sistemas: uma regra de combate, por exemplo, continua sendo consultada no arquivo de Combate.', 'compact');
+      addAfterIndex(content, '.rows', 0, 'protocol-question-example', 'Se surgir uma dúvida, indique o sistema e a situação concreta. Isso ajuda a Administração a distinguir uma dúvida de regra de uma decisão narrativa.', 'compact');
+      return;
+    }
     if (id === 'lore-thanatos') {
-      var first = content.querySelector('.panel');
-      addAfter(first, 'thanatos-peek', 'Este registro é delicado. Posso apresentar o que está documentado publicamente, mas certos dados permanecem reservados. Recomendo cautela ao explorar este arquivo.', 'peek');
+      addAfter(content.querySelector('.panel'), 'thanatos-peek', 'Este registro é delicado. Posso apresentar o que está documentado publicamente, mas certos dados permanecem reservados. Recomendo cautela ao explorar este arquivo.', 'peek');
+      return;
+    }
+    if (id === 'lore') {
+      addAfter(content.querySelector('.panel'), 'lore-archive-guide', 'Os arquivos públicos apresentam a história, as culturas e os registros conhecidos. Nem toda informação de bastidores é conhecimento que os personagens possuem dentro da narrativa.', 'compact');
+      addAfter(content.querySelector('.cards'), 'lore-reading-example', 'Ao ler um acontecimento histórico, separe o fato registrado das interpretações de povos, organizações e personagens. Nem toda crença apresentada no mundo é necessariamente verdadeira.', 'compact');
       return;
     }
     var messages = {
-      chi:'O Chi está presente em todos os seres vivos. Perceber a própria energia não significa dominá-la imediatamente: controle e treinamento continuam necessários.',
-      races:'A Nova Ordem trabalha com quatro categorias: Humanos, Híbridos, Químios e Ciborgues. Consulte cada descrição antes de definir a origem do personagem.',
-      combat:'No combate, descreva ações coerentes com as capacidades e condições do personagem. O sistema exige atenção às regras e à interação entre as ações.',
-      progression:'A progressão reúne diferentes caminhos de desenvolvimento. Missões, eventos e treinamentos têm funções próprias; não existe uma única trajetória obrigatória.',
+      agency:'A Agência possui estrutura, procedimentos e responsabilidades próprias. A participação de um personagem não é obrigatória.',
       'lore-history':'Este arquivo reúne acontecimentos históricos conhecidos. Alguns eventos ajudam a compreender a formação da ordem atual.',
       'lore-pantheons':'As culturas e tradições possuem seus próprios registros. Não confunda referências mitológicas com as entidades originais da cosmologia da Nova Ordem.',
       'lore-progenitor':'Este registro possui caráter reservado. Nem toda informação deve ser interpretada como conhecimento público dos personagens.',
-      characters:'A criação de personagens é livre, mas a administração avalia coerência com a Lore e equilíbrio da ficha.',
-      agency:'A Agência possui estrutura, procedimentos e responsabilidades próprias. A participação de um personagem não é obrigatória.',
-      organizations:'Cada organização tem identidade, território e interesses próprios. Consulte os registros antes de assumir vínculos ou alianças.',
-      protocol:'Este protocolo reúne orientações para a participação no RPG. Em caso de dúvida, consulte a administração.',
-      equipment:'Os equipamentos devem respeitar as categorias e condições registradas. Uma descrição visual, por si só, não concede capacidades adicionais.',
-      honor:'Honra e Karma são medidas diferentes. Não trate uma pontuação como conversível na outra.',
-      karma:'Karma registra consequências de ações criminosas relevantes e é avaliado separadamente da Honra.',
-      economy:'Os valores e transações devem seguir os registros do sistema monetário, sem presumir preços que não estejam documentados.',
-      ranks:'Rank, nível e reconhecimento são critérios distintos. A promoção depende das regras e da avaliação administrativa.',
+      'character-creation':'Revise cada etapa antes de enviar a ficha. As escolhas devem ser coerentes com o conceito do personagem e com as regras documentadas.',
+      functions:'As ferramentas interativas apoiam atividades do jogador. Verifique o que cada função registra e se ela já está conectada ao banco de dados.',
+      training:'Um registro de treinamento deve descrever a atividade realizada e o objetivo de desenvolvimento, sem presumir aprovação automática.',
+      forge:'Uma proposta de Forja precisa explicar o projeto, os recursos e o funcionamento pretendido.',
+      work:'O registro de Trabalho deve corresponder à ocupação e às condições previstas no sistema monetário.',
       admin:'Olá, administrador. Este painel reúne a avaliação de fichas e os registros necessários para analisar propostas dos jogadores.'
     };
     if (messages[id]) {
       var anchor = content.querySelector('.panel') || content.querySelector('.intro-lead') || content.firstElementChild;
       addAfter(anchor, 'page-' + id, messages[id], 'compact');
+      var sections = content.querySelectorAll('.rows,.tablebox,.no87-section');
+      if (sections.length > 1) addAfter(sections[1], 'page-' + id + '-detail', 'Consulte esta parte junto com a explicação anterior. Se algum detalhe não estiver definido no registro, não presuma um valor ou uma exceção: encaminhe a dúvida para a Administração.', 'compact');
     }
   }
   function enhance() {
