@@ -268,10 +268,14 @@
     }
     document.addEventListener('click', function (event) {
       var target = event.target && event.target.closest ? event.target.closest('[data-go]') : null;
-      if (target && target.getAttribute('data-go') && typeof window.go === 'function') {
-        window.go(target.getAttribute('data-go'));
-      }
-    });
+      if (!target) return;
+      var destination = target.getAttribute('data-go');
+      if (!destination) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      if (typeof window.go === 'function') window.go(destination);
+      else if (typeof go === 'function') go(destination);
+    }, true);
   }
   window.NovaOrdemARKScenes = {refresh:enhance};
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initialize, {once:true});
