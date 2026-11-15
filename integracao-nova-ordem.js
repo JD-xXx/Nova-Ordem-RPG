@@ -755,6 +755,7 @@
       el.innerHTML = '<section class="no-profile-card"><h3>Perfil do jogador</h3><p>Não foi possível carregar seus rascunhos: ' + escapeHtml(draftsResult.error.message) + '</p></section>';
       return;
     }
+    if (currentPage !== 'profile') return;
     const drafts = draftsResult.data || [];
     const draftHtml = drafts.length ? drafts.map((draft,index) =>
       '<article class="no-draft"><div><b>' + escapeHtml(draft.name || ('Rascunho ' + (index+1))) + '</b><small>Atualizado em ' + escapeHtml(draft.updated_at ? new Date(draft.updated_at).toLocaleString('pt-BR') : 'data indisponível') + '</small></div><button class="save" type="button" data-no-open-draft="' + escapeHtml(draft.id) + '">ABRIR FICHA</button></article>'
@@ -762,7 +763,7 @@
     el.innerHTML =
       '<section class="no-profile-card"><div class="eyebrow">AGÊNCIA A ORDEM · PORTAL DO JOGADOR</div><h3>Seu perfil</h3><p>Conta conectada: <b>' + escapeHtml(user.email || 'usuário autenticado') + '</b></p>' +
       (message ? '<p role="status">' + escapeHtml(message) + '</p>' : '') +
-      '<div class="no-profile-actions"><button class="close" type="button" data-no-logout>Sair da conta</button></div></section>' +
+      '<div class="no-profile-actions"><button class="save" type="button" data-no-start>Criar personagem</button><button class="close" type="button" data-no-logout>Sair da conta</button></div></section>' +
       '<section class="no-profile-card"><h3>Segurança da conta</h3><form data-no-change-password><label class="cc-field">Nova senha<input data-no-change-password-value type="password" minlength="6" autocomplete="new-password" required placeholder="Digite a nova senha"></label><label class="cc-field">Confirmar senha<input data-no-change-password-confirm type="password" minlength="6" autocomplete="new-password" required placeholder="Digite novamente"></label><div class="no-profile-actions"><button class="save" type="submit">ALTERAR SENHA</button></div></form></section>' +
       '<section class="no-profile-card"><h3>Meus rascunhos <small>(' + drafts.length + '/5)</small></h3><p>As fichas que ainda não foram enviadas ficam disponíveis aqui para você continuar depois.</p><div class="no-draft-list">' + draftHtml + '</div></section>';
   }
@@ -879,6 +880,7 @@
   db.auth.onAuthStateChange((event, session) => {
     if (event === 'PASSWORD_RECOVERY') {
       recoveryMode = true;
+      if (window.go) window.go('profile');
       if (root()) passwordRecoveryScreen();
       return;
     }
