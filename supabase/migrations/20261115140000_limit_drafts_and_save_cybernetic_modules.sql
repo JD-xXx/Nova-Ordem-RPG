@@ -210,7 +210,7 @@ begin
   where player_id = v_user_id and status = 'draft';
 
   if v_draft_count >= v_draft_limit then
-    raise exception 'Cada jogador pode manter no máximo 2 rascunhos ao mesmo tempo.', v_draft_limit;
+    raise exception 'Cada jogador pode manter no máximo 2 rascunhos ao mesmo tempo.';
   end if;
 
   insert into public.characters(player_id, status)
