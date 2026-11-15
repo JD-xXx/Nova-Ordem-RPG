@@ -925,7 +925,7 @@
     ).join('') : '<p>Você ainda não possui rascunhos. Quando iniciar uma ficha, ela aparecerá aqui.</p>';
     const progressHtml = progress
       ? '<p>Rascunhos em andamento: <b>' + drafts.length + '/' + draftLimit + '</b>.</p><p>Personagens aprovados no RPG: <b>' + activeCount + '/2</b>.</p>'
-      : '<p role="alert">As regras progressivas ainda não estão disponíveis no banco. Aplique o arquivo supabase-progressive-drafts-and-autosave.sql no projeto Nova Ordem - Testes antes de criar ou editar rascunhos. ' + escapeHtml(progressError && progressError.message || '') + '</p>';
+      : '<p role="alert">As regras de limite e salvamento ainda não estão disponíveis no banco. Aplique o arquivo supabase-progressive-drafts-and-autosave.sql no projeto Nova Ordem - Testes antes de criar ou editar rascunhos. ' + escapeHtml(progressError && progressError.message || '') + '</p>';
     el.innerHTML =
       '<section class="no-profile-card"><div class="eyebrow">AGÊNCIA A ORDEM · PORTAL DO JOGADOR</div><h3>Seu perfil</h3><p>Conta conectada: <b>' + escapeHtml(user.email || 'usuário autenticado') + '</b></p>' +
       (message ? '<p role="status">' + escapeHtml(message) + '</p>' : '') +
