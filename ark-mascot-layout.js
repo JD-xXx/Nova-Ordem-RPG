@@ -145,7 +145,7 @@
         'Eba, chegou à parte dos grandes mistérios! Por aqui você encontra referências a panteões nórdicos, gregos, egípcios, japoneses, chineses, hindus e celtas — cada tradição com suas próprias divindades e histórias. Também é possível propor um panteão original, criando deuses, símbolos, costumes e relações entre eles para avaliação e integração à Lore. E ainda existem seres que vão muito além do que a gente consegue explicar... confesso que alguns arquivos me deixam com um friozinho nos circuitos! Hehe.',
         false);
       addFeatureGuide(content, 'Personagens e evolução', 'home-character-guide',
-        'A melhor parte é criar alguém com uma história só sua! Você tem liberdade para imaginar origem, personalidade e objetivos — mas lembre de equilibrar as capacidades e limitações. Uma ficha justa deixa as aventuras mais interessantes para todo mundo! Ah, um aviso importante: você pode manter até dois rascunhos ao mesmo tempo. Se os dois espaços estiverem ocupados, só poderá abrir outro quando um deles for aprovado. Não é bug, viu? Eu só estou evitando uma fila infinita de fichas! 😅',
+        'A melhor parte é criar alguém com uma história só sua! Você tem liberdade para imaginar origem, personalidade e objetivos — mas lembre de equilibrar as capacidades e limitações. Uma ficha justa deixa as aventuras mais interessantes para todo mundo! Ah, um aviso importante: a regra prevê até dois rascunhos ativos por jogador. Com os dois espaços ocupados, um novo rascunho só poderá ser iniciado depois que um deles for aprovado. Não é bug, viu? Eu só estou evitando uma fila infinita de fichas! 😅',
         true);
     }
     if (id === 'chi') { addChiGuide(content); return; }
@@ -157,7 +157,7 @@
     }
     if (id === 'characters') {
       addAfter(content.querySelector('.panel'), 'characters-draft-guide',
-        'Criar personagem é dar vida a uma ideia — então aproveite a liberdade para construir uma origem e uma personalidade próprias! Só não esqueça do equilíbrio: pense no que ele consegue fazer, no que isso custa e também no que ainda não consegue. Assim todo mundo tem espaço para brilhar. E atenção a um detalhe importante: cada jogador pode manter até dois rascunhos de ficha. Quando os dois espaços estiverem ocupados, será preciso aguardar a aprovação de um deles antes de iniciar outro. Se isso acontecer, não se assuste: é o limite funcionando direitinho!',
+        'Criar personagem é dar vida a uma ideia — então aproveite a liberdade para construir uma origem e uma personalidade próprias! Só não esqueça do equilíbrio: pense no que ele consegue fazer, no que isso custa e também no que ainda não consegue. Assim todo mundo tem espaço para brilhar. E atenção a um detalhe importante: a regra prevê até dois rascunhos de ficha por jogador. Quando os dois espaços estiverem ocupados, será preciso aguardar a aprovação de um deles antes de iniciar outro. Se isso acontecer, não se assuste: é o limite funcionando direitinho!',
         'peek-comic');
       return;
     }
