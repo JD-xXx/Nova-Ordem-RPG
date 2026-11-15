@@ -21,9 +21,22 @@
     '.ark-scene-trio .ark-scene{display:block;margin:0;padding:11px;text-align:center}.ark-scene-trio .ark-scene-robot{width:84px;height:92px;margin:0 auto 4px}.ark-scene-trio .ark-scene-bubble{text-align:left;font-size:11px;padding:9px}.ark-scene-trio .ark-scene-bubble:before{font-size:8px}.ark-scene-trio .ark-scene-bubble p{font-size:11px;line-height:1.55}',
     '#backFloat{position:fixed;right:20px;bottom:20px;z-index:8;display:none;align-items:center;justify-content:center;gap:8px;width:auto;height:auto;min-height:44px;padding:10px 16px;border:1px solid #62bce9;border-radius:8px;background:linear-gradient(120deg,#123653,#091725);color:#e8f6ff;font:600 10px var(--mono,monospace);letter-spacing:.8px;box-shadow:0 8px 24px #0009;cursor:pointer}',
     '#backFloat:hover{background:#174567;border-color:#a0ddff;transform:translateY(-2px)}#backFloat:focus-visible{outline:2px solid #83d1ff;outline-offset:3px}',
+    '.ark-feature-guide{grid-column:1/-1;width:100%;margin:2px 0 10px;padding:0 8px;position:relative;z-index:1}.ark-feature-guide .ark-scene{margin:0;padding:8px 10px;flex-direction:row-reverse;align-items:center;gap:15px;overflow:visible}.ark-feature-guide .ark-scene-robot{width:82px;height:96px;flex:0 0 82px}.ark-feature-guide .ark-scene-bubble{position:relative;overflow:visible;border-radius:18px 18px 18px 5px}.ark-feature-guide .ark-scene-bubble:after{right:-9px;left:auto;bottom:18px;transform:rotate(-45deg)}.ark-feature-guide--peek .ark-scene-robot{width:82px;height:74px;flex-basis:82px;overflow:hidden}.ark-feature-guide--peek .ark-scene-robot svg{width:82px;height:150px;max-width:none}.ark-feature-guide--peek .ark-scene-bubble:after{right:-9px;left:auto;transform:rotate(-45deg)}',
+    '.ark-dust-trail{grid-column:1/-1;position:relative;height:27px;margin:-3px 0 7px;overflow:hidden;pointer-events:none}.ark-dust-trail:before{content:"";position:absolute;left:13%;right:12%;top:11px;height:3px;border-radius:50%;background:linear-gradient(90deg,transparent,#8edfff88,#45b8f4aa,#b5edff88,transparent);filter:blur(2px);animation:ark-dust-flow 1.8s ease-in-out infinite}.ark-dust-trail i{position:absolute;top:7px;left:var(--x);width:6px;height:6px;border-radius:50%;background:#a8eaff;opacity:0;filter:blur(1px);animation:ark-dust-puff 1.8s ease-out infinite}.ark-dust-trail i:nth-child(1){--x:24%;animation-delay:0s}.ark-dust-trail i:nth-child(2){--x:39%;animation-delay:.2s}.ark-dust-trail i:nth-child(3){--x:55%;animation-delay:.4s}.ark-dust-trail i:nth-child(4){--x:70%;animation-delay:.6s}.ark-dust-trail i:nth-child(5){--x:84%;animation-delay:.8s}',
+    '.ark-combat-demo{margin:17px 0 5px;padding:13px 15px;border:1px solid rgba(83,177,226,.3);border-radius:13px;background:linear-gradient(145deg,rgba(10,37,57,.72),rgba(5,17,28,.9));overflow:hidden}.ark-combat-demo>p{margin:8px 0 0;text-align:center;color:#a9cce0;font-size:11px;line-height:1.55}.ark-demo-stage{height:148px;max-width:440px;margin:auto;position:relative;display:flex;align-items:flex-end;justify-content:space-around}.ark-demo-fighter{position:relative;width:110px;height:132px;display:flex;align-items:flex-end;justify-content:center}.ark-demo-robot{width:104px;height:116px;animation:ark-hover 2.6s ease-in-out infinite}.ark-demo-robot svg{width:100%;height:100%}.ark-demo-sword{position:absolute;right:2px;top:5px;font-size:34px;color:#d7e9f5;transform:rotate(-38deg);filter:drop-shadow(0 0 5px #71cfff)}.ark-demo-shield{position:absolute;left:-1px;top:40px;width:43px;height:50px;display:grid;place-items:center;color:#9de5ff;font-size:50px;line-height:1;text-shadow:0 0 9px #48bfff;transform:rotate(90deg)}.ark-demo-impact{position:absolute;left:50%;top:30px;color:#b9efff;font-size:29px;animation:ark-impact-pulse .8s ease-in-out infinite alternate}.ark-combat-demo--attack .ark-demo-target{animation:ark-target-recoil 1.7s ease-in-out infinite}.ark-combat-demo--attack .ark-demo-striker{animation:ark-strike 1.7s ease-in-out infinite}.ark-demo-hit{position:absolute;left:-2px;top:27px;color:#b9efff;font-size:27px;opacity:0;animation:ark-hit-flash 1.7s ease-in-out infinite}.ark-combat-demo--parry .ark-demo-attacker{animation:ark-parry-strike 1.8s ease-in-out infinite}.ark-combat-demo--parry .ark-demo-defender{animation:ark-parry-brace 1.8s ease-in-out infinite}.ark-combat-demo--parry .ark-demo-impact{animation:ark-impact-pulse .45s ease-in-out infinite alternate}.ark-demo-movement{justify-content:center}.ark-demo-watcher{z-index:2;width:125px}.ark-demo-question{position:absolute;top:0;left:45%;font-size:25px;font-weight:800;color:#9ee7ff;animation:ark-question 1.2s ease-in-out infinite}.ark-demo-runner{position:absolute;left:8%;bottom:0;width:104px;height:116px;animation:ark-run-across 2.6s ease-in-out infinite}.ark-demo-runner .ark-demo-robot{width:100%;height:100%}.ark-demo-direction{position:absolute;bottom:7px;color:#80d9ff;font-size:20px;opacity:.7}.ark-demo-left{left:4%}.ark-demo-right{right:4%}',
+    '@keyframes ark-dust-flow{0%,100%{transform:translateX(-8%) scaleX(.75);opacity:.45}50%{transform:translateX(8%) scaleX(1.08);opacity:1}}',
+    '@keyframes ark-dust-puff{0%{transform:translateY(8px) scale(.4);opacity:0}30%{opacity:.85}100%{transform:translateY(-9px) scale(1.6);opacity:0}}',
+    '@keyframes ark-strike{0%,18%,100%{transform:translateX(0) rotate(0)}42%,55%{transform:translateX(24px) rotate(-8deg)}70%{transform:translateX(4px)}}',
+    '@keyframes ark-target-recoil{0%,38%,100%{transform:translateX(0)}52%,66%{transform:translateX(-9px)}}',
+    '@keyframes ark-hit-flash{0%,42%,100%{opacity:0;transform:scale(.4)}54%,65%{opacity:1;transform:scale(1.35)}}',
+    '@keyframes ark-parry-strike{0%,20%,100%{transform:translateX(0)}43%,58%{transform:translateX(-23px) rotate(-7deg)}70%{transform:translateX(-5px)}}',
+    '@keyframes ark-parry-brace{0%,38%,100%{transform:translateX(0)}52%,68%{transform:translateX(4px)}}',
+    '@keyframes ark-impact-pulse{from{opacity:.35;transform:scale(.7)}to{opacity:1;transform:scale(1.25)}}',
+    '@keyframes ark-question{0%,100%{transform:translateY(0) rotate(-8deg)}50%{transform:translateY(-5px) rotate(8deg)}}',
+    '@keyframes ark-run-across{0%,8%{left:4%;transform:scaleX(1)}42%,50%{left:70%;transform:scaleX(1)}54%{left:70%;transform:scaleX(-1)}88%,96%{left:4%;transform:scaleX(-1)}100%{left:4%;transform:scaleX(1)}}',
     '@keyframes ark-hover{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}',
-    '@media(max-width:700px){.ark-feature-guide .ark-scene{gap:6px}.ark-feature-guide .ark-scene-robot{width:62px;height:76px;flex-basis:62px}.ark-feature-guide--peek .ark-scene-robot{width:68px;height:64px;flex-basis:68px}.ark-feature-guide--peek .ark-scene-robot svg{width:68px;height:135px}.ark-chi-diagram{gap:7px}.ark-chi-diagram svg{width:58px;height:58px}.ark-scene--chi .ark-scene-robot{width:76px;height:90px;flex-basis:76px}.ark-table-explainer{grid-template-columns:1fr}.ark-scene{gap:9px;padding:11px}.ark-scene-robot{width:82px;height:92px;flex-basis:82px}.ark-scene-bubble{font-size:12px;padding:10px}.ark-scene-trio{grid-template-columns:1fr}.ark-scene-trio .ark-scene{display:flex;align-items:center;text-align:left}.ark-scene-trio .ark-scene-robot{width:72px;height:80px;flex-basis:72px;margin:0}.ark-scene-trio .ark-scene-bubble{flex:1}.ark-scene--peek{transform:none;margin-left:0}.ark-scene--peek .ark-scene-robot{width:75px;height:84px;flex-basis:75px}#backFloat{right:14px;bottom:14px;min-height:42px;padding:9px 13px}}',
-    '@media(prefers-reduced-motion:reduce){.ark-scene-robot{animation:none}#backFloat{transition:none}}'
+    '@media(max-width:700px){.ark-feature-guide{padding:0 2px;margin:5px 0 9px}.ark-feature-guide .ark-scene{gap:7px}.ark-feature-guide .ark-scene-robot{width:66px;height:78px;flex-basis:66px}.ark-feature-guide .ark-scene-bubble{font-size:11px;padding:9px 10px}.ark-feature-guide--peek .ark-scene-robot{width:68px;height:64px;flex-basis:68px}.ark-feature-guide--peek .ark-scene-robot svg{width:68px;height:135px}.ark-chi-diagram{gap:7px}.ark-chi-diagram svg{width:58px;height:58px}.ark-scene--chi .ark-scene-robot{width:76px;height:90px;flex-basis:76px}.ark-table-explainer{grid-template-columns:1fr}.ark-scene{gap:9px;padding:11px}.ark-scene-robot{width:82px;height:92px;flex-basis:82px}.ark-scene-bubble{font-size:12px;padding:10px}.ark-scene-trio{grid-template-columns:1fr}.ark-scene-trio .ark-scene{display:flex;align-items:center;text-align:left}.ark-scene-trio .ark-scene-robot{width:72px;height:80px;flex-basis:72px;margin:0}.ark-scene-trio .ark-scene-bubble{flex:1}.ark-scene--peek{transform:none;margin-left:0}.ark-scene--peek .ark-scene-robot{width:75px;height:84px;flex-basis:75px}.ark-combat-demo{padding:10px 8px}.ark-demo-stage{height:126px}.ark-demo-fighter{width:88px;height:116px}.ark-demo-robot{width:86px;height:100px}.ark-demo-runner{width:86px;height:100px}.ark-demo-runner .ark-demo-robot{width:100%;height:100%}#backFloat{right:14px;bottom:14px;min-height:42px;padding:9px 13px}}',
+    '@media(prefers-reduced-motion:reduce){.ark-scene-robot,.ark-dust-trail:before,.ark-dust-trail i,.ark-demo-robot,.ark-demo-striker,.ark-demo-target,.ark-demo-attacker,.ark-demo-defender,.ark-demo-impact,.ark-demo-hit,.ark-demo-question,.ark-demo-runner{animation:none!important}#backFloat{transition:none}}'
   ].join('\n');
   var style = document.createElement('style');
   style.id = 'ark-scene-layout-styles';
@@ -99,11 +112,15 @@
       return h && h.textContent.trim() === heading;
     });
     if (!feature || content.querySelector('[data-ark-key="' + key + '"]')) return;
-    feature.classList.add('ark-feature-has-guide');
     var holder = document.createElement('div');
     holder.className = 'ark-feature-guide' + (peek ? ' ark-feature-guide--peek' : '');
     holder.innerHTML = scene(key, message, 'comic');
-    feature.appendChild(holder);
+    feature.parentNode.insertBefore(holder, feature.nextSibling);
+    var trail = document.createElement('div');
+    trail.className = 'ark-dust-trail';
+    trail.setAttribute('aria-hidden', 'true');
+    trail.innerHTML = '<i></i><i></i><i></i><i></i><i></i>';
+    holder.parentNode.insertBefore(trail, holder.nextSibling);
   }
   function addChiGuide(content) {
     if (content.querySelector('[data-ark-key="chi-system-guide"]')) return;
@@ -121,6 +138,26 @@
     if (last) last.parentNode.insertBefore(node, last.nextSibling);
     else content.appendChild(node);
   }
+  function addCombatIllustration(content, headingPrefix, key, mode, caption) {
+    var section = Array.prototype.find.call(content.querySelectorAll('.no87-section'), function (node) {
+      var h = node.querySelector('h3');
+      return h && h.textContent.trim().indexOf(headingPrefix) === 0;
+    });
+    if (!section || content.querySelector('[data-ark-demo="' + key + '"]')) return;
+    var demo = document.createElement('div');
+    demo.className = 'ark-combat-demo ark-combat-demo--' + mode;
+    demo.setAttribute('data-ark-demo', key);
+    var robot = '<div class="ark-demo-robot">' + robotSvg + '</div>';
+    if (mode === 'parry') {
+      demo.innerHTML = '<div class="ark-demo-stage"><div class="ark-demo-fighter ark-demo-defender">' + robot + '<span class="ark-demo-shield">⬟</span></div><div class="ark-demo-impact">✦</div><div class="ark-demo-fighter ark-demo-attacker">' + robot + '<span class="ark-demo-sword">⚔</span></div></div><p>' + esc(caption) + '</p>';
+    } else if (mode === 'attack') {
+      demo.innerHTML = '<div class="ark-demo-stage"><div class="ark-demo-fighter ark-demo-target">' + robot + '<span class="ark-demo-hit">✦</span></div><div class="ark-demo-fighter ark-demo-striker">' + robot + '<span class="ark-demo-sword">⚔</span></div></div><p>' + esc(caption) + '</p>';
+    } else {
+      demo.innerHTML = '<div class="ark-demo-stage ark-demo-movement"><div class="ark-demo-fighter ark-demo-watcher">' + robot + '<span class="ark-demo-question">?</span></div><div class="ark-demo-runner">' + robot + '</div><span class="ark-demo-direction ark-demo-left">←</span><span class="ark-demo-direction ark-demo-right">→</span></div><p>' + esc(caption) + '</p>';
+    }
+    section.appendChild(demo);
+  }
+
   function addAfterIndex(content, selector, index, key, message, variant) {
     var nodes = content.querySelectorAll(selector);
     if (nodes[index]) addAfter(nodes[index], key, message, variant || 'compact');
@@ -144,15 +181,33 @@
       addFeatureGuide(content, 'Cosmologia e histórias', 'home-cosmology-guide',
         'Eba, chegou à parte dos grandes mistérios! Por aqui você encontra referências a panteões nórdicos, gregos, egípcios, japoneses, chineses, hindus e celtas — cada tradição com suas próprias divindades e histórias. Também é possível propor um panteão original, criando deuses, símbolos, costumes e relações entre eles para avaliação e integração à Lore. E ainda existem seres que vão muito além do que a gente consegue explicar... confesso que alguns arquivos me deixam com um friozinho nos circuitos! Hehe.',
         false);
+      addFeatureGuide(content, 'Poderes e Chi', 'home-chi-guide',
+        'Opa! Aqui começa a parte energética da coisa! O Chi está ligado às capacidades dos seres vivos, enquanto os Talentos definem manifestações congênitas. Vou te acompanhar pelos registros para separar cada conceito sem misturar as regras. ⚡',
+        false);
       addFeatureGuide(content, 'Personagens e evolução', 'home-character-guide',
         'A melhor parte é criar alguém com uma história só sua! Você tem liberdade para imaginar origem, personalidade e objetivos — mas lembre de equilibrar as capacidades e limitações. Uma ficha justa deixa as aventuras mais interessantes para todo mundo! Ah, um aviso importante: a regra prevê até dois rascunhos ativos por jogador. Com os dois espaços ocupados, um novo rascunho só poderá ser iniciado depois que um deles for aprovado. Não é bug, viu? Eu só estou evitando uma fila infinita de fichas! 😅',
         true);
+      addFeatureGuide(content, 'Combates e desafios', 'home-combat-guide',
+        'Hora de estratégia! Em combate, não basta escolher um golpe bonito: é preciso observar a situação, entender a intenção do adversário e respeitar as capacidades e limites de cada personagem. Eu fico aqui na torcida — de preferência atrás de uma proteção! 😅',
+        false);
+      addFeatureGuide(content, 'Organizações e influência', 'home-organizations-guide',
+        'As organizações têm objetivos, histórias e interesses próprios. Você pode descobrir como elas influenciam o mundo, construir relações ou seguir um caminho independente. Só não confunda a visão de um grupo com a verdade absoluta da Lore, combinado?',
+        false);
+      addFeatureGuide(content, 'Criação e possibilidades', 'home-creation-guide',
+        'Criatividade liberada! Treinamentos, projetos e ferramentas abrem caminhos diferentes, mas cada proposta precisa respeitar os recursos, os limites e a avaliação prevista no sistema. Se algo ainda estiver em desenvolvimento, eu te aviso!',
+        false);
     }
     if (id === 'chi') { addChiGuide(content); return; }
     if (id === 'combat') {
       addAfter(content.querySelector('.panel'), 'combat-fencer-guide',
         'Preparado para o duelo? Pense na luta como uma troca de leitura e estratégia: enquanto um personagem procura uma abertura, o outro observa, reage e escolhe como se proteger. Atacar sem pensar pode deixar uma brecha; esperar o momento certo pode mudar tudo! As rolagens ajudam a resolver o confronto, mas as decisões começam antes do dado cair. Vamos ver como isso funciona nas regras!',
         'fencer');
+      addCombatIllustration(content, '7. Ataque Perfeito', 'combat-perfect-attack-demo', 'attack',
+        'Ataque Perfeito: o A.R.K. avança com a espada cenográfica enquanto o outro recebe o golpe. A animação ilustra a conexão garantida do ataque — não acrescenta dano ou efeitos às regras.');
+      addCombatIllustration(content, '8. Parry', 'combat-perfect-parry-demo', 'parry',
+        'Parry: um A.R.K. avança com a espada e o outro firma o escudo. A defesa perfeita interrompe o ataque e cancela seu dano bruto e efeito naquela interação.');
+      addCombatIllustration(content, '9. Movimento Perfeito', 'combat-perfect-movement-demo', 'movement',
+        'Movimento Perfeito: o A.R.K. do meio tenta acompanhar com o olhar, mas o outro cruza a cena de um lado para o outro. É uma representação visual da velocidade que supera a percepção ou reação do oponente.');
       return;
     }
     if (id === 'characters') {
@@ -179,8 +234,10 @@
       return;
     }
     if (id === 'systems') {
-      addAfter(content.querySelector('.cards'), 'systems-guide', 'Estes são os arquivos centrais do RPG. Cada cartão abre um sistema próprio; alguns se relacionam, mas cada um tem uma função diferente. Vou explicar os pontos importantes dentro dos próprios registros.', 'compact');
-      addAfterIndex(content, '.cards', 0, 'systems-howto', 'Por exemplo: Chi explica a energia; Talentos explica as manifestações congênitas; Combate explica como as ações se resolvem. Para entender uma situação completa, normalmente precisamos consultar mais de um sistema.', 'compact');
+      var intro = content.querySelector('.panel') || content.querySelector('.intro-lead') || content.firstElementChild;
+      addAfter(intro, 'systems-guide', 'Oláá! Antes de abrir os arquivos, deixa eu te mostrar como esta área funciona! Cada cartão leva a um sistema próprio. Alguns se complementam, mas cada um explica uma parte diferente das regras. Assim você sabe onde procurar quando surgir uma dúvida!', 'compact');
+      var firstGuide = content.querySelector('[data-ark-key="systems-guide"]');
+      addAfter(firstGuide, 'systems-howto', 'Um exemplo rápido: Chi explica a energia; Talentos explica as habilidades congênitas; e Combate mostra como as ações são resolvidas. Às vezes, entender uma situação exige consultar dois ou mais sistemas. Pronto! Agora pode explorar os arquivos sem se perder. 🤖', 'compact');
       return;
     }
     if (id === 'combat') {
