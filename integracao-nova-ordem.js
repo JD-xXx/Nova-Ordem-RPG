@@ -989,6 +989,11 @@
           }
         };
       }
+      const storedModules = Array.isArray(row.cybernetic_modules) ? row.cybernetic_modules : [];
+      const extraModules = row.ficha_data && Array.isArray(row.ficha_data.cyberneticModules) ? row.ficha_data.cyberneticModules : [];
+      if (!Array.isArray(state.cyberneticModules) || (!state.cyberneticModules.length && (storedModules.length || extraModules.length))) {
+        state.cyberneticModules = storedModules.length ? storedModules : extraModules;
+      }
       characterId = row.id;
       completed = false;
       window.go('character-creation');
