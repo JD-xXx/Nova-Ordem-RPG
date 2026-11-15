@@ -356,6 +356,7 @@
     busy = true;
     try {
       const sessionResult = await db.auth.getSession();
+      if (sessionResult.error) throw sessionResult.error;
       const session = sessionResult.data && sessionResult.data.session;
       if (!session) {
         if (window.go) window.go('profile');
@@ -367,7 +368,33 @@
       if (creator()) creator().render();
       syncCreatorControls();
     } catch (error) {
-      showMessage(error.message || 'Não foi possível iniciar a ficha.');
+      const message = String(error && error.message || '');
+      if (/limite.*rascunh|rascunh.*limite|draft.*limit/i.test(message)) {
+        try {
+          const sessionResult = await db.auth.getSession();
+          if (sessionResult.error) throw sessionResult.error;
+          const userId = sessionResult.data && sessionResult.data.session && sessionResult.data.session.user && sessionResult.data.session.user.id;
+          if (!userId) throw new Error('Sua sessão expirou. Entre novamente para acessar seus rascunhos.');
+          const draftsResult = await db.from('characters')
+            .select('id')
+            .eq('player_id', userId)
+            .eq('status', 'draft')
+            .order('updated_at', {ascending:false})
+            .limit(1);
+          if (draftsResult.error) throw draftsResult.error;
+          const latestDraft = draftsResult.data && draftsResult.data[0];
+          if (latestDraft) {
+            await openDraft(latestDraft.id, true);
+          } else {
+            if (window.go) window.go('profile');
+            await renderProfilePage('Você atingiu seu limite de rascunhos. Não há um rascunho existente para abrir no momento.');
+          }
+        } catch (redirectError) {
+          showMessage(redirectError.message || 'Não foi possível localizar seus rascunhos.');
+        }
+      } else {
+        showMessage(message || 'Não foi possível iniciar a ficha.');
+      }
     } finally { busy = false; }
   }
 
@@ -891,9 +918,9 @@
     if (profile) profile.addEventListener('click', () => window.go('profile'));
   }
 
-  async function openDraft(draftId) {
-    if (busy) return;
-    busy = true;
+  async function openDraft(draftId, alreadyBusy) {
+    if (busy && !alreadyBusy) return;
+    if (!alreadyBusy) busy = true;
     try {
       const result = await db.from('characters')
         .select('id,player_id,name,age,height_cm,weight_kg,gender,personality,appearance,backstory,race,common_skills,supernatural_skills,chi_reserve,talent_rarity,specializations,ficha_data,status')
@@ -937,8 +964,9 @@
       persistActiveDraft();
       syncCreatorControls();
     } catch (error) {
+      if (alreadyBusy) throw error;
       alert(error.message || 'Não foi possível abrir esse rascunho.');
-    } finally { busy = false; }
+    } finally { if (!alreadyBusy) busy = false; }
   }
 
   async function changeAccountPassword(form) {
