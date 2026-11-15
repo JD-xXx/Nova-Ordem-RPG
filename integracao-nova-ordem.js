@@ -20,6 +20,7 @@
   let completed = false;
   let recoveryMode = false;
   let observer = null;
+  const ACTIVE_DRAFT_KEY = 'nova-ordem-active-draft-v1';
 
   const $ = (selector, base) => (base || document).querySelector(selector);
   const creator = () => window.NovaOrdemCharacterCreator;
@@ -47,21 +48,62 @@
     if (!el) return;
     el.innerHTML =
       '<section class="cc-card" style="max-width:620px;margin:24px auto;padding:24px">' +
-        '<div class="eyebrow">AGÊNCIA A ORDEM · ACESSO</div>' +
-        '<h3>Identificação do jogador</h3>' +
-        '<p>' + escapeHtml(message || 'Entre na sua conta para criar uma ficha.') + '</p>' +
+        '<div class="eyebrow">AGÊNCIA A ORDEM · PORTAL DO JOGADOR</div>' +
+        '<h3>Acesse sua conta</h3>' +
+        '<p>' + escapeHtml(message || 'Entre ou crie seu perfil antes de iniciar uma ficha.') + '</p>' +
         '<label class="cc-field">E-mail' +
           '<input data-no-email type="email" autocomplete="email" placeholder="seu@email.com">' +
         '</label>' +
         '<label class="cc-field">Senha' +
           '<input data-no-password type="password" autocomplete="current-password" placeholder="Sua senha">' +
         '</label>' +
-        '<div class="cc-nav" style="margin-top:18px">' +
+        '<div class="cc-nav" style="margin-top:18px;display:flex;flex-wrap:wrap;gap:9px">' +
           '<button class="save" type="button" data-no-auth="login">ENTRAR</button>' +
-          '<button class="close" type="button" data-no-auth="signup">CRIAR CONTA</button>' +
-          '<button class="close" type="button" data-no-auth="recovery">ESQUECI A SENHA</button>' +
+          '<button class="close" type="button" data-no-auth="signup">CRIAR PERFIL</button>' +
         '</div>' +
+        '<p style="margin-top:18px"><button class="close" type="button" data-no-auth="recovery">ESQUECI A SENHA</button></p>' +
       '</section>';
+  }
+
+  function recoveryRequestScreen(message) {
+    const el = root();
+    if (!el) return;
+    el.innerHTML =
+      '<section class="cc-card" style="max-width:620px;margin:24px auto;padding:24px">' +
+        '<div class="eyebrow">AGÊNCIA A ORDEM · RECUPERAÇÃO DE ACESSO</div>' +
+        '<h3>Recuperar senha</h3>' +
+        '<p>Informe o e-mail cadastrado. Enviaremos um link para você definir uma nova senha.</p>' +
+        (message ? '<p role="alert">' + escapeHtml(message) + '</p>' : '') +
+        '<form data-no-recovery-request>' +
+          '<label class="cc-field">E-mail da conta' +
+            '<input data-no-recovery-email type="email" autocomplete="email" required placeholder="seu@email.com">' +
+          '</label>' +
+          '<div class="cc-nav" style="margin-top:18px;display:flex;gap:9px;flex-wrap:wrap">' +
+            '<button class="save" type="submit">ENVIAR LINK DE RECUPERAÇÃO</button>' +
+            '<button class="close" type="button" data-no-back-access>VOLTAR AO ACESSO</button>' +
+          '</div>' +
+        '</form>' +
+      '</section>';
+  }
+
+  function accountScreen(message) {
+    const el = root();
+    if (!el) return;
+    db.auth.getUser().then(({data}) => {
+      const user = data && data.user;
+      if (!user) { authScreen('Sua sessão não está ativa. Entre novamente.'); return; }
+      el.innerHTML =
+        '<section class="cc-card" style="max-width:680px;margin:24px auto;padding:24px">' +
+          '<div class="eyebrow">AGÊNCIA A ORDEM · PERFIL DO JOGADOR</div>' +
+          '<h3>Perfil conectado</h3>' +
+          '<p>Conta: <b>' + escapeHtml(user.email || 'usuário autenticado') + '</b></p>' +
+          '<p>' + escapeHtml(message || (characterId ? 'Você tem uma ficha em andamento. Continue de onde parou.' : 'Seu perfil está pronto. Crie uma ficha quando quiser.')) + '</p>' +
+          '<div class="cc-nav" style="margin-top:18px;display:flex;gap:9px;flex-wrap:wrap">' +
+            (characterId ? '<button class="save" type="button" data-no-resume>CONTINUAR FICHA</button>' : '<button class="save" type="button" data-no-start>CRIAR PERSONAGEM</button>') +
+            '<button class="close" type="button" data-no-logout>SAIR DA CONTA</button>' +
+          '</div>' +
+        '</section>';
+    }).catch(() => authScreen('Não foi possível verificar sua sessão. Entre novamente.'));
   }
 
   function passwordRecoveryScreen(message) {
@@ -87,26 +129,25 @@
       '</section>';
   }
 
-  async function requestPasswordRecovery() {
+  async function requestPasswordRecovery(form) {
     if (busy) return;
-    const emailInput = $('[data-no-email]');
+    const emailInput = $('[data-no-recovery-email]', form);
     const email = emailInput && emailInput.value.trim();
-    if (!email) {
-      authScreen('Informe o e-mail da conta para receber o link de recuperação.');
-      return;
-    }
+    if (!email) { recoveryRequestScreen('Informe o e-mail da conta.'); return; }
     busy = true;
     try {
       const result = await db.auth.resetPasswordForEmail(email, {
         redirectTo: window.location.origin + window.location.pathname
       });
       if (result.error) throw result.error;
-      authScreen('Se esse e-mail estiver cadastrado, você receberá um link para redefinir sua senha. Confira também a caixa de spam.');
+      recoveryRequestScreen('Se o endereço estiver cadastrado, o Supabase enviará um link. Confira a caixa de entrada e o spam. Evite solicitar vários links em sequência.');
     } catch (error) {
-      authScreen(error.message || 'Não foi possível enviar o link de recuperação.');
-    } finally {
-      busy = false;
-    }
+      const detail = String(error && error.message || '');
+      const rateLimited = /rate.?limit|too many requests|email rate/i.test(detail);
+      recoveryRequestScreen(rateLimited
+        ? 'O limite temporário de envio de e-mails foi atingido. Aguarde antes de tentar novamente; solicitar vários links seguidos prolonga o bloqueio.'
+        : (detail || 'Não foi possível enviar o link de recuperação.'));
+    } finally { busy = false; }
   }
 
   async function saveRecoveredPassword(form) {
@@ -135,7 +176,8 @@
         cleanUrl.searchParams.delete('type');
         window.history.replaceState({}, document.title, cleanUrl.pathname + cleanUrl.search);
       } catch (_) {}
-      showMessage('Sua senha foi atualizada. Você já pode entrar na sua conta usando a nova senha.', 'Senha alterada com sucesso');
+      await db.auth.signOut();
+      authScreen('Senha alterada com sucesso. Entre usando sua nova senha.');
     } catch (error) {
       passwordRecoveryScreen(error.message || 'Não foi possível atualizar a senha. Solicite um novo link de recuperação.');
     } finally {
@@ -170,7 +212,7 @@
         return;
       }
       completed = false;
-      await createDraft();
+      accountScreen(mode === 'signup' ? 'Perfil criado. Agora você pode iniciar uma ficha quando quiser.' : 'Login realizado. Nenhum rascunho foi criado automaticamente.');
     } catch (error) {
       authScreen(error.message || 'Não foi possível autenticar.');
     } finally {
@@ -186,11 +228,69 @@
       return;
     }
 
+    const userResult = await db.auth.getUser();
+    const userId = userResult.data && userResult.data.user && userResult.data.user.id;
+    if (!userId) throw new Error('Não foi possível identificar a conta conectada.');
+    const draftsResult = await db.from('characters').select('id,name,updated_at').eq('player_id', userId).eq('status', 'draft');
+    if (draftsResult.error) throw draftsResult.error;
+    const drafts = draftsResult.data || [];
+    if (drafts.length >= 2) {
+      const names = drafts.map((draft, index) => (index + 1) + '. ' + (draft.name || 'Ficha sem nome')).join('\\n');
+      throw new Error('Você já possui o limite de 2 rascunhos. Nenhum novo rascunho foi criado.\\n\\nRascunhos encontrados:\\n' + names + '\\n\\nPrecisamos revisar esses rascunhos antes de liberar uma nova vaga.');
+    }
     const id = await rpc('create_character_draft');
     characterId = typeof id === 'string' ? id : (id && (id.id || id.character_id));
     completed = false;
     if (!characterId) throw new Error('O banco não retornou o identificador da ficha.');
     if (creator()) creator().reset();
+    persistActiveDraft();
+  }
+
+  function persistActiveDraft() {
+    if (!characterId || !creator()) return;
+    try {
+      const user = db.auth.getSession();
+      user.then(({data}) => {
+        const userId = data && data.session && data.session.user && data.session.user.id;
+        if (!userId || !characterId) return;
+        sessionStorage.setItem(ACTIVE_DRAFT_KEY, JSON.stringify({userId, characterId, state:creator().getState()}));
+      });
+    } catch (_) {}
+  }
+
+  function clearActiveDraft() {
+    try { sessionStorage.removeItem(ACTIVE_DRAFT_KEY); } catch (_) {}
+  }
+
+  async function restoreActiveDraft(session) {
+    let saved;
+    try { saved = JSON.parse(sessionStorage.getItem(ACTIVE_DRAFT_KEY) || 'null'); } catch (_) { saved = null; }
+    if (!saved || !saved.characterId || !saved.userId || saved.userId !== session.user.id) return false;
+    const result = await db.from('characters').select('id,status').eq('id', saved.characterId).maybeSingle();
+    if (result.error || !result.data || result.data.status !== 'draft') { clearActiveDraft(); return false; }
+    characterId = saved.characterId;
+    completed = false;
+    if (creator() && saved.state) creator().update(saved.state);
+    return true;
+  }
+
+  async function startCharacterCreation() {
+    if (busy || opening) return;
+    busy = true;
+    try {
+      const sessionResult = await db.auth.getSession();
+      const session = sessionResult.data && sessionResult.data.session;
+      if (!session) { authScreen('Entre na sua conta antes de criar uma ficha.'); return; }
+      if (characterId) {
+        if (window.go) window.go('characters');
+        if (creator()) creator().render();
+        return;
+      }
+      if (window.go) window.go('characters');
+      await createDraft();
+    } catch (error) {
+      showMessage(error.message || 'Não foi possível iniciar a ficha.');
+    } finally { busy = false; }
   }
 
   function splitList(value) {
@@ -351,6 +451,7 @@
 
       await rpc('submit_character', {p_character_id:characterId});
       characterId = null;
+      clearActiveDraft();
       completed = true;
       if (root()) {
         root().innerHTML =
@@ -443,13 +544,15 @@
       event.preventDefault();
       event.stopPropagation();
       event.stopImmediatePropagation();
-      if (authButton.dataset.noAuth === 'recovery') {
-        await requestPasswordRecovery();
-      } else {
-        await authenticate(authButton.dataset.noAuth);
-      }
+      if (authButton.dataset.noAuth === 'recovery') recoveryRequestScreen();
+      else await authenticate(authButton.dataset.noAuth);
       return;
     }
+
+    if (target.closest('[data-no-start]')) { event.preventDefault(); event.stopPropagation(); event.stopImmediatePropagation(); await startCharacterCreation(); return; }
+    if (target.closest('[data-no-resume]')) { event.preventDefault(); event.stopPropagation(); event.stopImmediatePropagation(); if (window.go) window.go('characters'); if (creator()) creator().render(); return; }
+    if (target.closest('[data-no-back-access]')) { event.preventDefault(); event.stopPropagation(); event.stopImmediatePropagation(); authScreen(); return; }
+    if (target.closest('[data-no-logout]')) { event.preventDefault(); event.stopPropagation(); event.stopImmediatePropagation(); await db.auth.signOut(); characterId = null; completed = false; authScreen('Você saiu da sua conta.'); return; }
 
     const button = target.closest('[data-cc-action]');
     if (!button || !root() || !root().contains(button) || !creator() || completed) return;
@@ -465,6 +568,7 @@
     } catch (error) {
       console.error('[Nova Ordem] Erro:', error);
       alert(error.message || 'Não foi possível concluir essa etapa.');
+      if (characterId && creator()) persistActiveDraft();
     } finally {
       button.disabled = false;
     }
@@ -476,6 +580,18 @@
     event.preventDefault();
     event.stopPropagation();
     await saveRecoveredPassword(form);
+  }, true);
+
+  document.addEventListener('submit', async event => {
+    const form = event.target;
+    if (!form || !form.matches || !form.matches('[data-no-recovery-request]')) return;
+    event.preventDefault();
+    event.stopPropagation();
+    await requestPasswordRecovery(form);
+  }, true);
+
+  document.addEventListener('input', event => {
+    if (characterId && creator() && event.target && event.target.closest('#content')) persistActiveDraft();
   }, true);
 
   document.addEventListener('change', event => {
@@ -504,6 +620,7 @@
       selected.delete(specialization);
     }
     creator().update({specializations:Array.from(selected)});
+    persistActiveDraft();
   }, true);
 
   async function detectCreator() {
@@ -520,10 +637,10 @@
         authScreen('Entre na sua conta para iniciar uma ficha.');
         return;
       }
-      await createDraft();
+      accountScreen('Sua conta está conectada. Clique em “Criar personagem” para iniciar uma ficha.');
     } catch (error) {
-      console.error('[Nova Ordem] Não foi possível iniciar a ficha:', error);
-      showMessage(error.message || 'Não foi possível iniciar uma ficha.');
+      console.error('[Nova Ordem] Não foi possível verificar a conta:', error);
+      showMessage(error.message || 'Não foi possível verificar a conta.');
     } finally {
       opening = false;
     }
@@ -541,7 +658,7 @@
       if (root()) passwordRecoveryScreen();
       return;
     }
-    if (!session) {
+    if (event === 'SIGNED_OUT' || !session) {
       characterId = null;
       completed = false;
     }
@@ -555,8 +672,14 @@
     observer = new MutationObserver(() => detectCreator());
     observer.observe(element, {childList:true, subtree:true});
     if (hasRecoveryMarker()) recoveryMode = true;
-    if (recoveryMode) passwordRecoveryScreen();
-    else detectCreator();
+    if (recoveryMode) { passwordRecoveryScreen(); return; }
+    db.auth.getSession().then(async ({data, error}) => {
+      if (error) { authScreen('Não foi possível verificar sua sessão.'); return; }
+      const session = data && data.session;
+      if (!session) { authScreen(); return; }
+      try { await restoreActiveDraft(session); } catch (error) { console.warn('[Nova Ordem] Não foi possível restaurar o rascunho local:', error); }
+      accountScreen();
+    }).catch(() => authScreen('Não foi possível verificar sua sessão.'));
   }
 
   if (document.readyState === 'loading') {
