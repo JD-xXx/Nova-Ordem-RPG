@@ -1031,8 +1031,7 @@
       p_character_id:targetId,
       p_ficha_data:{
         draftState:state,
-        cyberneticModules:state.race === 4 ? (state.cyberneticModules || []) : [],
-        occupation:String(fields.occupation || '').trim()
+        occupation:String(fields.occupation || '').trim(),
         talentDescription:String(fields.talentDescription || '').trim(),
         specializations:Array.isArray(state.specializations) ? state.specializations : [],
         humanChiEnhancement:state.race === 1 ? ({1:'Baixa',2:'Normal',3:'Alta'}[state.secondRoll] || null) : null,
