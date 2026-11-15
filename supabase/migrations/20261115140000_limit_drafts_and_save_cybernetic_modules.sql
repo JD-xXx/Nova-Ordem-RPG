@@ -108,7 +108,7 @@ returns trigger
 language plpgsql
 security definer
 set search_path = ''
-as $
+as $$
 declare
   v_new_draft boolean := false;
   v_draft_count integer;
@@ -135,7 +135,7 @@ begin
   end if;
   return new;
 end;
-$;
+$$;
 
 drop trigger if exists characters_draft_limit_guard on public.characters;
 create trigger characters_draft_limit_guard
@@ -292,7 +292,7 @@ returns void
 language plpgsql
 security definer
 set search_path = public, pg_temp
-as $
+as $$
 declare
   v_user_id uuid;
   v_specializations text[];
@@ -360,7 +360,7 @@ begin
      and player_id = v_user_id
      and status in ('draft', 'rejected');
 end;
-$;
+$$;
 
 revoke all on function public.save_character_extra_data(uuid, jsonb) from public;
 revoke all on function public.save_character_extra_data(uuid, jsonb) from anon;
