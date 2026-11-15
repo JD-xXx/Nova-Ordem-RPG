@@ -107,6 +107,7 @@
 
     const id = await rpc('create_character_draft');
     characterId = typeof id === 'string' ? id : (id && (id.id || id.character_id));
+    completed = false;
     if (!characterId) throw new Error('O banco não retornou o identificador da ficha.');
     if (creator()) creator().reset();
   }
@@ -416,7 +417,7 @@
     const element = root();
     if (!element || !element.querySelector('.cc-top') ||
         !element.querySelector('.cc-card') || !creator() ||
-        opening || characterId || completed) return;
+        opening || characterId) return;
 
     opening = true;
     try {
