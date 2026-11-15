@@ -234,9 +234,9 @@
     const draftsResult = await db.from('characters').select('id,name,updated_at').eq('player_id', userId).eq('status', 'draft');
     if (draftsResult.error) throw draftsResult.error;
     const drafts = draftsResult.data || [];
-    if (drafts.length >= 2) {
+    if (drafts.length >= 5) {
       const names = drafts.map((draft, index) => (index + 1) + '. ' + (draft.name || 'Ficha sem nome')).join('\\n');
-      throw new Error('Você já possui o limite de 2 rascunhos. Nenhum novo rascunho foi criado.\\n\\nRascunhos encontrados:\\n' + names + '\\n\\nPrecisamos revisar esses rascunhos antes de liberar uma nova vaga.');
+      throw new Error('Você já possui o limite de 5 rascunhos. Nenhum novo rascunho foi criado.\\n\\nRascunhos encontrados:\\n' + names + '\\n\\nVocê pode manter até 5 rascunhos simultaneamente.');
     }
     const id = await rpc('create_character_draft');
     characterId = typeof id === 'string' ? id : (id && (id.id || id.character_id));
