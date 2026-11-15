@@ -343,7 +343,8 @@
     if (content && window.MutationObserver) {
       var observer = new MutationObserver(function () {
         var title = currentPage().title;
-        var id = Object.keys(pageTitles).find(function (key) { return pageTitles[key] === title; });
+        var id = pageRegistry ? Object.keys(pageRegistry).find(function (key) { return pageRegistry[key] && pageRegistry[key].title === title; }) : null;
+        if (!id) id = Object.keys(pageTitles).find(function (key) { return pageTitles[key] === title; });
         if (id) state.page = id;
         setContext();
         if (id === 'ark') renderMessages(document.getElementById('ark-main-messages'));
