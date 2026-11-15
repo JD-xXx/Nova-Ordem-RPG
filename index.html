@@ -291,7 +291,36 @@ document.addEventListener('click',e=>{
  else if(a==='jump')cc.step=Math.max(0,Math.min(7,v));
  document.querySelector('#content').innerHTML=ccRender();
 });
-
+// Ponte para integração com o Supabase.
+window.NovaOrdemCharacterCreator = {
+  getState() {
+    return {
+      ...cc,
+      rolls: [...cc.rolls],
+      fields: {...cc.fields},
+      specializations: [...cc.specializations]
+    };
+  },
+  update(patch = {}) {
+    Object.assign(cc, patch);
+    const target = document.querySelector('#content');
+    if (target) target.innerHTML = ccRender();
+  },
+  render() {
+    const target = document.querySelector('#content');
+    if (target) target.innerHTML = ccRender();
+  },
+  reset() {
+    cc.step = 0;
+    cc.rolls = [];
+    cc.race = null;
+    cc.secondRoll = null;
+    cc.rarity = null;
+    cc.fields = {};
+    cc.specializations = [];
+    this.render();
+  }
+};
 // Garante renderização usando a nova navegação.
 if(typeof go==='function')go('overview');
 })();
