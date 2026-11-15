@@ -324,7 +324,8 @@
     if (!el || currentPage !== 'character-creation' || !characterId || !creator()) return;
     const state = creator().getState();
     const nextButton = el.querySelector('[data-cc-action="next"]');
-    if (nextButton) nextButton.textContent = Number(state.step) >= 7 ? 'ENVIAR FICHA' : 'PRÓXIMO';
+    const nextLabel = Number(state.step) >= 7 ? 'ENVIAR FICHA' : 'PRÓXIMO';
+    if (nextButton && nextButton.textContent.trim() !== nextLabel) nextButton.textContent = nextLabel;
 
     let bar = el.querySelector('[data-no-draft-actions]');
     if (!bar) {
