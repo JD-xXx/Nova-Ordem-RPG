@@ -41,7 +41,7 @@
     ".ark-demo-circuit-grass i:nth-child(1){left:8%;--h:15px}.ark-demo-circuit-grass i:nth-child(2){left:18%;--h:21px;animation-delay:.3s}.ark-demo-circuit-grass i:nth-child(3){left:29%;--h:12px;animation-delay:.6s}.ark-demo-circuit-grass i:nth-child(4){left:42%;--h:19px;animation-delay:.2s}.ark-demo-circuit-grass i:nth-child(5){left:57%;--h:14px;animation-delay:.5s}.ark-demo-circuit-grass i:nth-child(6){left:71%;--h:22px;animation-delay:.1s}.ark-demo-circuit-grass i:nth-child(7){left:85%;--h:16px;animation-delay:.4s}.ark-demo-circuit-grass i:nth-child(8){left:95%;--h:12px;animation-delay:.7s}",
     ".ark-combat-demo--attack>p{margin:8px 2px 1px;text-align:right;color:#9bcfe3;font-size:10px}.ark-combat-demo--attack .ark-demo-robot{position:relative}",
     "@keyframes ark-sword-pass{0%,18%{left:69%;transform:translateX(0)}43%{left:48%;transform:translateX(0)}62%,72%{left:3%;transform:translateX(0)}100%{left:3%;transform:translateX(0)}}",
-    "@keyframes ark-target-fall{0%,58%{transform:translateX(-50%) rotate(0);opacity:1}69%{transform:translateX(-50%) translateY(22px) rotate(90deg);opacity:.95}82%,100%{transform:translateX(-50%) translateY(22px) rotate(90deg);opacity:.95}}",
+    "@keyframes ark-target-fall{0%,58%{transform:translateX(-50%) rotateX(0);opacity:1}69%{transform:translateX(-50%) translateY(17px) rotateX(82deg);opacity:.95}82%,100%{transform:translateX(-50%) translateY(17px) rotateX(82deg);opacity:.95}}",
     "@keyframes ark-circuit-grass{from{transform:scaleY(.65);opacity:.55}to{transform:scaleY(1.12);opacity:1}}",
     "@keyframes ark-demo-holo-sweep{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}",
     "@keyframes ark-transmission-pulse{0%,100%{opacity:.55}50%{opacity:1}}",
