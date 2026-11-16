@@ -128,7 +128,31 @@
     '.ark-talent-stage--existence{min-height:184px;display:block;perspective:500px}.ark-talent-existence-actor,.ark-talent-existence-observer{position:absolute;bottom:12px;width:94px;height:104px;z-index:3}.ark-talent-existence-actor{left:5%;animation:ark-talent-existence-cross 7.2s ease-in-out infinite}.ark-talent-existence-actor .ark-talent-robot{width:100%;height:100%}.ark-talent-existence-observer .ark-talent-robot-svg{width:100%;height:100%}.ark-talent-existence-actor .ark-talent-robot-svg{position:relative;z-index:2}.ark-talent-existence-actor:after{content:"";position:absolute;z-index:3;left:34%;top:47%;width:32%;height:28%;border-radius:50%;background:radial-gradient(ellipse,#e5fbff 0 8%,#66d5ff 24%,rgba(27,143,255,.7) 52%,transparent 75%);filter:blur(4px);animation:ark-talent-existence-core 7.2s ease-in-out infinite}.ark-talent-existence-actor .ark-talent-chi-mark{z-index:4;width:26px;height:29px;top:59%}.ark-talent-existence-observer{left:43%;z-index:4;transform-origin:50% 90%;animation:ark-talent-existence-fall 7.2s ease-in-out infinite}.ark-talent-existence-observer .ark-talent-robot-svg{animation:ark-talent-existence-look 7.2s ease-in-out infinite;transform-origin:50% 48%}.ark-talent-existence-question{position:absolute;z-index:6;top:-12px;left:50%;color:#a9eaff;font:900 23px var(--mono,monospace);text-shadow:0 0 8px #48c4ff;opacity:0;animation:ark-talent-existence-confusion 7.2s ease-in-out infinite}.ark-talent-existence-wave{position:absolute;z-index:5;left:95%;top:12%;width:12px;height:76%;border-radius:50%;border:2px solid rgba(126,229,255,.9);background:linear-gradient(90deg,transparent,rgba(95,208,255,.28),transparent);box-shadow:0 0 20px rgba(64,189,255,.75),inset 0 0 15px rgba(80,202,255,.4);opacity:0;filter:blur(1px);animation:ark-talent-existence-wave 7.2s ease-in-out infinite}',
     '@keyframes ark-talent-reserve-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}@keyframes ark-talent-x-aura{0%,100%{opacity:.45;transform:translate(-50%,-48%) scale(.88)}50%{opacity:1;transform:translate(-50%,-48%) scale(1.08)}}@keyframes ark-talent-influence-ready{0%,100%{transform:translateY(0)}20%,55%{transform:translateY(-2px)}}@keyframes ark-talent-raise-arm{0%,12%{opacity:0;transform:rotate(0)}22%,62%{opacity:1;transform:rotate(-4deg)}75%,100%{opacity:0;transform:rotate(0)}}@keyframes ark-talent-influence-orb{0%,18%{left:22%;top:54%;opacity:0;transform:scale(.4)}27%{left:27%;top:35%;opacity:1;transform:scale(1)}37%{left:33%;top:13%;opacity:1;transform:scale(1.25)}47%{left:55%;top:22%;opacity:1;transform:scale(1.2)}59%{left:78%;top:40%;opacity:1;transform:scale(1.4)}70%,100%{left:32%;top:55%;opacity:0;transform:scale(.4)}}@keyframes ark-talent-sword-pull{0%,48%{right:8%;top:47%;transform:rotate(-15deg) scale(1)}60%{right:26%;top:42%;transform:rotate(-8deg) scale(1.05)}76%,100%{right:68%;top:43%;transform:rotate(2deg) scale(.92)}}@keyframes ark-talent-existence-core{0%,24%{opacity:1;transform:scale(1)}27%,43%{opacity:0;transform:scale(.2)}48%,100%{opacity:0}}@keyframes ark-talent-existence-cross{0%,24%{left:5%;opacity:1;filter:drop-shadow(0 0 14px #5acaff)}30%,42%{left:5%;opacity:.2;filter:blur(1px)}64%{left:78%;opacity:.24;filter:blur(1px)}70%,100%{left:78%;opacity:1;filter:drop-shadow(0 0 13px #5acaff)}}@keyframes ark-talent-existence-look{0%,24%{transform:rotate(-13deg)}28%,42%{transform:rotate(0)}47%{transform:rotate(-22deg)}53%{transform:rotate(20deg)}59%{transform:rotate(-9deg)}68%,74%{transform:rotate(18deg)}80%,100%{transform:rotate(18deg)}}@keyframes ark-talent-existence-confusion{0%,25%{opacity:0;transform:translate(-50%,8px) scale(.5)}30%,65%{opacity:1;transform:translate(-50%,0) scale(1)}70%,100%{opacity:0}}@keyframes ark-talent-existence-wave{0%,70%{left:95%;opacity:0;transform:scaleX(.4)}75%{left:83%;opacity:1;transform:scaleX(1)}84%{left:46%;opacity:.9;transform:scaleX(1.4)}91%{left:18%;opacity:.4;transform:scaleX(1.8)}100%{left:18%;opacity:0}}@keyframes ark-talent-existence-fall{0%,24%,79%{transform:rotate(0) translateY(0)}30%{transform:rotate(0) translateY(-9px)}36%,75%{transform:rotate(0) translateY(0)}86%,100%{transform:rotateX(82deg) translateY(18px)}}',
     '@media(max-width:700px){.ark-talent-demo .ark-demo-composition{min-height:236px}.ark-talent-demo .ark-demo-holo-window{min-height:184px}.ark-talent-demo .ark-demo-transmitter{width:76px;min-height:78px}.ark-talent-demo .ark-demo-projector{width:62px;height:58px}.ark-talent-demo .ark-demo-presenter-robot{width:50px;height:52px}.ark-talent-demo .ark-demo-projection-beam{left:35px!important;top:-169px!important;width:calc(100vw - 64px)!important;height:180px!important}.ark-talent-stage{min-height:156px}.ark-talent-robot{width:94px;height:102px}.ark-talent-influence-actor{left:4%;width:94px;height:102px}.ark-talent-floating-sword{width:62px;right:4%}.ark-talent-existence-actor,.ark-talent-existence-observer{width:78px;height:86px}.ark-talent-existence-actor{left:2%}.ark-talent-existence-observer{left:39%}.ark-talent-existence-cross{animation-name:ark-talent-existence-cross-mobile}}@keyframes ark-talent-existence-cross-mobile{0%,24%{left:2%;opacity:1;filter:drop-shadow(0 0 14px #5acaff)}30%,42%{left:2%;opacity:.2;filter:blur(1px)}64%{left:74%;opacity:.24;filter:blur(1px)}70%,100%{left:74%;opacity:1;filter:drop-shadow(0 0 13px #5acaff)}}',
-    '@media(prefers-reduced-motion:reduce){.ark-talent-demo *,.ark-talent-demo *:before,.ark-talent-demo *:after{animation:none!important}}'
+    '@media(prefers-reduced-motion:reduce){.ark-talent-demo *,.ark-talent-demo *:before,.ark-talent-demo *:after{animation:none!important}}',
+    '.ark-home-drawer{position:relative!important;min-height:168px!important;padding-bottom:92px!important;padding-right:18px!important;overflow:visible!important;isolation:isolate}',
+    '.ark-home-drawer--right{padding-right:102px!important;padding-left:18px!important}',
+    '.ark-home-drawer--left{padding-left:102px!important;padding-right:18px!important}',
+    '.ark-home-drawer-robot{position:absolute;right:8px;bottom:-5px;width:78px;height:88px;display:grid;place-items:center;z-index:4;pointer-events:none;filter:drop-shadow(0 9px 9px rgba(0,0,0,.52)) drop-shadow(0 0 10px rgba(80,190,245,.34));animation:ark-home-levitate 3.4s ease-in-out infinite}',
+    '.ark-home-drawer-robot svg{width:100%;height:100%;overflow:visible}',
+    '.ark-home-drawer--left .ark-home-drawer-robot{left:8px;right:auto;animation-delay:-1.2s}',
+    '@keyframes ark-home-levitate{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}',
+    '.ark-home-message{grid-column:1/-1;position:relative;min-height:210px;margin:-2px 0 0;padding:4px 8px 108px;overflow:visible;isolation:isolate}',
+    '.ark-home-message-bubble{position:relative;z-index:2;width:min(100%,700px);margin:0 auto 0 0;padding:13px 16px 14px;border:1px solid rgba(84,184,235,.56);border-radius:13px 13px 13px 4px;background:linear-gradient(120deg,rgba(225,246,255,.98),rgba(202,235,251,.96));box-shadow:0 7px 19px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.85);color:#102c40}',
+    '.ark-home-message-label{display:block;margin-bottom:5px;color:#1679ae;font:700 8px var(--mono,monospace);letter-spacing:1.1px}',
+    '.ark-home-message-bubble p{margin:0;color:#17364b;font-size:12px;line-height:1.65}',
+    '.ark-home-message:before{content:"";position:absolute;z-index:3;top:-32px;right:43px;width:2px;height:38px;border-radius:3px;background:linear-gradient(to top,rgba(76,185,235,.95),rgba(76,185,235,.35));transform:rotate(10deg);transform-origin:bottom;box-shadow:0 0 6px rgba(74,190,255,.55)}',
+    '.ark-home-message:after{content:"";position:absolute;z-index:4;top:-35px;right:39px;width:8px;height:8px;border-radius:50%;background:#9deaff;box-shadow:0 0 9px #54caff}',
+    '.ark-home-message--left:before{left:43px;right:auto;transform:rotate(-10deg)}.ark-home-message--left:after{left:39px;right:auto}',
+    '.ark-home-message--left .ark-home-message-bubble{margin-left:auto;margin-right:0;border-radius:13px 13px 4px 13px}',
+    '.ark-home-smoke{position:absolute;z-index:1;left:0;right:0;bottom:0;width:100%;height:190px;overflow:visible;pointer-events:none;opacity:.95}',
+    '.ark-home-message--reverse .ark-home-smoke{transform:scaleX(-1)}',
+    '.ark-home-smoke-glow{fill:none;stroke:rgba(46,169,242,.28);stroke-width:18;stroke-linecap:round;stroke-linejoin:round;filter:blur(8px);animation:ark-home-smoke-breathe 3.6s ease-in-out infinite}',
+    '.ark-home-smoke-core{fill:none;stroke:rgba(103,211,255,.36);stroke-width:5;stroke-linecap:round;stroke-linejoin:round;filter:blur(2.6px);animation:ark-home-smoke-breathe 2.8s ease-in-out infinite reverse}',
+    '.ark-home-smoke-puff{fill:#8bdfff;opacity:.7;filter:blur(5px);animation:ark-home-smoke-pulse 1.6s ease-in-out infinite}',
+    '.ark-home-smoke-puff--two{fill:#43baff;opacity:.62;filter:blur(7px)}.ark-home-smoke-puff--three{fill:#b7f0ff;opacity:.5;filter:blur(9px)}.ark-home-smoke-puff--four{fill:#69cfff;opacity:.8;filter:blur(3px)}',
+    '@keyframes ark-home-smoke-breathe{0%,100%{opacity:.45}50%{opacity:1}}@keyframes ark-home-smoke-pulse{0%,100%{opacity:.25}50%{opacity:.9}}',
+    '@media(max-width:650px){.ark-home-drawer{min-height:158px!important;padding-bottom:82px!important}.ark-home-drawer--right{padding-right:84px!important}.ark-home-drawer--left{padding-left:84px!important}.ark-home-drawer-robot{width:68px;height:78px;right:5px;bottom:-3px}.ark-home-drawer--left .ark-home-drawer-robot{left:5px;right:auto}.ark-home-message{min-height:190px;padding:3px 2px 92px}.ark-home-message-bubble{padding:11px 12px}.ark-home-message-bubble p{font-size:11px}.ark-home-smoke{height:165px}.ark-home-message:before{top:-28px;height:34px;right:35px}.ark-home-message:after{top:-31px;right:31px}.ark-home-message--left:before{left:35px;right:auto}.ark-home-message--left:after{left:31px;right:auto}}',
+    '@media(prefers-reduced-motion:reduce){.ark-home-drawer-robot,.ark-home-smoke-glow,.ark-home-smoke-core,.ark-home-smoke-puff{animation:none!important}}'
   ].join('\n');
   var style = document.createElement('style');
   style.id = 'ark-scene-layout-styles';
@@ -344,15 +368,35 @@
       return h && h.textContent.trim() === heading;
     });
     if (!feature || content.querySelector('[data-ark-key="' + key + '"]')) return;
+
+    // Na página inicial, o A.R.K. fica dentro do cartão; a fala é projetada abaixo dele.
+    var step = content.querySelectorAll('.ark-home-drawer').length;
+    var side = step % 2 ? 'left' : 'right';
+    feature.classList.add('ark-home-drawer', 'ark-home-drawer--' + side);
+    if (!feature.querySelector('.ark-home-drawer-robot')) {
+      var dock = document.createElement('div');
+      dock.className = 'ark-home-drawer-robot';
+      dock.setAttribute('aria-hidden', 'true');
+      dock.innerHTML = robotSvg;
+      feature.appendChild(dock);
+    }
+
     var holder = document.createElement('div');
-    holder.className = 'ark-feature-guide' + (peek ? ' ark-feature-guide--peek' : '');
-    holder.innerHTML = scene(key, message, 'comic');
+    holder.className = 'ark-home-message ark-home-message--' + side + (peek ? ' ark-home-message--peek' : '');
+    holder.setAttribute('data-ark-key', key);
+    var route = 'M 900 5 C 980 25 952 65 865 78 C 785 90 760 137 675 122 C 590 108 600 58 515 72 C 430 86 438 153 342 148 C 250 143 255 91 170 105 C 108 116 82 153 42 180';
+    holder.innerHTML =
+      '<svg class="ark-home-smoke" viewBox="0 0 1000 190" preserveAspectRatio="none" aria-hidden="true">' +
+        '<path class="ark-home-smoke-glow" d="' + route + '"/>' +
+        '<path class="ark-home-smoke-core" d="' + route + '"/>' +
+        '<circle class="ark-home-smoke-puff" r="8"><animateMotion dur="5.8s" repeatCount="indefinite" path="' + route + '"/></circle>' +
+        '<circle class="ark-home-smoke-puff ark-home-smoke-puff--two" r="6"><animateMotion begin="-1.9s" dur="5.8s" repeatCount="indefinite" path="' + route + '"/></circle>' +
+        '<circle class="ark-home-smoke-puff ark-home-smoke-puff--three" r="10"><animateMotion begin="-3.8s" dur="5.8s" repeatCount="indefinite" path="' + route + '"/></circle>' +
+        '<circle class="ark-home-smoke-puff ark-home-smoke-puff--four" r="4"><animateMotion begin="-0.9s" dur="5.8s" repeatCount="indefinite" path="' + route + '"/></circle>' +
+      '</svg>' +
+      '<div class="ark-home-message-bubble"><span class="ark-home-message-label">A.R.K. / GUIA DA AGÊNCIA</span><p>' + esc(message) + '</p></div>';
     feature.parentNode.insertBefore(holder, feature.nextSibling);
-    var trail = document.createElement('div');
-    trail.className = 'ark-dust-trail';
-    trail.setAttribute('aria-hidden', 'true');
-    trail.innerHTML = '<svg viewBox="0 0 166 28" preserveAspectRatio="none" aria-hidden="true"><path class="ark-dust-route" d="M2 19 C14 1 25 1 36 16 S58 31 70 13 S91 0 103 16 S126 31 138 12 S155 3 164 15"/></svg><i></i><i></i><i></i><i></i><i></i>';
-    holder.parentNode.insertBefore(trail, holder.nextSibling);
+    if (side === 'left') holder.classList.add('ark-home-message--reverse');
   }
   function addChiGuide(content) {
     if (content.querySelector('[data-ark-key="chi-system-guide"]')) return;
