@@ -555,15 +555,7 @@
       return;
     }
     if (id === 'overview') {
-      var welcome = content.querySelector('.welcome-marketing');
-      if (welcome) {
-        addAfter(welcome.querySelector('.welcome-copy'), 'home-intro', 'Olá! Eu sou o A.R.K., um dos programas de defesa e assistência da Agência. Vou acompanhar sua exploração pela Nova Ordem e explicar os registros conforme você avança.');
-        addAfter(welcome.querySelector('.innovation-copy'), 'home-tools', 'Nesta área ficam as ferramentas interativas. Os treinamentos registram atividades de desenvolvimento; a Forja recebe projetos; e o Trabalho registra jornadas profissionais.', 'compact');
-        addAfter(welcome.querySelector('.innovation-grid'), 'home-tools-detail', 'Se alguma ferramenta ainda estiver em desenvolvimento, eu aviso. Não vou apresentar funções incompletas como se já estivessem disponíveis.', 'compact');
-      }
-      var oldIntro = content.querySelector('.intro-lead');
-      if (oldIntro) addAfter(oldIntro, 'home-intro-fallback', 'Olá! Eu sou o A.R.K., guia virtual da Agência. Explore os registros e encontre minhas orientações ao longo da página.', 'compact');
-      return;
+      // A página inicial usa somente o A.R.K. flutuante; não inserir cópias nas mensagens de abertura.\n      return;
     }
     if (id === 'systems') {
       var cards = content.querySelector('.cards') || content.firstElementChild;
