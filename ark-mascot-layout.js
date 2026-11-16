@@ -129,14 +129,10 @@
     '@keyframes ark-talent-reserve-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}@keyframes ark-talent-x-aura{0%,100%{opacity:.45;transform:translate(-50%,-48%) scale(.88)}50%{opacity:1;transform:translate(-50%,-48%) scale(1.08)}}@keyframes ark-talent-influence-ready{0%,100%{transform:translateY(0)}20%,55%{transform:translateY(-2px)}}@keyframes ark-talent-raise-arm{0%,12%{opacity:0;transform:rotate(0)}22%,62%{opacity:1;transform:rotate(-4deg)}75%,100%{opacity:0;transform:rotate(0)}}@keyframes ark-talent-influence-orb{0%,18%{left:22%;top:54%;opacity:0;transform:scale(.4)}27%{left:27%;top:35%;opacity:1;transform:scale(1)}37%{left:33%;top:13%;opacity:1;transform:scale(1.25)}47%{left:55%;top:22%;opacity:1;transform:scale(1.2)}59%{left:78%;top:40%;opacity:1;transform:scale(1.4)}70%,100%{left:32%;top:55%;opacity:0;transform:scale(.4)}}@keyframes ark-talent-sword-pull{0%,48%{right:8%;top:47%;transform:rotate(-15deg) scale(1)}60%{right:26%;top:42%;transform:rotate(-8deg) scale(1.05)}76%,100%{right:68%;top:43%;transform:rotate(2deg) scale(.92)}}@keyframes ark-talent-existence-core{0%,24%{opacity:1;transform:scale(1)}27%,43%{opacity:0;transform:scale(.2)}48%,100%{opacity:0}}@keyframes ark-talent-existence-cross{0%,24%{left:5%;opacity:1;filter:drop-shadow(0 0 14px #5acaff)}30%,42%{left:5%;opacity:.2;filter:blur(1px)}64%{left:78%;opacity:.24;filter:blur(1px)}70%,100%{left:78%;opacity:1;filter:drop-shadow(0 0 13px #5acaff)}}@keyframes ark-talent-existence-look{0%,24%{transform:rotate(-13deg)}28%,42%{transform:rotate(0)}47%{transform:rotate(-22deg)}53%{transform:rotate(20deg)}59%{transform:rotate(-9deg)}68%,74%{transform:rotate(18deg)}80%,100%{transform:rotate(18deg)}}@keyframes ark-talent-existence-confusion{0%,25%{opacity:0;transform:translate(-50%,8px) scale(.5)}30%,65%{opacity:1;transform:translate(-50%,0) scale(1)}70%,100%{opacity:0}}@keyframes ark-talent-existence-wave{0%,70%{left:95%;opacity:0;transform:scaleX(.4)}75%{left:83%;opacity:1;transform:scaleX(1)}84%{left:46%;opacity:.9;transform:scaleX(1.4)}91%{left:18%;opacity:.4;transform:scaleX(1.8)}100%{left:18%;opacity:0}}@keyframes ark-talent-existence-fall{0%,24%,79%{transform:rotate(0) translateY(0)}30%{transform:rotate(0) translateY(-9px)}36%,75%{transform:rotate(0) translateY(0)}86%,100%{transform:rotateX(82deg) translateY(18px)}}',
     '@media(max-width:700px){.ark-talent-demo .ark-demo-composition{min-height:236px}.ark-talent-demo .ark-demo-holo-window{min-height:184px}.ark-talent-demo .ark-demo-transmitter{width:76px;min-height:78px}.ark-talent-demo .ark-demo-projector{width:62px;height:58px}.ark-talent-demo .ark-demo-presenter-robot{width:50px;height:52px}.ark-talent-demo .ark-demo-projection-beam{left:35px!important;top:-169px!important;width:calc(100vw - 64px)!important;height:180px!important}.ark-talent-stage{min-height:156px}.ark-talent-robot{width:94px;height:102px}.ark-talent-influence-actor{left:4%;width:94px;height:102px}.ark-talent-floating-sword{width:62px;right:4%}.ark-talent-existence-actor,.ark-talent-existence-observer{width:78px;height:86px}.ark-talent-existence-actor{left:2%}.ark-talent-existence-observer{left:39%}.ark-talent-existence-cross{animation-name:ark-talent-existence-cross-mobile}}@keyframes ark-talent-existence-cross-mobile{0%,24%{left:2%;opacity:1;filter:drop-shadow(0 0 14px #5acaff)}30%,42%{left:2%;opacity:.2;filter:blur(1px)}64%{left:74%;opacity:.24;filter:blur(1px)}70%,100%{left:74%;opacity:1;filter:drop-shadow(0 0 13px #5acaff)}}',
     '@media(prefers-reduced-motion:reduce){.ark-talent-demo *,.ark-talent-demo *:before,.ark-talent-demo *:after{animation:none!important}}',
-    '.ark-home-drawer{position:relative!important;min-height:168px!important;padding-bottom:92px!important;padding-right:18px!important;overflow:visible!important;isolation:isolate}',
+    '.ark-home-drawer{position:relative!important;min-height:168px!important;padding-bottom:26px!important;overflow:visible!important;isolation:isolate}',
     '.ark-home-drawer--right{padding-right:102px!important;padding-left:18px!important}',
     '.ark-home-drawer--left{padding-left:102px!important;padding-right:18px!important}',
-    '.ark-home-drawer-robot{position:absolute;right:8px;bottom:-5px;width:78px;height:88px;display:grid;place-items:center;z-index:4;pointer-events:none;filter:drop-shadow(0 9px 9px rgba(0,0,0,.52)) drop-shadow(0 0 10px rgba(80,190,245,.34));animation:ark-home-levitate 3.4s ease-in-out infinite}',
-    '.ark-home-drawer-robot svg{width:100%;height:100%;overflow:visible}',
-    '.ark-home-drawer--left .ark-home-drawer-robot{left:8px;right:auto;animation-delay:-1.2s}',
-    '@keyframes ark-home-levitate{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}',
-    '.ark-home-message{grid-column:1/-1;position:relative;min-height:210px;margin:-2px 0 0;padding:4px 8px 108px;overflow:visible;isolation:isolate}',
+    '.ark-home-message{grid-column:1/-1;position:relative;min-height:116px;margin:-2px 0 12px;padding:4px 8px 30px;overflow:visible;isolation:isolate}',
     '.ark-home-message-bubble{position:relative;z-index:2;width:min(100%,700px);margin:0 auto 0 0;padding:13px 16px 14px;border:1px solid rgba(84,184,235,.56);border-radius:13px 13px 13px 4px;background:linear-gradient(120deg,rgba(225,246,255,.98),rgba(202,235,251,.96));box-shadow:0 7px 19px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.85);color:#102c40}',
     '.ark-home-message-label{display:block;margin-bottom:5px;color:#1679ae;font:700 8px var(--mono,monospace);letter-spacing:1.1px}',
     '.ark-home-message-bubble p{margin:0;color:#17364b;font-size:12px;line-height:1.65}',
@@ -144,15 +140,13 @@
     '.ark-home-message:after{content:"";position:absolute;z-index:4;top:-83px;right:39px;width:8px;height:8px;border-radius:50%;background:#9deaff;box-shadow:0 0 9px #54caff}',
     '.ark-home-message--left:before{left:43px;right:auto;transform:rotate(-5deg)}.ark-home-message--left:after{left:39px;right:auto}',
     '.ark-home-message--left .ark-home-message-bubble{margin-left:auto;margin-right:0;border-radius:13px 13px 4px 13px}',
-    '.ark-home-smoke{position:absolute;z-index:1;left:0;right:0;bottom:0;width:100%;height:190px;overflow:visible;pointer-events:none;opacity:.95}',
-    '.ark-home-message--reverse .ark-home-smoke{transform:scaleX(-1)}',
-    '.ark-home-smoke-glow{fill:none;stroke:rgba(46,169,242,.28);stroke-width:18;stroke-linecap:round;stroke-linejoin:round;filter:blur(8px);animation:ark-home-smoke-breathe 3.6s ease-in-out infinite}',
-    '.ark-home-smoke-core{fill:none;stroke:rgba(103,211,255,.36);stroke-width:5;stroke-linecap:round;stroke-linejoin:round;filter:blur(2.6px);animation:ark-home-smoke-breathe 2.8s ease-in-out infinite reverse}',
-    '.ark-home-smoke-puff{fill:#8bdfff;opacity:.7;filter:blur(5px);animation:ark-home-smoke-pulse 1.6s ease-in-out infinite}',
-    '.ark-home-smoke-puff--two{fill:#43baff;opacity:.62;filter:blur(7px)}.ark-home-smoke-puff--three{fill:#b7f0ff;opacity:.5;filter:blur(9px)}.ark-home-smoke-puff--four{fill:#69cfff;opacity:.8;filter:blur(3px)}',
-    '@keyframes ark-home-smoke-breathe{0%,100%{opacity:.45}50%{opacity:1}}@keyframes ark-home-smoke-pulse{0%,100%{opacity:.25}50%{opacity:.9}}',
-    '@media(max-width:650px){.ark-home-drawer{min-height:158px!important;padding-bottom:82px!important}.ark-home-drawer--right{padding-right:84px!important}.ark-home-drawer--left{padding-left:84px!important}.ark-home-drawer-robot{width:68px;height:78px;right:5px;bottom:-3px}.ark-home-drawer--left .ark-home-drawer-robot{left:5px;right:auto}.ark-home-message{min-height:190px;padding:3px 2px 92px}.ark-home-message-bubble{padding:11px 12px}.ark-home-message-bubble p{font-size:11px}.ark-home-smoke{height:165px}.ark-home-message:before{top:-28px;height:34px;right:35px}.ark-home-message:after{top:-31px;right:31px}.ark-home-message--left:before{left:35px;right:auto}.ark-home-message--left:after{left:31px;right:auto}}',
-    '@media(prefers-reduced-motion:reduce){.ark-home-drawer-robot,.ark-home-smoke-glow,.ark-home-smoke-core,.ark-home-smoke-puff{animation:none!important}}'
+    '.ark-home-follow-robot{position:fixed;left:0;top:0;z-index:80;display:none;place-items:center;pointer-events:none;will-change:transform;transition:transform .32s cubic-bezier(.2,.75,.25,1);filter:drop-shadow(0 9px 9px rgba(0,0,0,.5)) drop-shadow(0 0 12px rgba(80,190,245,.48))}',
+    '.ark-home-follow-robot>svg{position:relative;z-index:2;width:100%;height:100%;overflow:visible;animation:ark-home-levitate 3.4s ease-in-out infinite}',
+    '.ark-home-follow-smoke{position:absolute;z-index:1;left:50%;top:72%;width:46px;height:35px;border-radius:50%;background:radial-gradient(ellipse,rgba(101,211,255,.48),rgba(49,160,235,.2) 48%,transparent 75%);filter:blur(8px);animation:ark-home-follow-puff 1.8s ease-in-out infinite}',
+    '.ark-home-follow-smoke--one{transform:translate(-90%,-20%) scale(1.1)}.ark-home-follow-smoke--two{transform:translate(0,10%) scale(.75);animation-delay:-.9s}',
+    '@keyframes ark-home-levitate{0%,100%{margin-top:0}50%{margin-top:-7px}}@keyframes ark-home-follow-puff{0%,100%{opacity:.25;scale:.75}50%{opacity:.9;scale:1.25}}',
+    '@media(max-width:650px){.ark-home-drawer{min-height:158px!important;padding-bottom:20px!important}.ark-home-drawer--right{padding-right:84px!important}.ark-home-drawer--left{padding-left:84px!important}.ark-home-message{min-height:102px;padding:3px 2px 24px}.ark-home-message-bubble{padding:11px 12px}.ark-home-message-bubble p{font-size:11px}.ark-home-message:before{top:-70px;height:76px;right:35px}.ark-home-message:after{top:-75px;right:31px}.ark-home-message--left:before{left:35px;right:auto}.ark-home-message--left:after{left:31px;right:auto}}',
+    '@media(prefers-reduced-motion:reduce){.ark-home-follow-robot,.ark-home-follow-robot>svg,.ark-home-follow-smoke{animation:none!important;transition:none!important}}',
   ].join('\n');
   var style = document.createElement('style');
   style.id = 'ark-scene-layout-styles';
@@ -368,35 +362,68 @@
       return h && h.textContent.trim() === heading;
     });
     if (!feature || content.querySelector('[data-ark-key="' + key + '"]')) return;
-
-    // Na página inicial, o A.R.K. fica dentro do cartão; a fala é projetada abaixo dele.
     var step = content.querySelectorAll('.ark-home-drawer').length;
     var side = step % 2 ? 'left' : 'right';
     feature.classList.add('ark-home-drawer', 'ark-home-drawer--' + side);
-    if (!feature.querySelector('.ark-home-drawer-robot')) {
-      var dock = document.createElement('div');
-      dock.className = 'ark-home-drawer-robot';
-      dock.setAttribute('aria-hidden', 'true');
-      dock.innerHTML = robotSvg;
-      feature.appendChild(dock);
-    }
 
     var holder = document.createElement('div');
     holder.className = 'ark-home-message ark-home-message--' + side + (peek ? ' ark-home-message--peek' : '');
     holder.setAttribute('data-ark-key', key);
-    var route = 'M 900 5 C 980 25 952 65 865 78 C 785 90 760 137 675 122 C 590 108 600 58 515 72 C 430 86 438 153 342 148 C 250 143 255 91 170 105 C 108 116 82 153 42 180';
-    holder.innerHTML =
-      '<svg class="ark-home-smoke" viewBox="0 0 1000 190" preserveAspectRatio="none" aria-hidden="true">' +
-        '<path class="ark-home-smoke-glow" d="' + route + '"/>' +
-        '<path class="ark-home-smoke-core" d="' + route + '"/>' +
-        '<circle class="ark-home-smoke-puff" r="8"><animateMotion dur="5.8s" repeatCount="indefinite" path="' + route + '"/></circle>' +
-        '<circle class="ark-home-smoke-puff ark-home-smoke-puff--two" r="6"><animateMotion begin="-1.9s" dur="5.8s" repeatCount="indefinite" path="' + route + '"/></circle>' +
-        '<circle class="ark-home-smoke-puff ark-home-smoke-puff--three" r="10"><animateMotion begin="-3.8s" dur="5.8s" repeatCount="indefinite" path="' + route + '"/></circle>' +
-        '<circle class="ark-home-smoke-puff ark-home-smoke-puff--four" r="4"><animateMotion begin="-0.9s" dur="5.8s" repeatCount="indefinite" path="' + route + '"/></circle>' +
-      '</svg>' +
-      '<div class="ark-home-message-bubble"><span class="ark-home-message-label">A.R.K. / GUIA DA AGÊNCIA</span><p>' + esc(message) + '</p></div>';
+    holder.innerHTML = '<div class="ark-home-message-bubble"><span class="ark-home-message-label">A.R.K. / GUIA DA AGÊNCIA</span><p>' + esc(message) + '</p></div>';
     feature.parentNode.insertBefore(holder, feature.nextSibling);
-    if (side === 'left') holder.classList.add('ark-home-message--reverse');
+  }
+
+  function updateHomeArk() {
+    var content = document.getElementById('content');
+    var follower = document.querySelector('.ark-home-follow-robot');
+    if (!content || !follower || activeId() !== 'overview') {
+      if (follower) follower.style.display = 'none';
+      return;
+    }
+    var cards = Array.prototype.slice.call(content.querySelectorAll('.ark-home-drawer'));
+    if (!cards.length) { follower.style.display = 'none'; return; }
+    var vh = window.innerHeight || document.documentElement.clientHeight;
+    var vw = window.innerWidth || document.documentElement.clientWidth;
+    var aimY = vh * 0.54;
+    var visible = cards.map(function (card) {
+      var rect = card.getBoundingClientRect();
+      return {card:card, rect:rect, distance:Math.abs((rect.top + rect.bottom) / 2 - aimY)};
+    }).filter(function (entry) { return entry.rect.bottom > 0 && entry.rect.top < vh; });
+    if (!visible.length) { follower.style.display = 'none'; return; }
+    visible.sort(function (a, b) { return a.distance - b.distance; });
+    var target = visible[0], rect = target.rect;
+    var leftSide = target.card.classList.contains('ark-home-drawer--left');
+    var width = vw <= 650 ? 68 : 78, height = vw <= 650 ? 78 : 88;
+    var x = leftSide ? rect.left + 7 : rect.right - width - 7;
+    var y = rect.bottom - height + 5;
+    x = Math.max(5, Math.min(vw - width - 5, x));
+    y = Math.max(8, Math.min(vh - height - 8, y));
+    follower.style.display = 'grid';
+    follower.style.width = width + 'px';
+    follower.style.height = height + 'px';
+    follower.style.transform = 'translate3d(' + Math.round(x) + 'px,' + Math.round(y) + 'px,0)';
+    var heading = target.card.querySelector('h3');
+    follower.setAttribute('data-following', heading ? heading.textContent.trim() : 'seção');
+  }
+
+  function ensureHomeArk() {
+    var follower = document.querySelector('.ark-home-follow-robot');
+    if (!follower) {
+      follower = document.createElement('div');
+      follower.className = 'ark-home-follow-robot';
+      follower.setAttribute('aria-hidden', 'true');
+      follower.innerHTML = '<span class="ark-home-follow-smoke ark-home-follow-smoke--one"></span><span class="ark-home-follow-smoke ark-home-follow-smoke--two"></span>' + robotSvg;
+      document.body.appendChild(follower);
+    }
+    updateHomeArk();
+  }
+
+  function scheduleHomeArkUpdate() {
+    if (window.__arkHomeFollowFrame) return;
+    window.__arkHomeFollowFrame = window.requestAnimationFrame(function () {
+      window.__arkHomeFollowFrame = 0;
+      updateHomeArk();
+    });
   }
   function addChiGuide(content) {
     if (content.querySelector('[data-ark-key="chi-system-guide"]')) return;
@@ -669,6 +696,11 @@
     var id = activeId();
     updateBackButton(id);
     placeScenes(content, id);
+    if (id === 'overview') ensureHomeArk();
+    else {
+      var homeFollower = document.querySelector('.ark-home-follow-robot');
+      if (homeFollower) homeFollower.style.display = 'none';
+    }
     if (id !== 'overview' && id !== 'ark' && !content.querySelector('[data-ark-scene="true"]')) {
       var anchor = content.querySelector('.panel') || content.querySelector('.intro-lead') || content.firstElementChild;
       addBefore(anchor, 'page-guide-' + id, 'Oi! Passei por este arquivo para ajudar na leitura. Observe os títulos, exemplos e tabelas com calma; se alguma regra não estiver explicada aqui, não vou inventar uma resposta. Pode me chamar pela Central do A.R.K. quando precisar!', 'compact');
@@ -677,6 +709,11 @@
   function initialize() {
     var content = document.getElementById('content');
     enhance();
+    if (!window.__arkHomeFollowBound) {
+      window.__arkHomeFollowBound = true;
+      window.addEventListener('scroll', scheduleHomeArkUpdate, {passive:true});
+      window.addEventListener('resize', scheduleHomeArkUpdate, {passive:true});
+    }
     if (content && window.MutationObserver) {
       var observer = new MutationObserver(function () {
         window.clearTimeout(observer._arkTimer);
