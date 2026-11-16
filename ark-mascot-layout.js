@@ -182,7 +182,7 @@
     var demo = document.createElement('div');
     demo.className = 'ark-combat-demo ark-combat-demo--' + mode;
     demo.setAttribute('data-ark-demo', key);
-    var robot = '<div class="ark-demo-robot ark-demo-robot--hologram">' + arkHologramSvg + '</div>';
+    var robot = '<div class="ark-demo-robot">' + robotSvg + '</div>';
     if (mode === 'parry') {
       demo.innerHTML = '<div class="ark-demo-stage"><div class="ark-demo-fighter ark-demo-defender">' + robot + '<span class="ark-demo-shield">⬟</span></div><div class="ark-demo-impact">✦</div><div class="ark-demo-fighter ark-demo-attacker">' + robot + '<span class="ark-demo-sword">⚔</span></div></div><p>' + esc(caption) + '</p>';
     } else if (mode === 'attack') {
