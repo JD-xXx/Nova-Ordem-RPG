@@ -289,10 +289,7 @@
       return;
     }
     if (id === 'talents') {
-      addAfter(content.querySelector('.panel'), 'talents-intro', 'Antes de escolher uma manifestação, lembre-se: Talentos são congênitos. A classe descreve como a habilidade se manifesta; a especialização define seu campo de atuação.', 'compact');
-      addAfterIndex(content, '.rows', 0, 'talents-class-example', 'Exemplo: se uma habilidade age diretamente no corpo do usuário, sua manifestação pode ser Corporal. Se influencia algo externo, pode ser Influência. A classificação depende do funcionamento real da habilidade, não apenas do nome escolhido.', 'compact');
-      addAfter(content.querySelector('.special-grid'), 'talents-specialization-example', 'Uma especialização delimita o tipo de manifestação. Ela não elimina os limites do Talento nem dispensa controle, treinamento e coerência com a classe.', 'compact');
-      addTalentTrio(content);
+      addAfter(content.querySelector('.special-grid'), 'talents-specialization-guide', 'Cada especialização representa um campo de manifestação do Talento. Escolha a que corresponde ao funcionamento da habilidade e mantenha as limitações e a classe do personagem em consideração.', 'compact');
       return;
     }
     if (id === 'progression') {
