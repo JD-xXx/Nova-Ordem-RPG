@@ -603,7 +603,7 @@
     }
     var trail=document.querySelector('.ark-route-trail');
     if(!trail){trail=document.createElement('div');trail.className='ark-route-trail';trail.setAttribute('aria-hidden','true');document.body.appendChild(trail);}
-    arkRoute.follower=follower;arkRoute.trail=trail;updateHomeArk();
+    arkRoute.follower=follower;arkRoute.trail=trail;if(!document.querySelector('.ark-transfer-box'))createArkTransferBox('idle');updateHomeArk();
   }
 
   function scheduleHomeArkUpdate() {
@@ -906,10 +906,26 @@
       return;
     }
     window.__arkPageTransition='leaving';
-    var box=createArkTransferBox('leaving');
+    var box=createArkTransferBox('idle');
     var follower=arkRoute.follower || document.querySelector('.ark-home-follow-robot');
-    if(follower) follower.style.display='none';
+    var frame=box.querySelector('.ark-transfer-frame');
+    var doorRect=frame.getBoundingClientRect();
+    if(follower){
+      follower.classList.add('ark-route-entering-door');
+      follower.style.display='grid';
+      var followerRect=follower.getBoundingClientRect();
+      var fw=followerRect.width||78, fh=followerRect.height||88;
+      var doorX=doorRect.left+(doorRect.width-fw)/2, doorY=doorRect.top+(doorRect.height-fh)/2;
+      window.requestAnimationFrame(function(){follower.style.transform='translate3d('+doorX+'px,'+doorY+'px,0)';});
+    }
     window.setTimeout(function(){
+      if(follower){follower.style.display='none';follower.classList.remove('ark-route-entering-door');}
+      box.classList.remove('ark-transfer-box--idle');
+      box.classList.add('ark-transfer-box--leaving');
+      var leavingStatus=box.querySelector('.ark-transfer-status'), leavingSub=box.querySelector('.ark-transfer-substatus');
+      if(leavingStatus) leavingStatus.textContent='A.R.K. / CARREGANDO SISTEMA';
+      if(leavingSub) leavingSub.textContent='TRANSFERINDO DADOS';
+      window.setTimeout(function(){
       window.__arkPageTransition='arriving';
       navigate();
       box.classList.remove('ark-transfer-box--leaving');
@@ -919,7 +935,8 @@
       if(sub) sub.textContent='RECONSTRUINDO UNIDADE';
       window.setTimeout(enhance,0);
       window.setTimeout(function(){finishArkPageTransition(box);},980);
-    },790);
+      },790);
+    },520);
   }
   function finishArkPageTransition(box) {
     var transfer=box || document.querySelector('.ark-transfer-box');
