@@ -186,8 +186,8 @@
     '.ark-transfer-robot{position:absolute;inset:7px 45px;width:76px;height:80px;display:grid;place-items:center;filter:drop-shadow(0 0 12px rgba(86,204,255,.72))}.ark-transfer-robot svg{width:100%;height:100%;overflow:visible}',
     '.ark-transfer-pixel{position:absolute;left:50%;top:50%;width:5px;height:5px;border-radius:1px;background:#9beaff;box-shadow:0 0 7px #50bfff;opacity:0;transform:translate(-50%,-50%)}',
     '.ark-transfer-status{color:#a8e6ff;font:700 8px var(--mono,monospace);letter-spacing:.75px;white-space:nowrap}.ark-transfer-substatus{margin-top:3px;color:#6f9db9;font:600 7px var(--mono,monospace);letter-spacing:.55px}',
-    '.ark-transfer-box--leaving .ark-transfer-robot{animation:ark-transfer-disintegrate .78s ease-in forwards}.ark-transfer-box--leaving .ark-transfer-pixel{animation:ark-transfer-pixel-out .72s ease-out forwards;animation-delay:calc(var(--i)*18ms)}',
-    '.ark-transfer-box--arriving .ark-transfer-robot{opacity:0;animation:ark-transfer-rebuild .82s cubic-bezier(.16,.72,.25,1) .08s forwards}.ark-transfer-box--arriving .ark-transfer-pixel{opacity:1;animation:ark-transfer-pixel-in .72s cubic-bezier(.16,.72,.25,1) forwards;animation-delay:calc((12 - var(--i))*22ms)}',
+    '.ark-transfer-box--leaving .ark-transfer-robot{animation:ark-transfer-disintegrate .78s ease-in forwards}.ark-transfer-box--leaving .ark-transfer-pixel{animation:ark-transfer-pixel-out .72s ease-out forwards;animation-delay:var(--out-delay);animation-fill-mode:both}',
+    '.ark-transfer-box--arriving .ark-transfer-robot{opacity:0;animation:ark-transfer-rebuild .82s cubic-bezier(.16,.72,.25,1) .08s both}.ark-transfer-box--arriving .ark-transfer-pixel{opacity:0;animation:ark-transfer-pixel-in .72s cubic-bezier(.16,.72,.25,1) var(--in-delay) both}',
     '.ark-transfer-box--departing{animation:ark-transfer-box-out .3s ease-in forwards}',
     '@keyframes ark-transfer-disintegrate{0%{opacity:1;filter:brightness(1)}35%{filter:brightness(2.8) saturate(1.7)}100%{opacity:0;filter:brightness(3) blur(5px);transform:scale(.82)}}',
     '@keyframes ark-transfer-rebuild{0%{opacity:0;filter:brightness(3) blur(7px);transform:scale(.78)}55%{opacity:.72;filter:brightness(1.8) blur(2px)}100%{opacity:1;filter:brightness(1);transform:scale(1)}}',
@@ -872,7 +872,7 @@
     var pixels='';
     var vectors=[[-49,-27],[-24,-38],[8,-42],[39,-28],[53,-5],[45,25],[18,39],[-18,39],[-47,22],[-58,0],[0,-18],[28,10]];
     vectors.forEach(function(v,i){
-      pixels+='<i class="ark-transfer-pixel" style="--i:'+i+';--px:'+v[0]+'px;--py:'+v[1]+'px"></i>';
+      pixels+='<i class="ark-transfer-pixel" style="--i:'+i+';--px:'+v[0]+'px;--py:'+v[1]+'px;--out-delay:'+(i*18)+'ms;--in-delay:'+((11-i)*22)+'ms"></i>';
     });
     box.innerHTML='<div class="ark-transfer-frame"><div class="ark-transfer-robot">'+robotSvg+'</div>'+pixels+'</div>'+
       '<div class="ark-transfer-status">'+(mode==='leaving'?'A.R.K. / CARREGANDO SISTEMA':'A.R.K. / RECONSTRUINDO')+'</div>'+
