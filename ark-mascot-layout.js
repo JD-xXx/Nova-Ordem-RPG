@@ -136,6 +136,12 @@
     '.ark-home-message-bubble{position:relative;z-index:2;width:min(100%,700px);margin:0 auto 0 0;padding:13px 16px 14px;border:1px solid rgba(84,184,235,.56);border-radius:13px 13px 13px 4px;background:linear-gradient(120deg,rgba(225,246,255,.98),rgba(202,235,251,.96));box-shadow:0 7px 19px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.85);color:#102c40}',
     '.ark-home-message-label{display:block;margin-bottom:5px;color:#1679ae;font:700 8px var(--mono,monospace);letter-spacing:1.1px}',
     '.ark-home-message-bubble p{margin:0;color:#17364b;font-size:12px;line-height:1.65}',
+    '.ark-home-message-divider{height:0;border:0;border-top:1px solid rgba(22,121,174,.32);margin:10px 0}',
+    '.ark-chi-stage:not(.ark-holo-active) .ark-chi-projection,.ark-talent-demo:not(.ark-holo-active) .ark-demo-holo-window,.ark-chi-reserve-demo:not(.ark-holo-active) .ark-demo-holo-window,.ark-combat-demo:not(.ark-holo-active) .ark-demo-holo-window{display:none!important}',
+    '.ark-chi-stage.ark-holo-active .ark-chi-projection,.ark-talent-demo.ark-holo-active .ark-demo-holo-window,.ark-chi-reserve-demo.ark-holo-active .ark-demo-holo-window,.ark-combat-demo.ark-holo-active .ark-demo-holo-window{display:flex;animation:ark-holo-materialize .78s cubic-bezier(.18,.72,.25,1) both}',
+    '.ark-chi-stage.ark-holo-active .ark-chi-projection{display:flex}',
+    '.ark-holo-active .ark-demo-holo-window:before,.ark-holo-active .ark-demo-holo-window:after{animation-duration:1.8s}',
+    '@keyframes ark-holo-materialize{0%{opacity:0;clip-path:inset(48% 0 48% 0);filter:brightness(2.5) blur(5px);transform:perspective(700px) rotateX(12deg) scale(.94)}55%{opacity:.8;clip-path:inset(8% 0 8% 0);filter:brightness(1.6) blur(1px)}100%{opacity:1;clip-path:inset(0);filter:brightness(1) blur(0);transform:perspective(700px) rotateX(0) scale(1)}}',
     '.ark-home-message:before{content:"";position:absolute;z-index:3;top:-78px;right:43px;width:2px;height:84px;border-radius:3px;background:linear-gradient(to top,rgba(76,185,235,.95),rgba(76,185,235,.35));transform:rotate(5deg);transform-origin:bottom;box-shadow:0 0 6px rgba(74,190,255,.55)}',
     '.ark-home-message:after{content:"";position:absolute;z-index:4;top:-83px;right:39px;width:8px;height:8px;border-radius:50%;background:#9deaff;box-shadow:0 0 9px #54caff}',
     '.ark-home-message--left:before{left:43px;right:auto;transform:rotate(-5deg)}.ark-home-message--left:after{left:39px;right:auto}',
@@ -371,6 +377,21 @@
       return h && h.textContent.trim() === heading;
     });
     if (!feature || content.querySelector('[data-ark-key="' + key + '"]')) return;
+    if (key === 'home-chi-guide') {
+      var firstGuide = content.querySelector('[data-ark-key="home-cosmology-guide"]');
+      var firstBubble = firstGuide && firstGuide.querySelector('.ark-home-message-bubble');
+      if (firstBubble) {
+        var divider = document.createElement('hr');
+        divider.className = 'ark-home-message-divider';
+        firstBubble.appendChild(divider);
+        var secondText = document.createElement('p');
+        secondText.setAttribute('data-ark-key', key);
+        secondText.textContent = message;
+        firstBubble.appendChild(secondText);
+        feature.classList.remove('ark-home-drawer', 'ark-home-drawer--left', 'ark-home-drawer--right');
+        return;
+      }
+    }
     var step = content.querySelectorAll('.ark-home-drawer').length;
     var side = step % 2 ? 'left' : 'right';
     feature.classList.add('ark-home-drawer', 'ark-home-drawer--' + side);
@@ -385,19 +406,33 @@
   var arkRoute = { target:null, index:-1, desiredIndex:-1, animation:null, follower:null, trail:null, speaking:null, timer:0 };
   function routeTargets(content) {
     var targets = [];
-    Array.prototype.forEach.call(content.querySelectorAll('.ark-home-drawer'), function (card) {
-      var message = card.nextElementSibling;
-      if (message && message.classList.contains('ark-home-message')) targets.push({anchor:card, message:message, robot:null, kind:'home'});
-    });
-    Array.prototype.forEach.call(content.querySelectorAll('.ark-scene[data-ark-scene="true"]'), function (scene) {
-      targets.push({anchor:scene, message:scene, robot:scene.querySelector('.ark-scene-robot'), kind:'scene'});
+    var nodes = content.querySelectorAll(
+      '.ark-home-drawer, .ark-scene[data-ark-scene="true"], .ark-chi-stage, .ark-chi-reserve-demo, .ark-talent-demo, .ark-combat-demo'
+    );
+    Array.prototype.forEach.call(nodes, function (node) {
+      if (node.classList.contains('ark-home-drawer')) {
+        var message = node.nextElementSibling;
+        if (message && message.classList.contains('ark-home-message')) targets.push({anchor:node, message:message, robot:null, kind:'home'});
+        return;
+      }
+      if (node.matches('.ark-scene[data-ark-scene="true"]')) {
+        targets.push({anchor:node, message:node, robot:node.querySelector('.ark-scene-robot'), kind:'scene'});
+        return;
+      }
+      var robot = node.querySelector('.ark-chi-robot, .ark-demo-presenter-robot');
+      targets.push({anchor:node, message:node, robot:robot, kind:'holo'});
     });
     return targets;
   }
   function setArkSpeaking(target) {
-    if (arkRoute.speaking && arkRoute.speaking.message) arkRoute.speaking.message.classList.remove('ark-is-speaking');
+    if (arkRoute.speaking && arkRoute.speaking.message) {
+      arkRoute.speaking.message.classList.remove('ark-is-speaking', 'ark-holo-active');
+    }
     arkRoute.speaking = target || null;
-    if (target && target.message) target.message.classList.add('ark-is-speaking');
+    if (target && target.message) {
+      if (target.kind === 'holo') target.message.classList.add('ark-holo-active');
+      else target.message.classList.add('ark-is-speaking');
+    }
   }
   function routePoint(target, vw, vh) {
     var rect = target.robot ? target.robot.getBoundingClientRect() : target.anchor.getBoundingClientRect();
@@ -407,6 +442,9 @@
       var left = target.anchor.classList.contains('ark-home-drawer--left');
       x = left ? rect.left + 7 : rect.right - width - 7;
       y = rect.bottom - height + 5;
+    } else if (target.kind === 'holo') {
+      x = rect.left + (rect.width - width) / 2;
+      y = rect.top + (rect.height - height) / 2;
     } else {
       x = rect.left + (rect.width - width) / 2;
       y = rect.top + (rect.height - height) / 2;
@@ -451,14 +489,14 @@
       var movingTarget=targets[arkRoute.index], movingPoint=routePoint(movingTarget,vw,vh);
       follower.style.width=movingPoint.width+'px'; follower.style.height=movingPoint.height+'px'; follower.style.display='grid';
       follower.style.transform='translate3d('+movingPoint.x+'px,'+movingPoint.y+'px,0)';
-      arkRoute.target=movingTarget; setArkSpeaking(movingTarget);
+      arkRoute.target=movingTarget; setArkSpeaking(movingTarget.kind === 'holo' ? null : movingTarget);
       return;
     }
     if(arkRoute.index!==arkRoute.desiredIndex) arkRoute.index+=arkRoute.desiredIndex>arkRoute.index?1:-1;
     arkRoute.index=Math.max(0,Math.min(targets.length-1,arkRoute.index));
     var target=targets[arkRoute.index], point=routePoint(target,vw,vh);
     follower.style.width=point.width+'px'; follower.style.height=point.height+'px'; follower.style.display='grid';
-    if(arkRoute.target===target){
+    if(arkRoute.target && arkRoute.target.anchor===target.anchor){
       if(!arkRoute.animation){follower.style.transform='translate3d('+point.x+'px,'+point.y+'px,0)';setArkSpeaking(target);}
       if(arkRoute.index!==arkRoute.desiredIndex) window.setTimeout(function(){updateHomeArk(false);},0);
       return;
