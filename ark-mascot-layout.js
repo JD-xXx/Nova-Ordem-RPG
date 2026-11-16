@@ -140,6 +140,15 @@
     '.ark-home-message:after{content:"";position:absolute;z-index:4;top:-83px;right:39px;width:8px;height:8px;border-radius:50%;background:#9deaff;box-shadow:0 0 9px #54caff}',
     '.ark-home-message--left:before{left:43px;right:auto;transform:rotate(-5deg)}.ark-home-message--left:after{left:39px;right:auto}',
     '.ark-home-message--left .ark-home-message-bubble{margin-left:auto;margin-right:0;border-radius:13px 13px 4px 13px}',
+    '.ark-scene[data-ark-scene="true"] .ark-scene-robot{visibility:hidden!important}.ark-scene[data-ark-scene="true"] .ark-scene-bubble{visibility:hidden!important;opacity:0;transition:opacity .28s ease}.ark-scene[data-ark-scene="true"].ark-is-speaking .ark-scene-bubble{visibility:visible!important;opacity:1}',
+    '.ark-home-message{visibility:hidden!important;opacity:0!important;transition:opacity .28s ease}.ark-home-message.ark-is-speaking{visibility:visible!important;opacity:1!important}',
+    '.ark-home-follow-robot{transition:none!important;transform-origin:50% 50%;will-change:transform;filter:drop-shadow(0 9px 9px rgba(0,0,0,.5)) drop-shadow(0 0 12px rgba(80,190,245,.55))}',
+    '.ark-home-follow-robot>svg{animation:ark-home-levitate 2.8s ease-in-out infinite}',
+    '.ark-home-follow-robot.ark-route-moving>svg{animation:ark-route-flight .42s ease-in-out infinite alternate}',
+    '.ark-home-follow-smoke{opacity:.45;filter:blur(10px);animation:ark-home-follow-puff .75s ease-in-out infinite}',
+    '.ark-route-trail{position:fixed;inset:0;z-index:79;width:100vw;height:100vh;pointer-events:none;opacity:0;overflow:visible;transition:opacity .25s ease}.ark-route-trail--active{opacity:1}.ark-route-trail path{fill:none;stroke:rgba(102,211,255,.68);stroke-width:5;stroke-linecap:round;stroke-dasharray:2 13;filter:drop-shadow(0 0 5px #49bfff);opacity:.9}.ark-route-trail:after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse,rgba(91,201,255,.12),transparent 65%);filter:blur(10px)}',
+    '@keyframes ark-route-flight{from{transform:rotate(-7deg) translateY(1px)}to{transform:rotate(7deg) translateY(-5px)}}@keyframes ark-route-dash{0%{stroke-dashoffset:160;opacity:0}18%{opacity:1}100%{stroke-dashoffset:0;opacity:.35}}',
+    '@media(prefers-reduced-motion:reduce){.ark-home-follow-robot>svg,.ark-home-follow-smoke,.ark-route-trail path{animation:none!important;transition:none!important}}',
     '.ark-home-follow-robot{position:fixed;left:0;top:0;z-index:80;display:none;place-items:center;pointer-events:none;will-change:transform;transition:transform .32s cubic-bezier(.2,.75,.25,1);filter:drop-shadow(0 9px 9px rgba(0,0,0,.5)) drop-shadow(0 0 12px rgba(80,190,245,.48))}',
     '.ark-home-follow-robot>svg{position:relative;z-index:2;width:100%;height:100%;overflow:visible;animation:ark-home-levitate 3.4s ease-in-out infinite}',
     '.ark-home-follow-smoke{position:absolute;z-index:1;left:50%;top:72%;width:46px;height:35px;border-radius:50%;background:radial-gradient(ellipse,rgba(101,211,255,.48),rgba(49,160,235,.2) 48%,transparent 75%);filter:blur(8px);animation:ark-home-follow-puff 1.8s ease-in-out infinite}',
@@ -373,49 +382,104 @@
     feature.parentNode.insertBefore(holder, feature.nextSibling);
   }
 
+  var arkRoute = { target:null, animation:null, follower:null, trail:null, speaking:null, timer:0 };
+  function routeTargets(content) {
+    var targets = [];
+    Array.prototype.forEach.call(content.querySelectorAll('.ark-home-drawer'), function (card) {
+      var message = card.nextElementSibling;
+      if (message && message.classList.contains('ark-home-message')) targets.push({anchor:card, message:message, robot:null, kind:'home'});
+    });
+    Array.prototype.forEach.call(content.querySelectorAll('.ark-scene[data-ark-scene="true"]'), function (scene) {
+      targets.push({anchor:scene, message:scene, robot:scene.querySelector('.ark-scene-robot'), kind:'scene'});
+    });
+    return targets;
+  }
+  function setArkSpeaking(target) {
+    if (arkRoute.speaking && arkRoute.speaking.message) arkRoute.speaking.message.classList.remove('ark-is-speaking');
+    arkRoute.speaking = target || null;
+    if (target && target.message) target.message.classList.add('ark-is-speaking');
+  }
+  function routePoint(target, vw, vh) {
+    var rect = target.robot ? target.robot.getBoundingClientRect() : target.anchor.getBoundingClientRect();
+    var width = vw <= 650 ? 66 : 78, height = vw <= 650 ? 76 : 88;
+    var x, y;
+    if (target.kind === 'home') {
+      var left = target.anchor.classList.contains('ark-home-drawer--left');
+      x = left ? rect.left + 7 : rect.right - width - 7;
+      y = rect.bottom - height + 5;
+    } else {
+      x = rect.left + (rect.width - width) / 2;
+      y = rect.top + (rect.height - height) / 2;
+    }
+    return {x:Math.max(4,Math.min(vw-width-4,x)),y:Math.max(4,Math.min(vh-height-4,y)),width:width,height:height};
+  }
+  function drawArkTrail(from, to) {
+    if (!arkRoute.trail) return;
+    var dx=to.x-from.x, dy=to.y-from.y, bend=Math.max(38,Math.min(150,Math.abs(dx)*.34+Math.abs(dy)*.16));
+    var c1x=from.x+dx*.28+(dy>=0?-bend:bend), c1y=from.y+dy*.18;
+    var c2x=from.x+dx*.72+(dy>=0?bend:-bend), c2y=from.y+dy*.82;
+    var d='M '+(from.x+to.width/2)+' '+(from.y+to.height*.72)+' C '+(c1x+to.width/2)+' '+c1y+', '+(c2x+to.width/2)+' '+c2y+', '+(to.x+to.width/2)+' '+(to.y+to.height*.72);
+    var path=arkRoute.trail.querySelector('path');
+    path.setAttribute('d',d);
+    path.style.animation='none'; void path.getBoundingClientRect(); path.style.animation='ark-route-dash 1.35s linear';
+    arkRoute.trail.classList.add('ark-route-trail--active');
+    window.clearTimeout(arkRoute.timer);
+    arkRoute.timer=window.setTimeout(function(){arkRoute.trail.classList.remove('ark-route-trail--active');},1450);
+  }
   function updateHomeArk() {
-    var content = document.getElementById('content');
-    var follower = document.querySelector('.ark-home-follow-robot');
-    if (!content || !follower || activeId() !== 'overview') {
-      if (follower) follower.style.display = 'none';
+    var content=document.getElementById('content'), follower=arkRoute.follower || document.querySelector('.ark-home-follow-robot');
+    if (!content || !follower) return;
+    if (arkRoute.follower && arkRoute.follower !== follower) arkRoute.follower=follower;
+    var id=activeId();
+    if (!arkRoute.follower || !arkRoute.trail) return;
+    if (!content || id==='ark') { follower.style.display='none'; setArkSpeaking(null); return; }
+    var targets=routeTargets(content);
+    if (!targets.length) { follower.style.display='none'; setArkSpeaking(null); return; }
+    var vh=window.innerHeight||document.documentElement.clientHeight, vw=window.innerWidth||document.documentElement.clientWidth;
+    var aimY=vh*.48;
+    var visible=targets.map(function(t){var r=t.anchor.getBoundingClientRect();return {target:t,rect:r,distance:Math.abs((r.top+r.bottom)/2-aimY)};})
+      .filter(function(v){return v.rect.bottom>0&&v.rect.top<vh;});
+    if(!visible.length){follower.style.display='none';setArkSpeaking(null);return;}
+    visible.sort(function(a,b){return a.distance-b.distance;});
+    var target=visible[0].target, point=routePoint(target,vw,vh);
+    follower.style.width=point.width+'px'; follower.style.height=point.height+'px'; follower.style.display='grid';
+    if(arkRoute.target===target){
+      if(!arkRoute.animation) setArkSpeaking(target);
       return;
     }
-    var cards = Array.prototype.slice.call(content.querySelectorAll('.ark-home-drawer'));
-    if (!cards.length) { follower.style.display = 'none'; return; }
-    var vh = window.innerHeight || document.documentElement.clientHeight;
-    var vw = window.innerWidth || document.documentElement.clientWidth;
-    var aimY = vh * 0.54;
-    var visible = cards.map(function (card) {
-      var rect = card.getBoundingClientRect();
-      return {card:card, rect:rect, distance:Math.abs((rect.top + rect.bottom) / 2 - aimY)};
-    }).filter(function (entry) { return entry.rect.bottom > 0 && entry.rect.top < vh; });
-    if (!visible.length) { follower.style.display = 'none'; return; }
-    visible.sort(function (a, b) { return a.distance - b.distance; });
-    var target = visible[0], rect = target.rect;
-    var leftSide = target.card.classList.contains('ark-home-drawer--left');
-    var width = vw <= 650 ? 68 : 78, height = vw <= 650 ? 78 : 88;
-    var x = leftSide ? rect.left + 7 : rect.right - width - 7;
-    var y = rect.bottom - height + 5;
-    x = Math.max(5, Math.min(vw - width - 5, x));
-    y = Math.max(8, Math.min(vh - height - 8, y));
-    follower.style.display = 'grid';
-    follower.style.width = width + 'px';
-    follower.style.height = height + 'px';
-    follower.style.transform = 'translate3d(' + Math.round(x) + 'px,' + Math.round(y) + 'px,0)';
-    var heading = target.card.querySelector('h3');
-    follower.setAttribute('data-following', heading ? heading.textContent.trim() : 'seção');
+    var current=follower.getBoundingClientRect();
+    var from={x:current.left,y:current.top,width:point.width,height:point.height};
+    if(!arkRoute.target || current.width===0){
+      follower.style.transform='translate3d('+point.x+'px,'+point.y+'px,0)';
+      arkRoute.target=target; setArkSpeaking(target); return;
+    }
+    setArkSpeaking(null);
+    if(arkRoute.animation) arkRoute.animation.cancel();
+    drawArkTrail(from,point);
+    var dx=point.x-from.x,dy=point.y-from.y, bend=Math.max(34,Math.min(125,Math.abs(dx)*.28+Math.abs(dy)*.12));
+    var frames=[];
+    for(var i=0;i<=16;i++){
+      var t=i/16, inv=1-t;
+      var cx1=from.x+dx*.28, cy1=from.y+dy*.12+(dy>=0?-bend:bend);
+      var cx2=from.x+dx*.72, cy2=from.y+dy*.88+(dy>=0?bend:-bend);
+      var px=inv*inv*inv*from.x+3*inv*inv*t*cx1+3*inv*t*t*cx2+t*t*t*point.x;
+      var py=inv*inv*inv*from.y+3*inv*inv*t*cy1+3*inv*t*t*cy2+t*t*t*point.y;
+      frames.push({transform:'translate3d('+px+'px,'+py+'px,0) rotate('+((dx>=0?1:-1)*Math.sin(Math.PI*t)*12)+'deg) scale('+(1+Math.sin(Math.PI*t)*.08)+')'});
+    }
+    arkRoute.animation=follower.animate(frames,{duration:Math.min(1700,Math.max(650,Math.hypot(dx,dy)*1.25)),easing:'cubic-bezier(.22,.72,.2,1)',fill:'forwards'});
+    arkRoute.target=target;
+    arkRoute.animation.onfinish=function(){arkRoute.animation=null;follower.style.transform='translate3d('+point.x+'px,'+point.y+'px,0)';setArkSpeaking(target);};
   }
-
   function ensureHomeArk() {
-    var follower = document.querySelector('.ark-home-follow-robot');
-    if (!follower) {
-      follower = document.createElement('div');
-      follower.className = 'ark-home-follow-robot';
-      follower.setAttribute('aria-hidden', 'true');
-      follower.innerHTML = '<span class="ark-home-follow-smoke ark-home-follow-smoke--one"></span><span class="ark-home-follow-smoke ark-home-follow-smoke--two"></span>' + robotSvg;
+    var follower=document.querySelector('.ark-home-follow-robot');
+    if(!follower){
+      follower=document.createElement('div');follower.className='ark-home-follow-robot';follower.setAttribute('aria-hidden','true');
+      follower.innerHTML='<span class="ark-home-follow-smoke ark-home-follow-smoke--one"></span><span class="ark-home-follow-smoke ark-home-follow-smoke--two"></span>'+robotSvg;
       document.body.appendChild(follower);
     }
-    updateHomeArk();
+    var trail=document.querySelector('.ark-route-trail');
+    if(!trail){trail=document.createElementNS('http://www.w3.org/2000/svg','svg');trail.setAttribute('class','ark-route-trail');trail.setAttribute('viewBox','0 0 1000 1000');trail.setAttribute('preserveAspectRatio','none');trail.innerHTML='<path d=""/>';document.body.appendChild(trail);}
+    arkRoute.follower=follower;arkRoute.trail=trail;updateHomeArk();
   }
 
   function scheduleHomeArkUpdate() {
@@ -688,11 +752,7 @@
     var id = activeId();
     updateBackButton(id);
     placeScenes(content, id);
-    if (id === 'overview') ensureHomeArk();
-    else {
-      var homeFollower = document.querySelector('.ark-home-follow-robot');
-      if (homeFollower) homeFollower.style.display = 'none';
-    }
+    ensureHomeArk();
     if (id !== 'overview' && id !== 'ark' && !content.querySelector('[data-ark-scene="true"]')) {
       var anchor = content.querySelector('.panel') || content.querySelector('.intro-lead') || content.firstElementChild;
       addBefore(anchor, 'page-guide-' + id, 'Oi! Passei por este arquivo para ajudar na leitura. Observe os títulos, exemplos e tabelas com calma; se alguma regra não estiver explicada aqui, não vou inventar uma resposta. Pode me chamar pela Central do A.R.K. quando precisar!', 'compact');
