@@ -48,17 +48,20 @@
   style.textContent = css;
   document.head.appendChild(style);
 
-  var robotSvg = '<svg viewBox="0 0 140 150" role="img" aria-label="A.R.K., robô branco oval flutuante, com visor escuro e olhos azuis expressivos">' +
-    '<defs><linearGradient id="ark-shell-eve" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff"/><stop offset=".48" stop-color="#f8fcff"/><stop offset="1" stop-color="#c6dce8"/></linearGradient><linearGradient id="ark-face-eve" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#102b40"/><stop offset="1" stop-color="#030d18"/></linearGradient><radialGradient id="ark-eye-eve"><stop stop-color="#efffff"/><stop offset=".38" stop-color="#83e5ff"/><stop offset="1" stop-color="#168bd3"/></radialGradient><filter id="ark-glow-eve"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>' +
-    '<ellipse cx="70" cy="139" rx="29" ry="4.5" fill="#39b9f4" opacity=".2"/><ellipse cx="70" cy="137" rx="18" ry="2" fill="#b7efff" opacity=".65"/>' +
-    '<path d="M70 8C39 8 22 31 22 69C22 108 39 132 70 132C101 132 118 108 118 69C118 31 101 8 70 8Z" fill="url(#ark-shell-eve)" stroke="#b5cbd8" stroke-width="1.7"/>' +
-    '<path d="M38 34C46 17 58 13 70 13C83 13 95 19 102 35" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".95"/>' +
-    '<path d="M27 82C19 85 17 93 21 99C25 103 31 99 35 93M113 82C121 85 123 93 119 99C115 103 109 99 105 93" fill="none" stroke="#e8f4fa" stroke-width="6" stroke-linecap="round"/>' +
-    '<ellipse cx="70" cy="64" rx="35" ry="22" fill="url(#ark-face-eve)" stroke="#6d9bb5" stroke-width="1.5"/>' +
-    '<ellipse class="ark-eye ark-eye--left" cx="56" cy="63" rx="6.2" ry="8.2" fill="url(#ark-eye-eve)" filter="url(#ark-glow-eve)"/><ellipse class="ark-eye ark-eye--right" cx="84" cy="63" rx="6.2" ry="8.2" fill="url(#ark-eye-eve)" filter="url(#ark-glow-eve)"/>' +
-    '<path d="M62 83Q70 87 78 83" fill="none" stroke="#79d8fa" stroke-width="1.8" stroke-linecap="round" opacity=".8"/>' +
-    '<path d="M43 111Q70 124 97 111" fill="none" stroke="#91cce6" stroke-width="2" opacity=".7"/><path d="M55 121Q70 126 85 121" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".8"/>' +
-    '<path d="M70 8V3" stroke="#8bdcff" stroke-width="1.8" stroke-linecap="round"/><circle cx="70" cy="3" r="2.5" fill="#8be7ff" filter="url(#ark-glow-eve)"/></svg>';
+  var robotSvg = '<svg viewBox="0 0 160 180" role="img" aria-label="A.R.K., androide branco flutuante com visor escuro e olhos azuis">' +
+    '<defs><linearGradient id="ark-shell-eve" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff"/><stop offset=".52" stop-color="#f3faff"/><stop offset="1" stop-color="#b8d1df"/></linearGradient><linearGradient id="ark-face-eve" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#163a54"/><stop offset="1" stop-color="#020c17"/></linearGradient><radialGradient id="ark-eye-eve"><stop stop-color="#fff"/><stop offset=".4" stop-color="#8ceaff"/><stop offset="1" stop-color="#168bd3"/></radialGradient><filter id="ark-glow-eve"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>' +
+    '<ellipse cx="80" cy="168" rx="31" ry="5" fill="#39b9f4" opacity=".2"/><ellipse cx="80" cy="166" rx="19" ry="2" fill="#b7efff" opacity=".65"/>' +
+    '<path d="M57 105Q42 109 35 126L28 143Q26 150 33 153Q40 155 45 148L58 133M103 105Q118 109 125 126L132 143Q134 150 127 153Q120 155 115 148L102 133" fill="url(#ark-shell-eve)" stroke="#a9c4d3" stroke-width="2" stroke-linejoin="round"/>' +
+    '<circle cx="43" cy="125" r="5" fill="#dff5ff" stroke="#94b9cd"/><circle cx="117" cy="125" r="5" fill="#dff5ff" stroke="#94b9cd"/>' +
+    '<path d="M80 82C60 82 51 96 51 116L51 137Q51 151 80 155Q109 151 109 137L109 116C109 96 100 82 80 82Z" fill="url(#ark-shell-eve)" stroke="#a9c4d3" stroke-width="2"/>' +
+    '<path d="M62 105Q80 96 98 105" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".9"/><path d="M68 139Q80 145 92 139" fill="none" stroke="#7fc5e4" stroke-width="2" stroke-linecap="round"/>' +
+    '<path d="M80 10C53 10 39 26 39 51C39 78 55 94 80 94C105 94 121 78 121 51C121 26 107 10 80 10Z" fill="url(#ark-shell-eve)" stroke="#a9c4d3" stroke-width="2"/>' +
+    '<path d="M49 34Q59 15 80 15Q101 15 111 34" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/>' +
+    '<rect x="45" y="39" width="70" height="37" rx="17" fill="url(#ark-face-eve)" stroke="#6594ae" stroke-width="1.5"/>' +
+    '<ellipse class="ark-eye ark-eye--left" cx="65" cy="57" rx="6.5" ry="9" fill="url(#ark-eye-eve)" filter="url(#ark-glow-eve)"/><ellipse class="ark-eye ark-eye--right" cx="95" cy="57" rx="6.5" ry="9" fill="url(#ark-eye-eve)" filter="url(#ark-glow-eve)"/>' +
+    '<path d="M72 83Q80 87 88 83" fill="none" stroke="#79d8fa" stroke-width="1.8" stroke-linecap="round" opacity=".85"/>' +
+    '<path d="M80 10V4" stroke="#8bdcff" stroke-width="2" stroke-linecap="round"/><circle cx="80" cy="4" r="3" fill="#8be7ff" filter="url(#ark-glow-eve)"/>' +
+    '<path d="M68 157L80 162L92 157" fill="none" stroke="#8ddcff" stroke-width="2" stroke-linecap="round" opacity=".8"/></svg>';
 
   var arkHologramSvg = '<svg viewBox="0 0 140 150" role="img" aria-label="Modelo antigo do A.R.K. usado como representação holográfica">' +
     '<defs><linearGradient id="ark-shell-v2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff"/><stop offset=".58" stop-color="#e6f3fa"/><stop offset="1" stop-color="#a9c7d9"/></linearGradient><linearGradient id="ark-screen-v2" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#123e60"/><stop offset="1" stop-color="#061827"/></linearGradient><filter id="ark-glow-v2"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>' +
@@ -68,6 +71,58 @@
     '<rect x="43" y="65" width="54" height="55" rx="19" fill="url(#ark-shell-v2)" stroke="#91b4c9" stroke-width="2"/><path d="M52 86Q70 76 88 86" fill="none" stroke="#fff" stroke-width="4" opacity=".8"/><rect x="60" y="91" width="20" height="15" rx="5" fill="#d5efff" stroke="#78b9df"/><path d="M65 98h10" stroke="#2699d6" stroke-width="2.5" stroke-linecap="round"/>' +
     '<rect x="35" y="18" width="70" height="57" rx="25" fill="url(#ark-shell-v2)" stroke="#8eafc2" stroke-width="2"/><path d="M46 31Q70 18 94 31" fill="none" stroke="#fff" stroke-width="5" opacity=".9"/><rect x="44" y="36" width="52" height="25" rx="10" fill="url(#ark-screen-v2)" stroke="#4d91b7" stroke-width="1.5"/><circle cx="58" cy="48.5" r="4" fill="#7de0ff" filter="url(#ark-glow-v2)"/><circle cx="82" cy="48.5" r="4" fill="#7de0ff" filter="url(#ark-glow-v2)"/><path d="M64 57h12" stroke="#55b8ed" stroke-width="1.5" stroke-linecap="round" opacity=".8"/>' +
     '<path d="M35 47h-5M105 47h5" stroke="#9fdcf8" stroke-width="3" stroke-linecap="round"/><circle cx="70" cy="76" r="3" fill="#5dbff1"/><path d="M57 120v5M83 120v5" stroke="#7ec9ed" stroke-width="3" stroke-linecap="round"/></svg>';
+
+
+  var rankStyle = document.createElement('style');
+  rankStyle.id = 'ark-rank-podium-styles';
+  rankStyle.textContent = [
+    '.ark-rank-podium{position:relative;isolation:isolate;display:grid;grid-template-columns:1fr 1.16fr 1fr;align-items:end;gap:12px;margin:24px 0 30px;padding:28px 18px 18px;border:1px solid rgba(94,180,226,.32);border-radius:18px;background:radial-gradient(ellipse at 50% 32%,rgba(31,119,169,.2),transparent 56%),linear-gradient(145deg,#0b2031,#06111d);overflow:hidden}',
+    '.ark-rank-podium:before{content:"RANKING  /  HIERARQUIA SUPERIOR";position:absolute;top:13px;left:0;right:0;text-align:center;color:#8dbbd5;font:700 9px var(--mono,monospace);letter-spacing:2px}',
+    '.ark-rank-podium:after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 25%,rgba(130,218,255,.045) 50%,transparent 75%);background-size:220% 100%;animation:ark-podium-sheen 8s linear infinite;pointer-events:none}',
+    '.ark-rank-card{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;min-width:0;text-align:center}',
+    '.ark-rank-card--first{transform:translateY(-15px)}',
+    '.ark-rank-title{position:relative;display:block;margin:0 0 8px;font:900 clamp(15px,2.5vw,22px)/1.1 var(--display,Arial),sans-serif;letter-spacing:1.5px;text-transform:uppercase}',
+    '.ark-rank-title--pillar{color:#ff594f;text-shadow:0 0 5px #ff392b,0 0 13px #ff351d,0 0 24px #f30;animation:ark-pillar-fire 1.35s ease-in-out infinite alternate}',
+    '.ark-rank-title--lord{color:#ffe39a;text-shadow:0 0 5px #ffd15b,0 0 14px #d99a24;animation:ark-lord-electric 1.8s steps(2,end) infinite}',
+    '.ark-rank-title--commander{color:#d8f1ff;text-shadow:0 0 6px #8ddcff,0 0 15px #58baff;animation:ark-commander-glint 2.4s ease-in-out infinite}',
+    '.ark-rank-title--pillar:after,.ark-rank-title--lord:after,.ark-rank-title--commander:after{content:"";position:absolute;inset:-7px -12px;z-index:-1;pointer-events:none}',
+    '.ark-rank-title--pillar:after{background:radial-gradient(ellipse,rgba(255,76,25,.25),transparent 70%);filter:blur(5px);animation:ark-flame-halo .9s ease-in-out infinite alternate}',
+    '.ark-rank-title--lord:after{background:linear-gradient(115deg,transparent 15%,rgba(255,245,185,.0) 38%,rgba(255,245,185,.9) 50%,transparent 62%);background-size:220% 100%;animation:ark-lightning 2.2s linear infinite}',
+    '.ark-rank-title--commander:after{background:linear-gradient(115deg,transparent 20%,rgba(180,235,255,.75) 50%,transparent 80%);background-size:220% 100%;animation:ark-lightning 3.2s linear infinite}',
+    '.ark-rank-robot{width:min(100%,132px);height:142px;display:grid;place-items:center;filter:drop-shadow(0 7px 15px rgba(78,190,244,.24));animation:ark-rank-float 3.5s ease-in-out infinite}',
+    '.ark-rank-card--first .ark-rank-robot{width:min(100%,154px);height:164px;filter:drop-shadow(0 0 15px rgba(255,83,52,.25))}',
+    '.ark-rank-robot svg{width:100%;height:100%;overflow:visible}',
+    '.ark-rank-plinth{position:relative;display:flex;align-items:center;justify-content:center;width:100%;height:72px;margin-top:3px;border:1px solid rgba(112,181,215,.3);border-bottom:0;border-radius:8px 8px 0 0;background:linear-gradient(150deg,rgba(40,87,116,.82),rgba(11,32,49,.96));box-shadow:inset 0 1px rgba(220,247,255,.14),0 -8px 22px rgba(40,154,212,.08)}',
+    '.ark-rank-card--first .ark-rank-plinth{height:112px;border-color:rgba(255,116,84,.48);background:linear-gradient(150deg,rgba(112,46,44,.9),rgba(35,18,25,.98));box-shadow:inset 0 1px rgba(255,213,190,.2),0 -8px 25px rgba(255,72,38,.13)}',
+    '.ark-rank-card--second .ark-rank-plinth{height:88px;border-color:rgba(229,203,135,.42);background:linear-gradient(150deg,rgba(104,84,44,.82),rgba(31,28,24,.98))}',
+    '.ark-rank-card--third .ark-rank-plinth{height:66px;border-color:rgba(164,216,238,.38);background:linear-gradient(150deg,rgba(65,100,119,.82),rgba(17,30,41,.98))}',
+    '.ark-rank-plinth b{color:#e7f6ff;font:800 23px var(--display,Arial);text-shadow:0 2px 8px #0008}',
+    '.ark-rank-card--first .ark-rank-plinth b{font-size:30px;color:#ffd0b8}.ark-rank-card--second .ark-rank-plinth b{color:#f6e5b5}.ark-rank-card--third .ark-rank-plinth b{color:#d8f1ff}',
+    '.ark-rank-caption{margin-top:8px;color:#91b4ca;font:700 8px var(--mono,monospace);letter-spacing:1px}',
+    '@keyframes ark-podium-sheen{0%{background-position:120% 0}100%{background-position:-120% 0}}',
+    '@keyframes ark-rank-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}',
+    '@keyframes ark-pillar-fire{0%{text-shadow:0 0 4px #ff6a35,0 0 10px #ff351d,0 3px 16px #f30}100%{text-shadow:0 -2px 7px #ffd06a,0 0 17px #ff351d,0 4px 24px #e20}}',
+    '@keyframes ark-flame-halo{from{opacity:.45;transform:scale(.9)}to{opacity:1;transform:scale(1.12)}}',
+    '@keyframes ark-lord-electric{0%,18%,22%,65%,70%,100%{filter:brightness(1);text-shadow:0 0 5px #ffe39a,0 0 14px #d99a24}20%,68%{filter:brightness(1.7);text-shadow:0 0 8px #fff6c7,0 0 22px #ffbf36,2px 0 3px #fff}}',
+    '@keyframes ark-lightning{0%{background-position:120% 0;opacity:0}18%{opacity:.8}38%{opacity:0}100%{background-position:-120% 0;opacity:0}}',
+    '@keyframes ark-commander-glint{0%,100%{filter:brightness(1);text-shadow:0 0 6px #8ddcff,0 0 15px #58baff}50%{filter:brightness(1.5);text-shadow:0 0 10px #e4f8ff,0 0 23px #69cfff}}',
+    '@media(max-width:560px){.ark-rank-podium{gap:5px;padding:28px 8px 12px;margin:18px -2px 24px}.ark-rank-card--first{transform:translateY(-9px)}.ark-rank-title{font-size:clamp(10px,3.1vw,15px);letter-spacing:.6px;margin-bottom:5px}.ark-rank-robot{height:105px}.ark-rank-card--first .ark-rank-robot{height:124px}.ark-rank-plinth{height:54px}.ark-rank-card--first .ark-rank-plinth{height:82px}.ark-rank-card--second .ark-rank-plinth{height:67px}.ark-rank-card--third .ark-rank-plinth{height:48px}.ark-rank-plinth b{font-size:17px}.ark-rank-card--first .ark-rank-plinth b{font-size:22px}.ark-rank-caption{font-size:6px;letter-spacing:.3px}}',
+    '@media(prefers-reduced-motion:reduce){.ark-rank-podium:after,.ark-rank-title,.ark-rank-title:after,.ark-rank-robot{animation:none!important}}'
+  ].join('\\n');
+  document.head.appendChild(rankStyle);
+
+  function addRankPodium(content) {
+    if (!content || content.querySelector('[data-ark-key="rank-podium"]')) return;
+    var holder = document.createElement('div');
+    holder.innerHTML = '<section class="ark-rank-podium" data-ark-scene="true" data-ark-key="rank-podium" aria-label="Pódio dos três maiores ranks">' +
+      '<article class="ark-rank-card ark-rank-card--second"><h3 class="ark-rank-title ark-rank-title--lord">LORD</h3><div class="ark-rank-robot" aria-hidden="true">' + robotSvg + '</div><div class="ark-rank-plinth"><b>2º</b></div><div class="ark-rank-caption">SEGUNDO LUGAR</div></article>' +
+      '<article class="ark-rank-card ark-rank-card--first"><h3 class="ark-rank-title ark-rank-title--pillar">PILAR</h3><div class="ark-rank-robot" aria-hidden="true">' + robotSvg + '</div><div class="ark-rank-plinth"><b>1º</b></div><div class="ark-rank-caption">PRIMEIRO LUGAR</div></article>' +
+      '<article class="ark-rank-card ark-rank-card--third"><h3 class="ark-rank-title ark-rank-title--commander">COMANDANTE-GERAL</h3><div class="ark-rank-robot" aria-hidden="true">' + robotSvg + '</div><div class="ark-rank-plinth"><b>3º</b></div><div class="ark-rank-caption">TERCEIRO LUGAR</div></article>' +
+      '</section>';
+    var anchor = content.querySelector('.panel') || content.querySelector('.rows') || content.firstElementChild;
+    if (anchor && anchor.parentNode) anchor.parentNode.insertBefore(holder.firstElementChild, anchor);
+    else content.appendChild(holder.firstElementChild);
+  }
 
   function esc(value) {
     return String(value == null ? '' : value).replace(/[&<>"']/g, function (c) {
@@ -212,6 +267,7 @@
   }
   function placeScenes(content, id) {
     if (!content) return;
+    if (id === 'ranks') addRankPodium(content);
     if (id === 'overview') {
       addFeatureGuide(content, 'Cosmologia e histórias', 'home-cosmology-guide',
         'Eba, chegou à parte dos grandes mistérios! Por aqui você encontra referências a panteões nórdicos, gregos, egípcios, japoneses, chineses, hindus e celtas — cada tradição com suas próprias divindades e histórias. Também é possível propor um panteão original, criando deuses, símbolos, costumes e relações entre eles para avaliação e integração à Lore. E ainda existem seres que vão muito além do que a gente consegue explicar... confesso que alguns arquivos me deixam com um friozinho nos circuitos! Hehe.',
