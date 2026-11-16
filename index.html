@@ -134,7 +134,7 @@ const extraStyle=`
 `;
 document.head.insertAdjacentHTML('beforeend',`<style>${extraStyle}</style>`);
 const systemDefs=[
-['progression','Missões e Progressão','Missões, formas de evolução, treinamento individual, Honra e Karma em um único sistema.']
+['progression','Missões e Progressão','Missões, formas de evolução, treinamento individual, Honra e Karma em um único sistema.'],
 ['combat','Combate','Confrontos narrativos por turnos, com ações ofensivas, defensivas e possibilidade de contra-ataque.'],
 ['races','Raças','Quatro raças jogáveis: Humanos, Híbridos, Químios e Ciborgues.'],
 
@@ -143,7 +143,7 @@ const systemDefs=[
 ['organizations','Organizações','Agência A Ordem, organização de Sombra e organizações criadas por jogadores.'],
 ['ranks','Rank','Patentes, níveis, requisitos de Honra, Lords e futura etapa dos Pilares.'],
 ['crafting','Criação','Sistema amplo de fabricação de objetos, dispositivos, modificações, armas e armaduras.'],
-['power','Power System','Chi, Talentos, reserva, emissão, formas de utilização, classes e especializações.']
+['power','Sistema de Poder','Chi, Talentos, reserva, emissão, formas de utilização, classes e especializações.']
 ];
 const systemTitles=Object.fromEntries(systemDefs.map(x=>[x[0],x[1]]));
 const origRender=window.render;
