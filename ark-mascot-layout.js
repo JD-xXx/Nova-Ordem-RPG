@@ -108,7 +108,7 @@
     '@keyframes ark-commander-glint{0%,100%{filter:brightness(1);text-shadow:0 0 6px #8ddcff,0 0 15px #58baff}50%{filter:brightness(1.5);text-shadow:0 0 10px #e4f8ff,0 0 23px #69cfff}}',
     '@media(max-width:560px){.ark-rank-podium{gap:5px;padding:28px 8px 12px;margin:18px -2px 24px}.ark-rank-card--first{transform:translateY(-9px)}.ark-rank-title{font-size:clamp(10px,3.1vw,15px);letter-spacing:.6px;margin-bottom:5px}.ark-rank-robot{height:105px}.ark-rank-card--first .ark-rank-robot{height:124px}.ark-rank-plinth{height:54px}.ark-rank-card--first .ark-rank-plinth{height:82px}.ark-rank-card--second .ark-rank-plinth{height:67px}.ark-rank-card--third .ark-rank-plinth{height:48px}.ark-rank-plinth b{font-size:17px}.ark-rank-card--first .ark-rank-plinth b{font-size:22px}.ark-rank-caption{font-size:6px;letter-spacing:.3px}}',
     '@media(prefers-reduced-motion:reduce){.ark-rank-podium:after,.ark-rank-title,.ark-rank-title:after,.ark-rank-robot{animation:none!important}}'
-  ].join('\\n');
+  ].join('\n');
   document.head.appendChild(rankStyle);
 
   function addRankPodium(content) {
