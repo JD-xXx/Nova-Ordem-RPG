@@ -443,6 +443,7 @@
     return targets;
   }
   function setArkSpeaking(target) {
+    if (arkRoute.speaking === (target || null)) return;
     if (arkRoute.speaking && arkRoute.speaking.message) {
       arkRoute.speaking.message.classList.remove('ark-is-speaking', 'ark-holo-active');
     }
