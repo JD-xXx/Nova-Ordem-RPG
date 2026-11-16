@@ -445,7 +445,7 @@
     var target=visible[0].target, point=routePoint(target,vw,vh);
     follower.style.width=point.width+'px'; follower.style.height=point.height+'px'; follower.style.display='grid';
     if(arkRoute.target===target){
-      if(!arkRoute.animation) setArkSpeaking(target);
+      if(!arkRoute.animation){follower.style.transform='translate3d('+point.x+'px,'+point.y+'px,0)';setArkSpeaking(target);}
       return;
     }
     var current=follower.getBoundingClientRect();
