@@ -178,12 +178,12 @@
     '.ark-home-follow-smoke{position:absolute;z-index:1;left:50%;top:72%;width:46px;height:35px;border-radius:50%;background:radial-gradient(ellipse,rgba(101,211,255,.48),rgba(49,160,235,.2) 48%,transparent 75%);filter:blur(8px);animation:ark-home-follow-puff 1.8s ease-in-out infinite}',
     '.ark-home-follow-smoke--one{transform:translate(-90%,-20%) scale(1.1)}.ark-home-follow-smoke--two{transform:translate(0,10%) scale(.75);animation-delay:-.9s}',
     '.ark-route-trail{position:fixed;inset:0;z-index:79;pointer-events:none;overflow:visible}',
-    '.ark-smoke-puff{position:absolute;width:18px;height:13px;border-radius:50%;background:radial-gradient(ellipse at 45% 45%,rgba(210,247,255,.94),rgba(91,202,255,.76) 38%,rgba(44,153,226,.28) 72%,transparent 100%);filter:blur(2px) drop-shadow(0 0 7px rgba(82,193,255,.62));opacity:0;transform:translate(-50%,-50%) scale(.55);animation:ark-cartoon-smoke .82s cubic-bezier(.2,.65,.3,1) forwards}',
-    '.ark-smoke-puff:before,.ark-smoke-puff:after{content:"";position:absolute;border-radius:50%;background:inherit;filter:blur(1px)}.ark-smoke-puff:before{width:12px;height:11px;left:-5px;top:-4px}.ark-smoke-puff:after{width:13px;height:12px;right:-5px;top:-3px}',
-    '@keyframes ark-cartoon-smoke{0%{opacity:0;transform:translate(-50%,-35%) scale(.35)}18%{opacity:.88}65%{opacity:.62}100%{opacity:0;transform:translate(-50%,-115%) scale(1.45)}}',
-    '.ark-transfer-box{position:fixed;z-index:130;top:76px;left:50%;width:174px;padding:9px 10px 8px;transform:translateX(-50%);border:1px solid rgba(104,210,255,.58);border-radius:13px;background:linear-gradient(145deg,rgba(8,32,50,.97),rgba(3,13,24,.98));box-shadow:0 12px 38px rgba(0,0,0,.45),0 0 24px rgba(64,177,235,.2);text-align:center;pointer-events:none;overflow:hidden}',
-    '.ark-transfer-frame{position:relative;height:94px;margin:0 auto 5px;border:1px solid rgba(110,213,255,.28);border-radius:9px;background:radial-gradient(ellipse,rgba(62,174,230,.2),rgba(6,22,36,.28));overflow:hidden}',
-    '.ark-transfer-robot{position:absolute;inset:7px 45px;width:76px;height:80px;display:grid;place-items:center;filter:drop-shadow(0 0 12px rgba(86,204,255,.72))}.ark-transfer-robot svg{width:100%;height:100%;overflow:visible}',
+    '.ark-smoke-puff{position:absolute;width:15px;height:10px;border-radius:50%;background:radial-gradient(ellipse at 45% 45%,rgba(222,249,255,.96),rgba(103,211,255,.78) 42%,rgba(44,153,226,.22) 76%,transparent 100%);filter:blur(1.5px) drop-shadow(0 0 5px rgba(82,193,255,.48));opacity:0;transform:translate(-50%,-50%) scale(.48);animation:ark-cartoon-smoke .58s ease-out forwards}',
+    '.ark-smoke-puff:before,.ark-smoke-puff:after{content:"";position:absolute;border-radius:50%;background:inherit;filter:blur(1px)}.ark-smoke-puff:before{width:9px;height:8px;left:-3px;top:-3px}.ark-smoke-puff:after{width:9px;height:8px;right:-3px;top:-2px}',
+    '@keyframes ark-cartoon-smoke{0%{opacity:0;transform:translate(-50%,-50%) scale(.42)}22%{opacity:.82}62%{opacity:.58}100%{opacity:0;transform:translate(-50%,-62%) scale(.9)}}',
+    '.ark-transfer-box{position:fixed;z-index:130;top:76px;left:50%;width:154px;padding:8px 9px 9px;transform:translateX(-50%);border:1px solid rgba(104,210,255,.5);border-radius:78px 78px 13px 13px;background:linear-gradient(155deg,rgba(8,32,50,.96),rgba(3,13,24,.98));box-shadow:0 10px 34px rgba(0,0,0,.38),0 0 20px rgba(64,177,235,.15);text-align:center;pointer-events:none;overflow:hidden;transition:box-shadow .25s ease,border-color .25s ease}',
+    '.ark-transfer-frame{position:relative;height:94px;margin:0 auto 5px;border:1px solid rgba(110,213,255,.32);border-radius:58px 58px 8px 8px;background:radial-gradient(ellipse at 50% 68%,rgba(62,174,230,.24),rgba(6,22,36,.28) 72%);box-shadow:inset 0 0 22px rgba(76,190,244,.12);overflow:hidden}.ark-transfer-door-core{position:absolute;inset:8px 13px 0;border:1px solid rgba(123,218,255,.2);border-bottom:0;border-radius:48px 48px 0 0;background:linear-gradient(180deg,rgba(83,190,238,.12),rgba(12,47,69,.08));box-shadow:0 0 18px rgba(69,184,240,.13),inset 0 0 18px rgba(76,190,244,.12)}.ark-transfer-door-core:before{content:"";position:absolute;left:50%;top:19px;width:31px;height:31px;transform:translateX(-50%);border:1px solid rgba(139,225,255,.5);border-radius:50%;box-shadow:0 0 13px rgba(83,194,255,.34),inset 0 0 12px rgba(83,194,255,.2)}.ark-transfer-door-core:after{content:"A.R.K.";position:absolute;left:0;right:0;bottom:12px;color:rgba(155,226,255,.6);font:700 7px var(--mono,monospace);letter-spacing:1.5px}',
+    '.ark-transfer-robot{position:absolute;inset:7px 39px;width:76px;height:80px;display:grid;place-items:center;filter:drop-shadow(0 0 12px rgba(86,204,255,.72));opacity:0}.ark-transfer-robot svg{width:100%;height:100%;overflow:visible}.ark-transfer-box--idle .ark-transfer-robot{opacity:0}.ark-transfer-box--idle .ark-transfer-door-core{opacity:1}.ark-transfer-box--leaving .ark-transfer-door-core,.ark-transfer-box--arriving .ark-transfer-door-core{opacity:.18}.ark-transfer-box--leaving,.ark-transfer-box--arriving{border-color:rgba(128,222,255,.82);box-shadow:0 12px 38px rgba(0,0,0,.45),0 0 30px rgba(64,177,235,.34)}.ark-transfer-box--idle .ark-transfer-status{color:#8dc8e5}.ark-route-entering-door{transition:transform .48s cubic-bezier(.2,.7,.2,1)!important}.ark-route-exiting-door{animation:ark-door-exit .42s cubic-bezier(.2,.7,.2,1) both}@keyframes ark-door-exit{from{opacity:0;translate:0 -13px}to{opacity:1;translate:0 22px}}',
     '.ark-transfer-pixel{position:absolute;left:50%;top:50%;width:5px;height:5px;border-radius:1px;background:#9beaff;box-shadow:0 0 7px #50bfff;opacity:0;transform:translate(-50%,-50%)}',
     '.ark-transfer-status{color:#a8e6ff;font:700 8px var(--mono,monospace);letter-spacing:.75px;white-space:nowrap}.ark-transfer-substatus{margin-top:3px;color:#6f9db9;font:600 7px var(--mono,monospace);letter-spacing:.55px}',
     '.ark-transfer-box--leaving .ark-transfer-robot{animation:ark-transfer-disintegrate .78s ease-in forwards}.ark-transfer-box--leaving .ark-transfer-pixel{animation:ark-transfer-pixel-out .72s ease-out forwards;animation-delay:var(--out-delay);animation-fill-mode:both}',
@@ -194,7 +194,7 @@
     '@keyframes ark-transfer-pixel-out{0%{opacity:0;transform:translate(-50%,-50%) scale(.4)}20%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--px)),calc(-50% + var(--py))) scale(.2)}}',
     '@keyframes ark-transfer-pixel-in{0%{opacity:0;transform:translate(calc(-50% + var(--px)),calc(-50% + var(--py))) scale(.2)}35%{opacity:1}100%{opacity:0;transform:translate(-50%,-50%) scale(.35)}}',
     '@keyframes ark-transfer-box-out{to{opacity:0;transform:translate(-50%,-18px) scale(.94)}}',
-    '@media(max-width:650px){.ark-transfer-box{top:66px;width:158px}.ark-transfer-frame{height:86px}.ark-transfer-robot{inset:5px 40px;width:70px;height:74px}}',
+    '@media(max-width:650px){.ark-transfer-box{top:66px;width:146px}.ark-transfer-frame{height:86px}.ark-transfer-robot{inset:5px 35px;width:70px;height:74px}}',
 
     '@keyframes ark-home-levitate{0%,100%{margin-top:0}50%{margin-top:-7px}}@keyframes ark-home-follow-puff{0%,100%{opacity:.25;scale:.75}50%{opacity:.9;scale:1.25}}',
     '@media(max-width:650px){.ark-home-drawer{min-height:158px!important;padding-bottom:20px!important}.ark-home-drawer--right{padding-right:84px!important}.ark-home-drawer--left{padding-left:84px!important}.ark-home-message{min-height:102px;padding:3px 2px 24px}.ark-home-message-bubble{padding:11px 12px}.ark-home-message-bubble p{font-size:11px}.ark-home-message:before{top:-70px;height:76px;right:35px}.ark-home-message:after{top:-75px;right:31px}.ark-home-message--left:before{left:35px;right:auto}.ark-home-message--left:after{left:31px;right:auto}}',
@@ -561,9 +561,9 @@
     var dx=point.x-arkRoute.position.x, dy=point.y-arkRoute.position.y;
     var distance=Math.hypot(dx,dy);
     if(distance>3){
-      var smokeX=arkRoute.position.x+point.width*.5-(dx/distance)*18;
-      var smokeY=arkRoute.position.y+point.height*.5-(dy/distance)*18;
-      if(!arkRoute.lastSmoke || Math.hypot(smokeX-arkRoute.lastSmoke.x,smokeY-arkRoute.lastSmoke.y)>=5){
+      var smokeX=arkRoute.position.x+point.width*.5-(dx/distance)*10;
+      var smokeY=arkRoute.position.y+point.height*.86-(dy/distance)*4;
+      if(!arkRoute.lastSmoke || Math.hypot(smokeX-arkRoute.lastSmoke.x,smokeY-arkRoute.lastSmoke.y)>=15){
         emitArkSmoke(smokeX,smokeY);
         arkRoute.lastSmoke={x:smokeX,y:smokeY};
       }
@@ -598,7 +598,7 @@
     var follower=document.querySelector('.ark-home-follow-robot');
     if(!follower){
       follower=document.createElement('div');follower.className='ark-home-follow-robot';follower.setAttribute('aria-hidden','true');
-      follower.innerHTML='<span class="ark-home-follow-smoke ark-home-follow-smoke--one"></span><span class="ark-home-follow-smoke ark-home-follow-smoke--two"></span>'+robotSvg;
+      follower.innerHTML=robotSvg;
       document.body.appendChild(follower);
     }
     var trail=document.querySelector('.ark-route-trail');
@@ -883,19 +883,27 @@
     }
   }
   function createArkTransferBox(mode) {
-    var box=document.createElement('div');
+    var box=document.querySelector('.ark-transfer-box');
+    if(!box){
+      box=document.createElement('div');
+      box.setAttribute('role','status');
+      box.setAttribute('aria-live','polite');
+    }
     box.className='ark-transfer-box ark-transfer-box--'+mode;
-    box.setAttribute('role','status');
-    box.setAttribute('aria-live','polite');
     var pixels='';
     var vectors=[[-49,-27],[-24,-38],[8,-42],[39,-28],[53,-5],[45,25],[18,39],[-18,39],[-47,22],[-58,0],[0,-18],[28,10]];
     vectors.forEach(function(v,i){
       pixels+='<i class="ark-transfer-pixel" style="--i:'+i+';--px:'+v[0]+'px;--py:'+v[1]+'px;--out-delay:'+(i*18)+'ms;--in-delay:'+((11-i)*22)+'ms"></i>';
     });
-    box.innerHTML='<div class="ark-transfer-frame"><div class="ark-transfer-robot">'+robotSvg+'</div>'+pixels+'</div>'+
-      '<div class="ark-transfer-status">'+(mode==='leaving'?'A.R.K. / CARREGANDO SISTEMA':'A.R.K. / RECONSTRUINDO')+'</div>'+
-      '<div class="ark-transfer-substatus">'+(mode==='leaving'?'TRANSFERINDO DADOS':'REAGRUPANDO DADOS')+'</div>';
-    document.body.appendChild(box);
+    if(!box.querySelector('.ark-transfer-frame')){
+      box.innerHTML='<div class="ark-transfer-frame"><div class="ark-transfer-door-core"></div><div class="ark-transfer-robot">'+robotSvg+'</div>'+pixels+'</div>'+
+        '<div class="ark-transfer-status">A.R.K. / ACESSO PRIVADO</div>'+
+        '<div class="ark-transfer-substatus">PORTAL DE SISTEMA</div>';
+      document.body.appendChild(box);
+    }
+    var status=box.querySelector('.ark-transfer-status'), sub=box.querySelector('.ark-transfer-substatus');
+    if(status) status.textContent=mode==='leaving'?'A.R.K. / CARREGANDO SISTEMA':mode==='arriving'?'A.R.K. / RECONSTRUINDO':'A.R.K. / ACESSO PRIVADO';
+    if(sub) sub.textContent=mode==='leaving'?'TRANSFERINDO DADOS':mode==='arriving'?'REAGRUPANDO DADOS':'PORTAL DE SISTEMA';
     return box;
   }
   function runArkPageTransition(navigate) {
@@ -956,10 +964,16 @@
       arkRoute.position=null;
     }
     if(transfer){
-      transfer.classList.add('ark-transfer-box--departing');
-      window.setTimeout(function(){if(transfer.parentNode)transfer.parentNode.removeChild(transfer);},320);
+      transfer.className='ark-transfer-box ark-transfer-box--idle';
+      var status=transfer.querySelector('.ark-transfer-status'), sub=transfer.querySelector('.ark-transfer-substatus');
+      if(status) status.textContent='A.R.K. / ACESSO PRIVADO';
+      if(sub) sub.textContent='PORTAL DE SISTEMA';
     }
-    updateHomeArk();
+    if(follower && rect && activeId()!=='ark'){
+      follower.classList.remove('ark-route-entering-door');
+      follower.classList.add('ark-route-exiting-door');
+      window.setTimeout(function(){follower.classList.remove('ark-route-exiting-door');updateHomeArk();},430);
+    } else updateHomeArk();
   }
   function initialize() {
     var content = document.getElementById('content');
