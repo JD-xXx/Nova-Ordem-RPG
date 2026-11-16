@@ -543,9 +543,9 @@
     var dx=point.x-arkRoute.position.x, dy=point.y-arkRoute.position.y;
     var distance=Math.hypot(dx,dy);
     if(distance>3){
-      var smokeX=arkRoute.position.x+point.width*.5;
-      var smokeY=arkRoute.position.y+point.height*.76;
-      if(!arkRoute.lastSmoke || Math.hypot(smokeX-arkRoute.lastSmoke.x,smokeY-arkRoute.lastSmoke.y)>=7){
+      var smokeX=arkRoute.position.x+point.width*.5-(dx/distance)*18;
+      var smokeY=arkRoute.position.y+point.height*.5-(dy/distance)*18;
+      if(!arkRoute.lastSmoke || Math.hypot(smokeX-arkRoute.lastSmoke.x,smokeY-arkRoute.lastSmoke.y)>=5){
         emitArkSmoke(smokeX,smokeY);
         arkRoute.lastSmoke={x:smokeX,y:smokeY};
       }
