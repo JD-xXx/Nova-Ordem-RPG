@@ -205,20 +205,38 @@
   style.textContent = css;
   document.head.appendChild(style);
 
-  var robotSvg = '<svg viewBox="0 0 160 180" role="img" aria-label="A.R.K., androide branco flutuante com visor escuro e olhos azuis">' +
-    '<defs><linearGradient id="ark-shell-eve" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff"/><stop offset=".52" stop-color="#f3faff"/><stop offset="1" stop-color="#b8d1df"/></linearGradient><linearGradient id="ark-face-eve" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#163a54"/><stop offset="1" stop-color="#020c17"/></linearGradient><radialGradient id="ark-eye-eve"><stop stop-color="#fff"/><stop offset=".4" stop-color="#8ceaff"/><stop offset="1" stop-color="#168bd3"/></radialGradient><filter id="ark-glow-eve"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>' +
-    '<ellipse cx="80" cy="168" rx="31" ry="5" fill="#39b9f4" opacity=".2"/><ellipse cx="80" cy="166" rx="19" ry="2" fill="#b7efff" opacity=".65"/>' +
-    '<path d="M57 105Q42 109 35 126L28 143Q26 150 33 153Q40 155 45 148L58 133M103 105Q118 109 125 126L132 143Q134 150 127 153Q120 155 115 148L102 133" fill="url(#ark-shell-eve)" stroke="#a9c4d3" stroke-width="2" stroke-linejoin="round"/>' +
-    '<circle cx="43" cy="125" r="5" fill="#dff5ff" stroke="#94b9cd"/><circle cx="117" cy="125" r="5" fill="#dff5ff" stroke="#94b9cd"/>' +
-    '<path d="M80 82C60 82 51 96 51 116L51 137Q51 151 80 155Q109 151 109 137L109 116C109 96 100 82 80 82Z" fill="url(#ark-shell-eve)" stroke="#a9c4d3" stroke-width="2"/>' +
-    '<path d="M62 105Q80 96 98 105" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".9"/><path d="M68 139Q80 145 92 139" fill="none" stroke="#7fc5e4" stroke-width="2" stroke-linecap="round"/>' +
-    '<path d="M80 10C53 10 39 26 39 51C39 78 55 94 80 94C105 94 121 78 121 51C121 26 107 10 80 10Z" fill="url(#ark-shell-eve)" stroke="#a9c4d3" stroke-width="2"/>' +
-    '<path d="M49 34Q59 15 80 15Q101 15 111 34" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/>' +
-    '<rect x="45" y="39" width="70" height="37" rx="17" fill="url(#ark-face-eve)" stroke="#6594ae" stroke-width="1.5"/>' +
-    '<ellipse class="ark-eye ark-eye--left" cx="65" cy="57" rx="6.5" ry="9" fill="url(#ark-eye-eve)" filter="url(#ark-glow-eve)"/><ellipse class="ark-eye ark-eye--right" cx="95" cy="57" rx="6.5" ry="9" fill="url(#ark-eye-eve)" filter="url(#ark-glow-eve)"/>' +
-    '<path d="M72 83Q80 87 88 83" fill="none" stroke="#79d8fa" stroke-width="1.8" stroke-linecap="round" opacity=".85"/>' +
-    '<path d="M80 10V4" stroke="#8bdcff" stroke-width="2" stroke-linecap="round"/><circle cx="80" cy="4" r="3" fill="#8be7ff" filter="url(#ark-glow-eve)"/>' +
-    '<path d="M68 157L80 162L92 157" fill="none" stroke="#8ddcff" stroke-width="2" stroke-linecap="round" opacity=".8"/></svg>';
+  var arkCharacterStyle = document.createElement('style');
+  arkCharacterStyle.id = 'ark-character-animation-styles';
+  arkCharacterStyle.textContent = [
+    '.ark-arm{transform-box:fill-box;transform-origin:50% 50%;animation:ark-arm-drift 4.8s ease-in-out infinite}',
+    '.ark-arm--right{animation-delay:-2.4s}',
+    '.ark-visor-glint{animation:ark-visor-shine 5.6s ease-in-out infinite;transform-box:fill-box;transform-origin:center}',
+    '.ark-eye{transform-box:fill-box;transform-origin:center;animation:ark-eye-blink 5.8s ease-in-out infinite}',
+    '.ark-eye--right{animation-delay:.08s}',
+    '@keyframes ark-arm-drift{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-2px) rotate(2deg)}}',
+    '@keyframes ark-visor-shine{0%,72%,100%{opacity:.3;transform:translateX(-3px)}38%{opacity:.9;transform:translateX(3px)}}',
+    '@keyframes ark-eye-blink{0%,91%,94%,100%{transform:scaleY(1)}92%,93%{transform:scaleY(.12)}}',
+    '@media(prefers-reduced-motion:reduce){.ark-arm,.ark-visor-glint,.ark-eye{animation:none!important}}'
+  ].join('\\n');
+  document.head.appendChild(arkCharacterStyle);
+
+  var robotSvg = '<svg viewBox="0 0 180 190" role="img" aria-label="A.R.K., androide branco flutuante com visor escuro e olhos azuis expressivos">' +
+    '<defs><linearGradient id="ark-shell-v5" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff"/><stop offset=".48" stop-color="#f3faff"/><stop offset="1" stop-color="#b6d0df"/></linearGradient><linearGradient id="ark-shell-edge-v5" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#c4dbe7"/></linearGradient><linearGradient id="ark-visor-v5" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#173b55"/><stop offset=".5" stop-color="#061a2a"/><stop offset="1" stop-color="#020b15"/></linearGradient><radialGradient id="ark-eye-v5"><stop stop-color="#fff"/><stop offset=".34" stop-color="#a8f1ff"/><stop offset="1" stop-color="#168bd3"/></radialGradient><radialGradient id="ark-core-v5"><stop stop-color="#f0ffff"/><stop offset=".42" stop-color="#75e5ff"/><stop offset="1" stop-color="#168bc4"/></radialGradient><filter id="ark-glow-v5"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>' +
+    '<ellipse cx="90" cy="178" rx="34" ry="5" fill="#39b9f4" opacity=".2"/><ellipse cx="90" cy="176" rx="20" ry="2.5" fill="#b7efff" opacity=".7"/>' +
+    '<g class="ark-arm ark-arm--left"><path d="M63 108Q52 105 45 115L36 136Q32 144 39 149Q46 153 51 144L64 124Z" fill="url(#ark-shell-v5)" stroke="#9ebaca" stroke-width="2" stroke-linejoin="round"/><circle cx="54" cy="114" r="8" fill="url(#ark-shell-edge-v5)" stroke="#91afc1" stroke-width="1.5"/><path d="M37 138L34 145" stroke="#7edfff" stroke-width="2.5" stroke-linecap="round"/></g>' +
+    '<g class="ark-arm ark-arm--right"><path d="M117 108Q128 105 135 115L144 136Q148 144 141 149Q134 153 129 144L116 124Z" fill="url(#ark-shell-v5)" stroke="#9ebaca" stroke-width="2" stroke-linejoin="round"/><circle cx="126" cy="114" r="8" fill="url(#ark-shell-edge-v5)" stroke="#91afc1" stroke-width="1.5"/><path d="M143 138L146 145" stroke="#7edfff" stroke-width="2.5" stroke-linecap="round"/></g>' +
+    '<path d="M66 103Q56 108 54 121L59 153Q72 166 90 168Q108 166 121 153L126 121Q124 108 114 103L105 111H75Z" fill="url(#ark-shell-v5)" stroke="#a5c0cf" stroke-width="2" stroke-linejoin="round"/>' +
+    '<path d="M69 112Q90 122 111 112" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".92"/><path d="M74 151Q90 158 106 151" fill="none" stroke="#8cb7ca" stroke-width="1.6" stroke-linecap="round" opacity=".8"/>' +
+    '<path d="M90 118L101 132L90 145L79 132Z" fill="url(#ark-core-v5)" stroke="#a8efff" stroke-width="1.5" filter="url(#ark-glow-v5)"/><circle cx="90" cy="132" r="3" fill="#f2ffff"/><path d="M67 130L74 133M113 130L106 133" stroke="#79d7f4" stroke-width="2" stroke-linecap="round"/>' +
+    '<path d="M90 14C63 14 43 33 43 59L43 73C43 98 61 114 90 114C119 114 137 98 137 73L137 59C137 33 117 14 90 14Z" fill="url(#ark-shell-edge-v5)" stroke="#9ebaca" stroke-width="2"/>' +
+    '<path d="M54 37Q65 18 90 18Q115 18 126 37" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".95"/>' +
+    '<path d="M46 51Q90 38 134 51L131 83Q90 99 49 83Z" fill="url(#ark-visor-v5)" stroke="#5e8da7" stroke-width="1.6"/>' +
+    '<path class="ark-visor-glint" d="M56 53Q90 43 124 53" fill="none" stroke="#b7efff" stroke-width="1.6" stroke-linecap="round" opacity=".7"/>' +
+    '<ellipse class="ark-eye ark-eye--left" cx="69" cy="67" rx="7" ry="10" fill="url(#ark-eye-v5)" filter="url(#ark-glow-v5)"/><ellipse class="ark-eye ark-eye--right" cx="111" cy="67" rx="7" ry="10" fill="url(#ark-eye-v5)" filter="url(#ark-glow-v5)"/>' +
+    '<circle cx="67" cy="63" r="2.2" fill="#fff" opacity=".9"/><circle cx="109" cy="63" r="2.2" fill="#fff" opacity=".9"/>' +
+    '<path d="M79 91Q90 96 101 91" fill="none" stroke="#78dfff" stroke-width="1.8" stroke-linecap="round" opacity=".9"/>' +
+    '<path d="M90 14V8" stroke="#8bdcff" stroke-width="2" stroke-linecap="round"/><circle cx="90" cy="7" r="3.5" fill="#8be7ff" filter="url(#ark-glow-v5)"/>' +
+    '<path d="M78 166L90 171L102 166" fill="none" stroke="#8ddcff" stroke-width="2" stroke-linecap="round" opacity=".85"/></svg>';
 
   var arkHologramSvg = '<svg viewBox="0 0 140 150" role="img" aria-label="Modelo antigo do A.R.K. usado como representação holográfica">' +
     '<defs><linearGradient id="ark-shell-v2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff"/><stop offset=".58" stop-color="#e6f3fa"/><stop offset="1" stop-color="#a9c7d9"/></linearGradient><linearGradient id="ark-screen-v2" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#123e60"/><stop offset="1" stop-color="#061827"/></linearGradient><filter id="ark-glow-v2"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>' +
@@ -250,11 +268,11 @@
     '.ark-rank-card--first .ark-rank-robot{width:min(100%,154px);height:164px;filter:drop-shadow(0 0 15px rgba(255,83,52,.25))}',
     '.ark-rank-robot svg{width:100%;height:100%;overflow:visible}',
     '.ark-rank-plinth{position:relative;display:flex;align-items:center;justify-content:center;width:100%;height:72px;margin-top:3px;border:1px solid rgba(112,181,215,.3);border-bottom:0;border-radius:8px 8px 0 0;background:linear-gradient(150deg,rgba(40,87,116,.82),rgba(11,32,49,.96));box-shadow:inset 0 1px rgba(220,247,255,.14),0 -8px 22px rgba(40,154,212,.08)}',
-    '.ark-rank-card--first .ark-rank-plinth{height:112px;border-color:rgba(255,116,84,.48);background:linear-gradient(150deg,rgba(112,46,44,.9),rgba(35,18,25,.98));box-shadow:inset 0 1px rgba(255,213,190,.2),0 -8px 25px rgba(255,72,38,.13)}',
-    '.ark-rank-card--second .ark-rank-plinth{height:88px;border-color:rgba(229,203,135,.42);background:linear-gradient(150deg,rgba(104,84,44,.82),rgba(31,28,24,.98))}',
-    '.ark-rank-card--third .ark-rank-plinth{height:66px;border-color:rgba(164,216,238,.38);background:linear-gradient(150deg,rgba(65,100,119,.82),rgba(17,30,41,.98))}',
-    '.ark-rank-plinth b{color:#e7f6ff;font:800 23px var(--display,Arial);text-shadow:0 2px 8px #0008}',
-    '.ark-rank-card--first .ark-rank-plinth b{font-size:30px;color:#ffd0b8}.ark-rank-card--second .ark-rank-plinth b{color:#f6e5b5}.ark-rank-card--third .ark-rank-plinth b{color:#d8f1ff}',
+    '.ark-rank-card--first .ark-rank-plinth{height:112px;border-color:rgba(255,220,126,.72);background:linear-gradient(150deg,rgba(150,111,36,.96),rgba(48,34,12,.99));box-shadow:inset 0 1px rgba(255,245,202,.28),0 -8px 25px rgba(255,194,62,.16)}',
+    '.ark-rank-card--second .ark-rank-plinth{height:88px;border-color:rgba(210,225,235,.58);background:linear-gradient(150deg,rgba(112,132,145,.92),rgba(29,40,49,.99))}',
+    '.ark-rank-card--third .ark-rank-plinth{height:66px;border-color:rgba(206,139,102,.56);background:linear-gradient(150deg,rgba(125,75,48,.92),rgba(39,24,20,.99))}',
+    '.ark-rank-plinth b{width:44px;height:44px;display:grid;place-items:center;border:2px solid rgba(255,255,255,.48);border-radius:50%;background:radial-gradient(circle at 34% 25%,#fff,#91a8b8 56%,#425563);color:#f5fbff;font:800 19px var(--display,Arial);text-shadow:0 2px 8px #0008;box-shadow:inset 0 1px 3px #fff9,0 4px 12px #0006}',
+    '.ark-rank-card--first .ark-rank-plinth b{width:52px;height:52px;font-size:22px;border-color:#ffe6a0;background:radial-gradient(circle at 34% 25%,#fff4c7,#d6a83f 56%,#775018);color:#fff5cf}.ark-rank-card--second .ark-rank-plinth b{border-color:#e7f2f8;background:radial-gradient(circle at 34% 25%,#fff,#b7c5ce 56%,#637784);color:#fff}.ark-rank-card--third .ark-rank-plinth b{border-color:#e9b18d;background:radial-gradient(circle at 34% 25%,#ffe1c9,#b97850 56%,#633c2a);color:#fff0e4}',
     '.ark-rank-caption{margin-top:8px;color:#91b4ca;font:700 8px var(--mono,monospace);letter-spacing:1px}',
     '@keyframes ark-podium-sheen{0%{background-position:120% 0}100%{background-position:-120% 0}}',
     '@keyframes ark-rank-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}',
