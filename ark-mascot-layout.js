@@ -155,6 +155,8 @@
     '.ark-demo-projection-beam{transform-origin:0 100%;clip-path:polygon(0 100%,0 100%,100% 100%,100% 100%)!important}',
     '.ark-home-message{height:0!important;min-height:0!important;max-height:0!important;margin:0!important;padding:0!important;overflow:hidden!important;opacity:0!important;visibility:hidden!important;transition:max-height .72s cubic-bezier(.2,.7,.2,1),padding .55s ease,margin .55s ease,opacity .3s ease}',
     '.ark-home-message.ark-is-speaking{height:auto!important;min-height:0!important;max-height:900px!important;margin:0 0 12px!important;padding:4px 8px 30px!important;overflow:visible!important;opacity:1!important;visibility:visible!important}',
+    '#content{overflow-anchor:none!important}',
+    '.ark-home-message,.ark-chi-stage,.ark-talent-demo,.ark-chi-reserve-demo,.ark-combat-demo{overflow-anchor:none!important}',
     '@keyframes ark-projector-arrive{from{opacity:0;transform:perspective(700px) translate3d(-10px,8px,-90px) scale(.72)}to{opacity:1;transform:perspective(700px) translateZ(-55px) scale(.88)}}',
     '@keyframes ark-beam-form{0%{clip-path:polygon(0 100%,0 100%,100% 100%,100% 100%);opacity:0}100%{clip-path:polygon(0 100%,0 0,100% 0,100% 100%);opacity:.8}}',
     '.ark-chi-stage.ark-holo-active .ark-chi-projection{display:flex;animation:ark-holo-materialize .78s cubic-bezier(.18,.72,.25,1) both}',
@@ -393,9 +395,8 @@
       '</div><p>O núcleo azul representa a reserva de Chi; o círculo delimita essa reserva. A aura azul ao redor do A.R.K. representa a emissão do Chi para fora do corpo.</p>';
     var reserveHeading = Array.prototype.find.call(content.querySelectorAll('h3.section'), function (node) { return /RESERVA E EMISSÃO DE CHI/i.test(node.textContent); });
     var reserveRows = reserveHeading && reserveHeading.nextElementSibling && reserveHeading.nextElementSibling.classList.contains('rows') ? reserveHeading.nextElementSibling : null;
-    var anchor = reserveRows || content.querySelector('.ark-chi-stage') || content.querySelector('.panel');
+    var anchor = reserveRows || (reserveHeading && reserveHeading.parentNode) || null;
     if (anchor && anchor.parentNode) anchor.parentNode.insertBefore(stage, anchor.nextSibling);
-    else content.insertBefore(stage, content.firstChild);
   }
 
   function addTalentHoloDemos(content) {
