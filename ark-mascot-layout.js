@@ -85,6 +85,18 @@
     '@media(max-width:700px){.ark-combat-demo{padding:8px}.ark-demo-holo-window{min-height:174px;padding-top:22px}.ark-demo-stage{height:150px;width:100%}.ark-demo-fighter{width:70px;height:78px}.ark-demo-transmitter{min-height:82px}.ark-demo-projector{width:58px;height:62px}.ark-demo-presenter-robot{width:52px;height:58px}.ark-demo-projection-beam{top:-42px;height:46px}.ark-demo-katana{left:-53px;top:47px;width:68px}.ark-demo-stage--sword-pass,.ark-demo-stage--parry{height:150px}.ark-demo-stage--parry .ark-demo-defender{left:13%}.ark-demo-stage--parry .ark-demo-attacker{left:72%}.ark-demo-barrier{width:94px;height:94px}.ark-demo-stage--movement{height:160px}.ark-demo-stage--movement .ark-demo-fighter{width:48px;height:52px}.ark-demo-stage--movement .ark-demo-center{left:calc(50% - 24px);top:calc(50% - 28px)}.ark-demo-runner{margin:-26px 0 0 -24px}.ark-demo-stage--movement .ark-demo-fighter{width:48px;height:52px}.ark-demo-orbit-track--outer{height:112px}.ark-demo-orbit-track--inner{height:70px}.ark-demo-transmission{font-size:7px;letter-spacing:.55px}}',
     '@media(prefers-reduced-motion:reduce){.ark-demo-holo-window:after,.ark-demo-transmission:before,.ark-demo-grass i,.ark-demo-presenter-robot,.ark-demo-robot,.ark-demo-shield-gear,.ark-demo-barrier,.ark-demo-impact,.ark-demo-runner,.ark-demo-center .ark-demo-robot{animation:none!important}}',
     '.ark-demo-composition{position:relative;display:block;min-height:280px;padding-bottom:0;overflow:visible}',
+    '.ark-demo-transmitter:before{content:"";position:absolute;left:7px;bottom:5px;width:70px;height:13px;border-radius:50%;background:rgba(0,0,0,.58);filter:blur(7px);transform:skewX(-24deg);z-index:0}',
+    '.ark-demo-presenter-robot{transform:perspective(420px) rotateY(-30deg) rotate(7deg) translateZ(-8px)!important;filter:drop-shadow(10px 8px 0 rgba(1,8,18,.55)) drop-shadow(0 0 9px rgba(84,202,255,.62))}',
+    '.ark-demo-composition .ark-demo-transmitter .ark-demo-projector .ark-demo-projection-beam{left:-11px!important}',
+    '.ark-feature-guide .ark-scene{align-items:flex-start!important}',
+    '.ark-feature-guide .ark-scene-bubble{align-self:flex-start!important;margin-top:0!important}',
+    '.ark-feature-guide .ark-scene-bubble:after{top:22px!important;bottom:auto!important}',
+    '.ark-feature-guide--peek .ark-scene-bubble:after{top:22px!important;bottom:auto!important}',
+    '.ark-dust-trail{height:34px!important;margin:-1px 0 7px!important;overflow:visible!important}',
+    '.ark-dust-trail:before{display:none!important}',
+    '.ark-dust-trail svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}',
+    '.ark-dust-route{fill:none;stroke:rgba(125,220,255,.7);stroke-width:2.2;stroke-linecap:round;stroke-dasharray:5 5;filter:drop-shadow(0 0 3px rgba(88,199,255,.75));animation:ark-dust-route-flow 2.8s linear infinite}',
+    '@keyframes ark-dust-route-flow{to{stroke-dashoffset:-40}}',
     '.ark-demo-holo-window{z-index:2}',
     '.ark-demo-transmitter{position:absolute!important;left:0;bottom:0;margin:0!important;width:104px;min-height:102px;align-items:flex-start;justify-content:flex-end;z-index:3!important}',
     '.ark-demo-presenter-label{margin-left:3px!important;text-align:left!important}',
@@ -288,7 +300,8 @@
 
   function addTalentHoloDemos(content) {
     if (!content || content.querySelector('[data-ark-talent-demos="true"]')) return;
-    var classRows = content.querySelector('.rows');
+    var classHeading = Array.prototype.find.call(content.querySelectorAll('h3.section'), function (node) { return /CLASSES E RARIDADE|CLASSES/.test(node.textContent.trim()); });
+    var classRows = classHeading && classHeading.nextElementSibling && classHeading.nextElementSibling.classList.contains('rows') ? classHeading.nextElementSibling : null;
     if (!classRows) return;
     function chiMark(key) {
       return '<span class="ark-talent-chi-mark" aria-label="Reserva de Chi"><svg viewBox="0 0 44 48" role="img" aria-label="Símbolo de Chi azul"><path d="M22 4C27 14 37 18 35 30C33 40 27 45 21 45C12 45 7 38 9 29C10 22 16 18 16 10C20 13 21 17 21 20C25 16 24 10 22 4Z" fill="#35baff" stroke="#a7ecff" stroke-width="1.5"/><circle cx="22" cy="30" r="5.2" fill="#dffaff" stroke="#71d9ff" stroke-width="1.5"/><circle cx="22" cy="30" r="2.2" fill="#168be5"/></svg></span><span class="ark-talent-reserve-ring" aria-hidden="true"></span>';
@@ -338,7 +351,7 @@
     var trail = document.createElement('div');
     trail.className = 'ark-dust-trail';
     trail.setAttribute('aria-hidden', 'true');
-    trail.innerHTML = '<i></i><i></i><i></i><i></i><i></i>';
+    trail.innerHTML = '<svg viewBox="0 0 166 28" preserveAspectRatio="none" aria-hidden="true"><path class="ark-dust-route" d="M2 19 C14 1 25 1 36 16 S58 31 70 13 S91 0 103 16 S126 31 138 12 S155 3 164 15"/></svg><i></i><i></i><i></i><i></i><i></i>';
     holder.parentNode.insertBefore(trail, holder.nextSibling);
   }
   function addChiGuide(content) {
@@ -495,10 +508,16 @@
       addAfterIndex(content, '.no87-section', 5, 'combat-perfect-example', 'Um resultado natural 10 no ataque ativa o Ataque Perfeito conforme o registro. Já o bônus de Técnica Máxima não transforma um resultado em 10: o resultado final continua limitado a 9.', 'compact');
       return;
     }
-    if (id === 'chi') {
+    if (id === 'power') {
+      addChiReserveHoloDemo(content);
+      addTalentHoloDemos(content);
       addAfter(content.querySelector('.panel'), 'chi-intro-example', 'Ter Chi não significa saber utilizá-lo. Todos os seres vivos possuem Chi, mas pessoas comuns podem ter essa energia inativa. Percepção, controle e treinamento são etapas diferentes.', 'compact');
       addAfterIndex(content, '.rows', 0, 'chi-emission-example', 'Na prática, uma técnica simples e breve tende a exigir menos Chi do que uma manifestação complexa, potente ou mantida por muito tempo. O custo considera esses três fatores, não uma tarifa fixa para toda habilidade.', 'compact');
       addAfterIndex(content, '.rows', 1, 'chi-recovery-example', 'Se um personagem gastar energia demais, descansar e meditar são formas de recuperação. Continuar tentando executar técnicas durante a exaustão pode comprometer o controle e deixá-lo vulnerável.', 'compact');
+      return;
+    }
+    if (id === 'chi') {
+      addChiReserveHoloDemo(content);
       return;
     }
     if (id === 'talents') {
