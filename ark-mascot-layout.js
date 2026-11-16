@@ -179,7 +179,7 @@
     '.ark-home-follow-robot>svg{position:relative;z-index:2;width:100%;height:100%;overflow:visible;animation:ark-home-levitate 3.4s ease-in-out infinite}',
     '.ark-home-follow-smoke{position:absolute;z-index:1;left:50%;top:72%;width:46px;height:35px;border-radius:50%;background:radial-gradient(ellipse,rgba(101,211,255,.48),rgba(49,160,235,.2) 48%,transparent 75%);filter:blur(8px);animation:ark-home-follow-puff 1.8s ease-in-out infinite}',
     '.ark-home-follow-smoke--one{transform:translate(-90%,-20%) scale(1.1)}.ark-home-follow-smoke--two{transform:translate(0,10%) scale(.75);animation-delay:-.9s}',
-    '.ark-route-trail{position:fixed;inset:0;z-index:79;pointer-events:none;overflow:visible}',
+    '.ark-route-trail{position:fixed;inset:0;z-index:79;pointer-events:none;overflow:visible;opacity:1!important}',
     '.ark-smoke-puff{position:absolute;width:15px;height:10px;border-radius:50%;background:radial-gradient(ellipse at 45% 45%,rgba(222,249,255,.96),rgba(103,211,255,.78) 42%,rgba(44,153,226,.22) 76%,transparent 100%);filter:blur(1.5px) drop-shadow(0 0 5px rgba(82,193,255,.48));opacity:0;transform:translate(-50%,-50%) scale(.48);animation:ark-cartoon-smoke .58s ease-out forwards}',
     '.ark-smoke-puff:before,.ark-smoke-puff:after{content:"";position:absolute;border-radius:50%;background:inherit;filter:blur(1px)}.ark-smoke-puff:before{width:9px;height:8px;left:-3px;top:-3px}.ark-smoke-puff:after{width:9px;height:8px;right:-3px;top:-2px}',
     '.ark-home-follow-robot.ark-route-disintegrating{animation:ark-robot-data-break .68s ease-in forwards!important;pointer-events:none!important}@keyframes ark-robot-data-break{0%{opacity:1;filter:brightness(1) drop-shadow(0 0 12px #55caff);transform:scale(1)}35%{opacity:.9;filter:brightness(2.8) blur(1px) drop-shadow(0 0 18px #55caff)}100%{opacity:0;filter:brightness(3) blur(7px);scale:.18}}',
@@ -391,21 +391,60 @@
       '</div></div>' +
       '<div class="ark-demo-transmitter" aria-label="A.R.K. atual projetando o holograma"><span class="ark-demo-presenter-label">A.R.K. / PROJETANDO</span><div class="ark-demo-projector"><i class="ark-demo-projection-beam" aria-hidden="true"><svg viewBox="0 0 470 224" preserveAspectRatio="none" aria-hidden="true"><path d="M43 224L0 0L470 0Z" fill="rgba(65,180,255,.055)"/><path d="M43 224L470 0L470 180Z" fill="rgba(65,180,255,.085)"/><path d="M43 224L470 180L0 180Z" fill="rgba(65,180,255,.045)"/><path d="M43 224L0 180L0 0Z" fill="rgba(65,180,255,.07)"/><path d="M43 224L0 0M43 224L470 0M43 224L470 180M43 224L0 180" fill="none" stroke="rgba(129,225,255,.42)" stroke-width="1.5"/><path d="M0 0H470V180H0Z" fill="none" stroke="rgba(129,225,255,.16)" stroke-width="1"/></svg></i><div class="ark-demo-presenter-robot">' + robotSvg + '</div></div></div>' +
       '</div><p>O núcleo azul representa a reserva de Chi; o círculo delimita essa reserva. A aura azul ao redor do A.R.K. representa a emissão do Chi para fora do corpo.</p>';
-    var anchor = content.querySelector('.ark-chi-stage') || content.querySelector('.panel');
+    var reserveHeading = Array.prototype.find.call(content.querySelectorAll('h3.section'), function (node) { return /RESERVA E EMISSÃO DE CHI/i.test(node.textContent); });
+    var reserveRows = reserveHeading && reserveHeading.nextElementSibling && reserveHeading.nextElementSibling.classList.contains('rows') ? reserveHeading.nextElementSibling : null;
+    var anchor = reserveRows || content.querySelector('.ark-chi-stage') || content.querySelector('.panel');
     if (anchor && anchor.parentNode) anchor.parentNode.insertBefore(stage, anchor.nextSibling);
     else content.insertBefore(stage, content.firstChild);
   }
 
   function addTalentHoloDemos(content) {
-    if (!content || content.querySelector('[data-ark-talent-demos="true"]')) return;
-    var classHeading = Array.prototype.find.call(content.querySelectorAll('h3.section'), function (node) { return /CLASSES E RARIDADE|CLASSES/.test(node.textContent.trim()); });
+    if (!content || content.querySelector('[data-ark-talent-demo="corporal"]')) return;
+    var talentPanel = Array.prototype.find.call(content.querySelectorAll('.panel'), function (node) {
+      var heading = node.querySelector('h3');
+      return heading && /TALENTOS/i.test(heading.textContent);
+    });
+    var classHeading = Array.prototype.find.call(content.querySelectorAll('h3.section'), function (node) {
+      if (!/^CLASSES(?:\s|$)/i.test(node.textContent.trim())) return false;
+      return !talentPanel || !!(talentPanel.compareDocumentPosition(node) & 4);
+    });
     var classRows = classHeading && classHeading.nextElementSibling && classHeading.nextElementSibling.classList.contains('rows') ? classHeading.nextElementSibling : null;
     if (!classRows) return;
-    function chiMark(key) {
+
+    if (!document.getElementById('ark-talent-arm-holo-styles')) {
+      var armStyle = document.createElement('style');
+      armStyle.id = 'ark-talent-arm-holo-styles';
+      armStyle.textContent = [
+        '.ark-talent-demo{grid-column:1/-1;width:100%;min-width:0}',
+        '.ark-talent-stage--corporal{min-height:190px;display:flex;align-items:center;justify-content:center;padding:8px 12px;overflow:hidden}',
+        '.ark-talent-arm-xray{display:block;width:min(100%,560px);height:160px;overflow:visible;filter:drop-shadow(0 0 9px rgba(65,190,255,.35))}',
+        '.ark-talent-arm-xray .arm-shell{fill:url(#ark-arm-metal-gradient);stroke:#a6eaff;stroke-width:2}',
+        '.ark-talent-arm-xray .arm-muscle{fill:rgba(90,170,205,.22);stroke:#b6eaff;stroke-width:1.7;filter:drop-shadow(0 0 3px rgba(79,190,255,.45));animation:ark-arm-muscle-glow 2.8s ease-in-out infinite}',
+        '.ark-talent-arm-xray .arm-muscle--fore{animation-delay:.55s}',
+        '.ark-talent-arm-xray .arm-joint{fill:#102f49;stroke:#8be3ff;stroke-width:2}',
+        '.ark-talent-arm-xray .arm-rib{fill:none;stroke:rgba(194,239,255,.72);stroke-width:1.4;stroke-linecap:round}',
+        '.ark-talent-arm-xray .arm-vein{fill:none;stroke:#43c8ff;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:10 6;filter:drop-shadow(0 0 4px #29aaff);animation:ark-arm-vein-flow 1.25s linear infinite}',
+        '.ark-talent-arm-xray .arm-vein--branch{stroke-width:1.6;animation-duration:1.65s}',
+        '.ark-talent-arm-xray .arm-hand-palm{fill:url(#ark-arm-metal-gradient);stroke:#b4efff;stroke-width:1.8}',
+        '.ark-talent-arm-xray .arm-fingers{fill:none;stroke:#d5f6ff;stroke-width:4.2;stroke-linecap:round;stroke-linejoin:round;transform-box:view-box;transform-origin:116px 54px;animation:ark-arm-grip 2.8s ease-in-out infinite}',
+        '@keyframes ark-arm-vein-flow{to{stroke-dashoffset:-32}}',
+        '@keyframes ark-arm-muscle-glow{0%,25%,100%{fill:rgba(75,155,190,.18);filter:drop-shadow(0 0 2px rgba(79,190,255,.25))}48%,72%{fill:rgba(49,169,245,.5);filter:drop-shadow(0 0 9px rgba(59,190,255,.95))}}',
+        '@keyframes ark-arm-grip{0%,18%,68%,100%{transform:rotate(0)}34%,52%{transform:rotate(13deg)}}',
+        '.ark-talent-influence-robot .ark-talent-floating-sword{left:13px;right:auto;top:27px;width:78px;height:24px;transform-origin:100% 50%;animation:ark-talent-sword-grip 4.8s cubic-bezier(.25,.7,.2,1) infinite}',
+        '.ark-talent-influence-robot .ark-talent-floating-sword svg{transform:none}',
+        '@keyframes ark-talent-sword-grip{0%,46%{opacity:0;transform:translateX(24px) rotate(0) scale(.92)}57%{opacity:1;transform:translateX(11px) rotate(0) scale(1.02)}72%,100%{opacity:1;transform:translateX(0) rotate(0) scale(.96)}}',
+        '.ark-talent-influence-robot .ark-talent-raised-arm{animation-name:ark-talent-raise-arm-held}',
+        '@keyframes ark-talent-raise-arm-held{0%,12%{opacity:0;transform:rotate(0)}22%,82%{opacity:1;transform:rotate(-4deg)}100%{opacity:0;transform:rotate(0)}}',
+        '@media(max-width:700px){.ark-talent-arm-xray{height:132px}.ark-talent-influence-robot .ark-talent-floating-sword{left:9px;top:23px;width:62px;height:20px}}'
+      ].join('');
+      document.head.appendChild(armStyle);
+    }
+
+    function chiMark() {
       return '<span class="ark-talent-chi-mark" aria-label="Reserva de Chi"><svg viewBox="0 0 44 48" role="img" aria-label="Símbolo de Chi azul"><path d="M22 4C27 14 37 18 35 30C33 40 27 45 21 45C12 45 7 38 9 29C10 22 16 18 16 10C20 13 21 17 21 20C25 16 24 10 22 4Z" fill="#35baff" stroke="#a7ecff" stroke-width="1.5"/><circle cx="22" cy="30" r="5.2" fill="#dffaff" stroke="#71d9ff" stroke-width="1.5"/><circle cx="22" cy="30" r="2.2" fill="#168be5"/></svg></span><span class="ark-talent-reserve-ring" aria-hidden="true"></span>';
     }
-    function robot(extraClass, key, extras) {
-      return '<div class="ark-talent-robot ' + extraClass + '"><div class="ark-talent-robot-svg">' + arkHologramSvg + '</div>' + chiMark(key) + (extras || '') + '</div>';
+    function robot(extraClass, extras) {
+      return '<div class="ark-talent-robot ' + extraClass + '"><div class="ark-talent-robot-svg">' + arkHologramSvg + '</div>' + chiMark() + (extras || '') + '</div>';
     }
     function demo(key, heading, mode, stage, caption) {
       return '<section class="ark-talent-demo" data-ark-talent-demo="' + key + '">' +
@@ -417,26 +456,51 @@
         '<div class="ark-demo-transmitter" aria-label="A.R.K. atual projetando o holograma"><span class="ark-demo-presenter-label">A.R.K. / PROJETANDO</span><div class="ark-demo-projector"><i class="ark-demo-projection-beam" aria-hidden="true"><svg viewBox="0 0 470 224" preserveAspectRatio="none" aria-hidden="true"><path d="M43 224L0 0L470 0Z" fill="rgba(65,180,255,.055)"/><path d="M43 224L470 0L470 180Z" fill="rgba(65,180,255,.085)"/><path d="M43 224L470 180L0 180Z" fill="rgba(65,180,255,.045)"/><path d="M43 224L0 180L0 0Z" fill="rgba(65,180,255,.07)"/><path d="M43 224L0 0M43 224L470 0M43 224L470 180M43 224L0 180" fill="none" stroke="rgba(129,225,255,.42)" stroke-width="1.5"/><path d="M0 0H470V180H0Z" fill="none" stroke="rgba(129,225,255,.16)" stroke-width="1"/></svg></i><div class="ark-demo-presenter-robot">' + robotSvg + '</div></div></div>' +
         '</div><p>' + caption + '</p></section>';
     }
+
+    var corporalStage = '<svg class="ark-talent-arm-xray" viewBox="0 0 170 100" role="img" aria-label="Holograma de um braço robótico anatômico visto como raio X, com veias de Chi azuis e mão articulada">' +
+      '<defs><linearGradient id="ark-arm-metal-gradient" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#d9f7ff" stop-opacity=".9"/><stop offset=".45" stop-color="#4d91b4" stop-opacity=".62"/><stop offset="1" stop-color="#153e5e" stop-opacity=".86"/></linearGradient></defs>' +
+      '<path class="arm-shell" d="M8 38C17 25 31 23 45 29L77 31C88 30 101 34 109 42L116 45L115 64L106 67C96 73 85 74 75 70L44 72C29 79 14 69 8 57Z"/>' +
+      '<path class="arm-muscle" d="M19 38C27 30 38 31 48 36L62 42L55 62L40 67C28 67 19 59 17 50Z"/>' +
+      '<path class="arm-muscle arm-muscle--fore" d="M57 39L80 37C92 36 101 41 108 47L105 61C96 67 85 66 75 64L55 60Z"/>' +
+      '<path class="arm-rib" d="M23 40L42 62M32 34L51 64M65 42L84 61M77 39L95 61M91 41L103 57"/>' +
+      '<circle class="arm-joint" cx="56" cy="51" r="7"/><circle class="arm-joint" cx="108" cy="55" r="6"/>' +
+      '<path class="arm-vein" d="M10 52C24 52 30 46 41 48S54 55 63 51S77 45 86 50S99 53 111 53"/>' +
+      '<path class="arm-vein arm-vein--branch" d="M37 48C35 40 31 37 27 33M42 49C44 58 48 63 54 68M64 51C65 43 70 39 76 35M82 49C83 58 88 63 94 67M99 52C102 45 106 41 112 38"/>' +
+      '<path class="arm-vein arm-vein--branch" d="M26 51L20 61M74 49L71 31M91 51L97 35"/>' +
+      '<g class="arm-hand"><path class="arm-hand-palm" d="M108 44L119 43L125 51L122 65L112 66L106 59Z"/><g class="arm-fingers">' +
+      '<path d="M119 46L128 34L143 31"/><path d="M122 50L139 45L150 46"/><path d="M122 56L140 57L150 62"/><path d="M119 62L132 72L144 77"/><path d="M111 49L115 39L123 35"/>' +
+      '</g></g></svg>';
+
     var influenceArm = '<svg class="ark-talent-raised-arm" viewBox="0 0 140 150" aria-hidden="true"><path d="M92 77L105 63L111 43"/><circle cx="111" cy="43" r="5"/></svg>';
-    var sword = '<svg viewBox="0 0 90 24" role="img" aria-label="Espada holográfica"><path d="M5 15L70 5L84 8L70 11L7 19Z" fill="#d9f6ff" stroke="#72d8ff" stroke-width="1.4"/><path d="M12 15L71 8" stroke="#fff" stroke-width="1.5"/><path d="M68 4L72 13" stroke="#c6f2ff" stroke-width="3"/><path d="M72 8L88 8L88 13L72 13Z" fill="#7baac5" stroke="#d5f5ff" stroke-width="1"/><path d="M76 8L84 13M76 13L84 8" stroke="#345e7b" stroke-width="1"/></svg>';
+    var sword = '<svg viewBox="0 0 90 24" role="img" aria-label="Espada holográfica, com a ponta da lâmina voltada para a esquerda"><path d="M5 15L70 5L84 8L70 11L7 19Z" fill="#d9f6ff" stroke="#72d8ff" stroke-width="1.4"/><path d="M12 15L71 8" stroke="#fff" stroke-width="1.5"/><path d="M68 4L72 13" stroke="#c6f2ff" stroke-width="3"/><path d="M72 8L88 8L88 13L72 13Z" fill="#7baac5" stroke="#d5f5ff" stroke-width="1"/><path d="M76 8L84 13M76 13L84 8" stroke="#345e7b" stroke-width="1"/></svg>';
     var influenceStage = '<div class="ark-talent-influence-actor">' +
-      robot('ark-talent-influence-robot', 'influence', influenceArm) +
-      '</div><span class="ark-talent-energy-orb" aria-hidden="true"></span><div class="ark-talent-floating-sword">' + sword + '</div>';
-    var existenceStage = '<div class="ark-talent-existence-actor">' + robot('ark-talent-existence-robot', 'existence-left') + '</div>' +
+      robot('ark-talent-influence-robot', influenceArm + '<div class="ark-talent-floating-sword">' + sword + '</div>') +
+      '</div><span class="ark-talent-energy-orb" aria-hidden="true"></span>';
+    var existenceStage = '<div class="ark-talent-existence-actor">' + robot('ark-talent-existence-robot') + '</div>' +
       '<div class="ark-talent-existence-observer"><div class="ark-talent-robot-svg">' + arkHologramSvg + '</div><span class="ark-talent-existence-question">?</span></div>' +
       '<div class="ark-talent-existence-wave" aria-hidden="true"></div>';
-    var holder = document.createElement('div');
-    holder.className = 'ark-talent-demos';
-    holder.setAttribute('data-ark-talent-demos', 'true');
-    holder.innerHTML =
-      demo('influence', '01 / INFLUÊNCIA', 'influence', influenceStage,
-        'O A.R.K. concentra o Chi, ergue a mão e direciona a emissão. A energia alcança a espada à distância e a traz até sua mão: um exemplo visual de influência sobre algo externo ao próprio corpo.') +
-      demo('existence', '02 / EXISTÊNCIA', 'existence', existenceStage,
-        'O primeiro A.R.K. oculta sua presença e atravessa o espaço sem ser percebido. Depois, ao reaparecer, impõe sua existência por meio de uma onda de pressão que derruba o observador.');
-    classRows.parentNode.insertBefore(holder, classRows.nextSibling);
+
+    var demos = [
+      {key:'corporal',row:'Corporal',html:demo('corporal','01 / CORPORAL','corporal',corporalStage,
+        'O holograma apresenta somente um braço mecânico em posição horizontal, como um raio X. Veias azuis de Chi percorrem a estrutura e, ao alcançar os músculos mecânicos, fazem essas partes brilharem; a mão abre e fecha para demonstrar o reforço.')},
+      {key:'influence',row:'Influência',html:demo('influence','02 / INFLUÊNCIA','influence',influenceStage,
+        'O A.R.K. concentra o Chi, ergue a mão e direciona a emissão. A espada é atraída até a mão, com o cabo junto aos dedos e a lâmina apontada para a esquerda: uma demonstração de influência sobre algo externo ao próprio corpo.')},
+      {key:'existence',row:'Existência',html:demo('existence','03 / EXISTÊNCIA','existence',existenceStage,
+        'O primeiro A.R.K. oculta sua presença e atravessa o espaço sem ser percebido. Depois, ao reaparecer, impõe sua existência por meio de uma onda de pressão que derruba o observador.')}
+    ];
+    demos.forEach(function (item) {
+      var row = Array.prototype.find.call(classRows.querySelectorAll('.row'), function (node) {
+        var label = node.querySelector('b');
+        return label && label.textContent.trim().toLowerCase() === item.row.toLowerCase();
+      });
+      if (!row || content.querySelector('[data-ark-talent-demo="' + item.key + '"]')) return;
+      var holder = document.createElement('div');
+      holder.innerHTML = item.html;
+      row.parentNode.insertBefore(holder.firstElementChild, row.nextSibling);
+    });
   }
 
-  function addFeatureGuide(content, heading, key, message, peek) {
+function addFeatureGuide(content, heading, key, message, peek) {
     var feature = Array.prototype.find.call(content.querySelectorAll('.feature'), function (node) {
       var h = node.querySelector('h3');
       return h && h.textContent.trim() === heading;
@@ -468,15 +532,16 @@
     feature.parentNode.insertBefore(holder, feature.nextSibling);
   }
 
-  var arkRoute = { target:null, index:-1, desiredIndex:-1, animation:null, frame:0, position:null, follower:null, trail:null, speaking:null, timer:0, smokeCount:0, lastSmoke:null, finished:false, snow:null };
+  var arkRoute = { target:null, index:-1, desiredIndex:-1, animation:null, frame:0, position:null, follower:null, trail:null, speaking:null, timer:0, smokeCount:0, lastSmoke:null, finished:false, snow:null, initialIntroShown:false };
   function routeTargets(content) {
     var targets = [];
+    var intro = document.querySelector('.ark-home-intro');
+    if (intro && !intro.hidden) targets.push({anchor:intro,message:intro,robot:null,kind:'intro'});
     var nodes = content.querySelectorAll(
-      '.ark-home-intro, .ark-home-drawer, .ark-scene[data-ark-scene="true"], .ark-chi-stage, .ark-chi-reserve-demo, .ark-talent-demo, .ark-combat-demo'
+      '.ark-home-drawer, .ark-scene[data-ark-scene="true"], .ark-chi-stage, .ark-chi-reserve-demo, .ark-talent-demo, .ark-combat-demo'
     );
     Array.prototype.forEach.call(nodes, function (node) {
       if (node.hidden || (window.getComputedStyle && window.getComputedStyle(node).display === 'none')) return;
-      if (node.classList.contains('ark-home-intro')) { targets.push({anchor:node,message:node,robot:null,kind:'intro'}); return; }
       if (node.classList.contains('ark-home-drawer')) {
         var message = node.nextElementSibling;
         if (message && message.classList.contains('ark-home-message')) targets.push({anchor:node, message:message, robot:null, kind:'home'});
@@ -491,7 +556,7 @@
     });
     return targets;
   }
-  function setArkSpeaking(target) {
+function setArkSpeaking(target) {
     if (arkRoute.speaking === (target || null)) return;
     if (arkRoute.speaking && arkRoute.speaking.message) {
       arkRoute.speaking.message.classList.remove('ark-is-speaking', 'ark-holo-active');
@@ -536,28 +601,57 @@
     arkRoute.smokeCount++;
     window.setTimeout(function(){if(puff.parentNode)puff.parentNode.removeChild(puff);},900);
   }
+  function ensureArkSnowStyles() {
+    if (document.getElementById('ark-data-snow-styles')) return;
+    var style=document.createElement('style');
+    style.id='ark-data-snow-styles';
+    style.textContent=[
+      '.ark-route-trail{opacity:1!important}',
+      '.ark-data-snowfall{position:fixed;inset:0;z-index:78;overflow:hidden;pointer-events:none;contain:strict}',
+      '.ark-data-snowfall .ark-data-snowflake{top:-28px!important;animation:ark-data-snow-loop var(--snow-duration) linear var(--snow-delay) infinite!important}',
+      '.ark-data-snowbank{position:absolute;left:0;right:0;bottom:0;height:22px;pointer-events:none}',
+      '.ark-data-snowbank i{position:absolute;bottom:0;display:block;border-radius:55% 55% 0 0;background:radial-gradient(ellipse at 50% 100%,rgba(231,250,255,.96) 0 23%,rgba(139,218,255,.72) 50%,rgba(54,151,220,.16) 76%,transparent 100%);filter:drop-shadow(0 -2px 5px rgba(94,200,255,.45));transform:scaleY(0);transform-origin:bottom;animation:ark-data-snowbank-grow 2.6s ease-out forwards}',
+      '.ark-data-snowbank i:nth-child(1){left:7%;width:86px;height:11px;animation-delay:.15s}',
+      '.ark-data-snowbank i:nth-child(2){left:29%;width:62px;height:8px;animation-delay:.55s}',
+      '.ark-data-snowbank i:nth-child(3){left:56%;width:104px;height:14px;animation-delay:.9s}',
+      '.ark-data-snowbank i:nth-child(4){left:83%;width:72px;height:10px;animation-delay:1.2s}',
+      '@keyframes ark-data-snow-loop{0%{opacity:0;transform:translate3d(0,0,0) rotate(0)}9%{opacity:.96}82%{opacity:.82}100%{opacity:0;transform:translate3d(var(--snow-drift),calc(100vh + 45px),0) rotate(var(--snow-spin))}}',
+      '@keyframes ark-data-snowbank-grow{to{transform:scaleY(1)}}'
+    ].join('');
+    document.head.appendChild(style);
+  }
+  function stopArkSnowfall() {
+    if (arkRoute.snow && arkRoute.snow.parentNode) arkRoute.snow.parentNode.removeChild(arkRoute.snow);
+    arkRoute.snow=null;
+  }
   function disintegrateArkIntoSnow(follower) {
     if (arkRoute.finished) return;
     arkRoute.finished=true;
     setArkSpeaking(null);
+    ensureArkSnowStyles();
     var rect=follower.getBoundingClientRect();
     var layer=document.createElement('div');
     layer.className='ark-data-snowfall';
     layer.setAttribute('aria-hidden','true');
     layer.style.setProperty('--snow-origin-x',(rect.left+rect.width/2)+'px');
     layer.style.setProperty('--snow-origin-y',(rect.top+rect.height/2)+'px');
-    for(var i=0;i<46;i++){
+    var viewportWidth=window.innerWidth||document.documentElement.clientWidth;
+    for(var i=0;i<42;i++){
       var flake=document.createElement('i');
       flake.className='ark-data-snowflake';
-      flake.style.setProperty('--snow-x',(rect.left+rect.width/2+(Math.random()-.5)*(window.innerWidth||document.documentElement.clientWidth)*.9)+'px');
-      flake.style.setProperty('--snow-y',(rect.top+rect.height/2+(Math.random()-.5)*110)+'px');
+      flake.style.left=(Math.random()*viewportWidth)+'px';
+      flake.style.top='-28px';
       flake.style.setProperty('--snow-size',(2+Math.random()*4)+'px');
-      flake.style.setProperty('--snow-duration',(3.1+Math.random()*2.4)+'s');
-      flake.style.setProperty('--snow-delay',(Math.random()*.75)+'s');
-      flake.style.setProperty('--snow-drift',((Math.random()-.5)*150)+'px');
+      flake.style.setProperty('--snow-duration',(5.2+Math.random()*4.2)+'s');
+      flake.style.setProperty('--snow-delay',(-Math.random()*8)+'s');
+      flake.style.setProperty('--snow-drift',((Math.random()-.5)*125)+'px');
       flake.style.setProperty('--snow-spin',((Math.random()-.5)*720)+'deg');
       layer.appendChild(flake);
     }
+    var bank=document.createElement('div');
+    bank.className='ark-data-snowbank';
+    bank.innerHTML='<i></i><i></i><i></i><i></i>';
+    layer.appendChild(bank);
     document.body.appendChild(layer);
     arkRoute.snow=layer;
     follower.classList.remove('ark-route-moving','ark-route-docked');
@@ -566,10 +660,6 @@
       if(arkRoute.finished) follower.style.display='none';
       follower.classList.remove('ark-route-disintegrating');
     },700);
-    window.setTimeout(function(){
-      if(layer.parentNode) layer.parentNode.removeChild(layer);
-      if(arkRoute.snow===layer) arkRoute.snow=null;
-    },6500);
     arkRoute.target=null;
     arkRoute.position=null;
   }
@@ -579,29 +669,55 @@
     if (window.__arkPageTransition) { follower.style.display='none'; return; }
     if (activeId()==='ark') { follower.style.display='none'; setArkSpeaking(null); arkRoute.position=null; return; }
     var targets=routeTargets(content);
-    if (!targets.length) { follower.style.display='none'; setArkSpeaking(null); arkRoute.index=-1; arkRoute.target=null; arkRoute.position=null; return; }
+    if (!targets.length) {
+      follower.style.display='none';
+      setArkSpeaking(null);
+      arkRoute.index=-1;
+      arkRoute.target=null;
+      arkRoute.position=null;
+      return;
+    }
 
     var vh=window.innerHeight||document.documentElement.clientHeight;
     var vw=window.innerWidth||document.documentElement.clientWidth;
-    // O último ponto já passou: A.R.K. encerra o percurso em uma queda de dados.
-    var finalRect=targets[targets.length-1].anchor.getBoundingClientRect();
-    if(finalRect.bottom < -8){
-      disintegrateArkIntoSnow(follower);
-      return;
-    }
+
     if(arkRoute.finished){
+      var visibleIndex=-1, visibleDistance=Infinity;
+      targets.forEach(function(target,index){
+        var rect=target.anchor.getBoundingClientRect();
+        if(rect.bottom<=0 || rect.top>=vh) return;
+        var distance=Math.abs((rect.top+rect.bottom)/2-vh*.48);
+        if(distance<visibleDistance){visibleDistance=distance;visibleIndex=index;}
+      });
+      if(visibleIndex<0){follower.style.display='none';return;}
+      stopArkSnowfall();
       arkRoute.finished=false;
       follower.classList.remove('ark-route-disintegrating');
       follower.style.opacity='';
       follower.style.display='grid';
       arkRoute.position=null;
+      arkRoute.target=null;
     }
+
+    // O último ponto já passou e nenhum ponto está visível: A.R.K. vira neve digital.
+    var finalRect=targets[targets.length-1].anchor.getBoundingClientRect();
+    if(finalRect.bottom < -8){
+      disintegrateArkIntoSnow(follower);
+      return;
+    }
+
     var aimY=vh*.48, nearest=0, nearestDistance=Infinity;
     targets.forEach(function(target,index){
       var rect=target.anchor.getBoundingClientRect();
       var distance=Math.abs((rect.top+rect.bottom)/2-aimY);
       if(distance<nearestDistance){nearestDistance=distance;nearest=index;}
     });
+    // A mensagem inicial precisa ser vista antes de o A.R.K. avançar para a próxima.
+    if(targets[0].kind==='intro' && !arkRoute.initialIntroShown) nearest=0;
+    if(targets[0].kind==='intro' && arkRoute.initialIntroShown){
+      var introRect=targets[0].anchor.getBoundingClientRect();
+      if(introRect.bottom>Math.min(150,vh*.22)) nearest=0;
+    }
 
     var previousTarget=arkRoute.target;
     arkRoute.desiredIndex=nearest;
@@ -618,7 +734,6 @@
     }
 
     if(!previousTarget || previousTarget.anchor!==target.anchor){
-      var start={x:arkRoute.position.x,y:arkRoute.position.y,width:point.width,height:point.height};
       arkRoute.target=target;
       setArkSpeaking(null);
     }
@@ -628,7 +743,7 @@
     if(distance>3){
       var smokeX=arkRoute.position.x+point.width*.5-(dx/distance)*10;
       var smokeY=arkRoute.position.y+point.height*.86-(dy/distance)*4;
-      if(!arkRoute.lastSmoke || Math.hypot(smokeX-arkRoute.lastSmoke.x,smokeY-arkRoute.lastSmoke.y)>=15){
+      if(!arkRoute.lastSmoke || Math.hypot(smokeX-arkRoute.lastSmoke.x,smokeY-arkRoute.lastSmoke.y)>=12){
         emitArkSmoke(smokeX,smokeY);
         arkRoute.lastSmoke={x:smokeX,y:smokeY};
       }
@@ -638,12 +753,12 @@
       arkRoute.position.y=point.y;
       follower.style.transform='translate3d('+point.x+'px,'+point.y+'px,0)';
       follower.classList.remove('ark-route-moving');
+      if(target.kind==='intro') arkRoute.initialIntroShown=true;
       setArkSpeaking(target);
       return;
     }
 
-    // Movimento contínuo: cada frame recalcula o destino pela posição REAL do elemento
-    // na tela. A rolagem pode mudar o destino no meio do trajeto sem reiniciar animações.
+    // Movimento contínuo: o destino é recalculado pela posição real do elemento na tela.
     var factor=distance>180?.34:distance>60?.42:.5;
     var step=Math.min(distance,Math.max(1.8,Math.min(38,distance*factor)));
     var ratio=step/distance;
@@ -686,6 +801,7 @@
     var width=window.innerWidth<=650?66:78, height=window.innerWidth<=650?76:88;
     var x=rect.left+(rect.width-width)/2, y=rect.top+(rect.height-height)/2;
     window.__arkWelcomePlayed=true;
+    arkRoute.initialIntroShown=false;
     arkRoute.position={x:x,y:y};arkRoute.target=null;
     follower.style.width=width+'px';follower.style.height=height+'px';
     follower.style.display='none';follower.style.transform='translate3d('+x+'px,'+y+'px,0)';
@@ -713,7 +829,7 @@
     }
     var trail=document.querySelector('.ark-route-trail');
     if(!trail){trail=document.createElement('div');trail.className='ark-route-trail';trail.setAttribute('aria-hidden','true');document.body.appendChild(trail);}
-    arkRoute.follower=follower;arkRoute.trail=trail;
+    arkRoute.follower=follower;arkRoute.trail=trail;trail.style.opacity='1';
     ensureArkHomeLayout();
     if(!startArkWelcomeArrival()) updateHomeArk();
   }
@@ -872,8 +988,10 @@
       return;
     }
     if (id === 'power') {
+      addChiGuide(content);
       addChiReserveHoloDemo(content);
       addTalentHoloDemos(content);
+      addAfter(content.querySelector('.special-grid'), 'talents-specialization-guide', 'Cada especialização representa um campo de manifestação do Talento. Escolha a que corresponde ao funcionamento da habilidade e mantenha as limitações e a classe do personagem em consideração.', 'compact');
       addAfter(content.querySelector('.panel'), 'chi-intro-example', 'Ter Chi não significa saber utilizá-lo. Todos os seres vivos possuem Chi, mas pessoas comuns podem ter essa energia inativa. Percepção, controle e treinamento são etapas diferentes.', 'compact');
       addAfterIndex(content, '.rows', 0, 'chi-emission-example', 'Na prática, uma técnica simples e breve tende a exigir menos Chi do que uma manifestação complexa, potente ou mantida por muito tempo. O custo considera esses três fatores, não uma tarifa fixa para toda habilidade.', 'compact');
       addAfterIndex(content, '.rows', 1, 'chi-recovery-example', 'Se um personagem gastar energia demais, descansar e meditar são formas de recuperação. Continuar tentando executar técnicas durante a exaustão pode comprometer o controle e deixá-lo vulnerável.', 'compact');
