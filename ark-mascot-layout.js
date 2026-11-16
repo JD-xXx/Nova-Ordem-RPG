@@ -181,7 +181,8 @@
     '.ark-smoke-puff{position:absolute;width:15px;height:10px;border-radius:50%;background:radial-gradient(ellipse at 45% 45%,rgba(222,249,255,.96),rgba(103,211,255,.78) 42%,rgba(44,153,226,.22) 76%,transparent 100%);filter:blur(1.5px) drop-shadow(0 0 5px rgba(82,193,255,.48));opacity:0;transform:translate(-50%,-50%) scale(.48);animation:ark-cartoon-smoke .58s ease-out forwards}',
     '.ark-smoke-puff:before,.ark-smoke-puff:after{content:"";position:absolute;border-radius:50%;background:inherit;filter:blur(1px)}.ark-smoke-puff:before{width:9px;height:8px;left:-3px;top:-3px}.ark-smoke-puff:after{width:9px;height:8px;right:-3px;top:-2px}',
     '@keyframes ark-cartoon-smoke{0%{opacity:0;transform:translate(-50%,-50%) scale(.42)}22%{opacity:.82}62%{opacity:.58}100%{opacity:0;transform:translate(-50%,-62%) scale(.9)}}',
-    '.ark-transfer-box{position:fixed;z-index:130;top:76px;left:50%;width:154px;padding:8px 9px 9px;transform:translateX(-50%);border:1px solid rgba(104,210,255,.5);border-radius:78px 78px 13px 13px;background:linear-gradient(155deg,rgba(8,32,50,.96),rgba(3,13,24,.98));box-shadow:0 10px 34px rgba(0,0,0,.38),0 0 20px rgba(64,177,235,.15);text-align:center;pointer-events:none;overflow:hidden;transition:box-shadow .25s ease,border-color .25s ease}',
+    '.ark-transfer-box{position:relative;z-index:12;top:auto;left:auto;width:154px;margin:20px auto 14px;transform:none;padding:8px 9px 9px;transform:translateX(-50%);border:1px solid rgba(104,210,255,.5);border-radius:78px 78px 13px 13px;background:linear-gradient(155deg,rgba(8,32,50,.96),rgba(3,13,24,.98));box-shadow:0 10px 34px rgba(0,0,0,.38),0 0 20px rgba(64,177,235,.15);text-align:center;pointer-events:none;overflow:hidden;transition:box-shadow .25s ease,border-color .25s ease}',
+    '.ark-home-intro{display:grid;grid-template-columns:92px minmax(0,1fr);align-items:center;gap:13px;min-height:142px;max-width:760px;margin:0 auto 24px;padding:12px 18px;border:1px solid rgba(84,178,226,.25);border-radius:13px;background:linear-gradient(112deg,rgba(11,30,46,.88),rgba(7,17,28,.94));overflow:visible}.ark-home-intro[hidden]{display:none!important}.ark-home-intro-copy{min-width:0;padding:12px 15px;border:1px solid rgba(91,177,232,.32);border-radius:12px;background:rgba(7,20,32,.82);color:#c8dced;font-size:12px;line-height:1.65;opacity:0;transform:translateY(8px);transition:opacity .38s ease,transform .42s ease}.ark-home-intro-copy:before{content:"A.R.K. / ASSISTENTE DA AGÊNCIA";display:block;margin-bottom:6px;color:#8dd4ff;font:700 9px var(--mono,monospace);letter-spacing:1px}.ark-home-intro-copy p{margin:0 0 6px}.ark-home-intro-copy p:last-child{margin-bottom:0}.ark-home-intro.ark-is-speaking .ark-home-intro-copy{opacity:1;transform:translateY(0)}.ark-home-intro .ark-home-intro-mark{width:100%;height:100%;min-height:100px;display:block;pointer-events:none}@media(max-width:650px){.ark-home-intro{grid-template-columns:70px minmax(0,1fr);gap:8px;min-height:130px;padding:9px;margin-bottom:19px}.ark-home-intro-copy{padding:10px;font-size:10px;line-height:1.55}.ark-home-intro-copy:before{font-size:8px;letter-spacing:.6px}}',
     '.ark-transfer-frame{position:relative;height:94px;margin:0 auto 5px;border:1px solid rgba(110,213,255,.32);border-radius:58px 58px 8px 8px;background:radial-gradient(ellipse at 50% 68%,rgba(62,174,230,.24),rgba(6,22,36,.28) 72%);box-shadow:inset 0 0 22px rgba(76,190,244,.12);overflow:hidden}.ark-transfer-door-core{position:absolute;inset:8px 13px 0;border:1px solid rgba(123,218,255,.2);border-bottom:0;border-radius:48px 48px 0 0;background:linear-gradient(180deg,rgba(83,190,238,.12),rgba(12,47,69,.08));box-shadow:0 0 18px rgba(69,184,240,.13),inset 0 0 18px rgba(76,190,244,.12)}.ark-transfer-door-core:before{content:"";position:absolute;left:50%;top:19px;width:31px;height:31px;transform:translateX(-50%);border:1px solid rgba(139,225,255,.5);border-radius:50%;box-shadow:0 0 13px rgba(83,194,255,.34),inset 0 0 12px rgba(83,194,255,.2)}.ark-transfer-door-core:after{content:"A.R.K.";position:absolute;left:0;right:0;bottom:12px;color:rgba(155,226,255,.6);font:700 7px var(--mono,monospace);letter-spacing:1.5px}',
     '.ark-transfer-robot{position:absolute;inset:7px 39px;width:76px;height:80px;display:grid;place-items:center;filter:drop-shadow(0 0 12px rgba(86,204,255,.72));opacity:0}.ark-transfer-robot svg{width:100%;height:100%;overflow:visible}.ark-transfer-box--idle .ark-transfer-robot{opacity:0}.ark-transfer-box--idle .ark-transfer-door-core{opacity:1}.ark-transfer-box--leaving .ark-transfer-door-core,.ark-transfer-box--arriving .ark-transfer-door-core{opacity:.18}.ark-transfer-box--leaving,.ark-transfer-box--arriving{border-color:rgba(128,222,255,.82);box-shadow:0 12px 38px rgba(0,0,0,.45),0 0 30px rgba(64,177,235,.34)}.ark-transfer-box--idle .ark-transfer-status{color:#8dc8e5}.ark-route-entering-door{transition:transform .48s cubic-bezier(.2,.7,.2,1)!important}.ark-route-exiting-door{animation:ark-door-exit .42s cubic-bezier(.2,.7,.2,1) both}@keyframes ark-door-exit{from{opacity:0;translate:0 -13px}to{opacity:1;translate:0 22px}}',
     '.ark-transfer-pixel{position:absolute;left:50%;top:50%;width:5px;height:5px;border-radius:1px;background:#9beaff;box-shadow:0 0 7px #50bfff;opacity:0;transform:translate(-50%,-50%)}',
@@ -194,7 +195,7 @@
     '@keyframes ark-transfer-pixel-out{0%{opacity:0;transform:translate(-50%,-50%) scale(.4)}20%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--px)),calc(-50% + var(--py))) scale(.2)}}',
     '@keyframes ark-transfer-pixel-in{0%{opacity:0;transform:translate(calc(-50% + var(--px)),calc(-50% + var(--py))) scale(.2)}35%{opacity:1}100%{opacity:0;transform:translate(-50%,-50%) scale(.35)}}',
     '@keyframes ark-transfer-box-out{to{opacity:0;transform:translate(-50%,-18px) scale(.94)}}',
-    '@media(max-width:650px){.ark-transfer-box{top:66px;width:146px}.ark-transfer-frame{height:86px}.ark-transfer-robot{inset:5px 35px;width:70px;height:74px}}',
+    '@media(max-width:650px){.ark-transfer-box{top:auto;width:146px;margin:16px auto 12px}.ark-transfer-frame{height:86px}.ark-transfer-robot{inset:5px 35px;width:70px;height:74px}}',
 
     '@keyframes ark-home-levitate{0%,100%{margin-top:0}50%{margin-top:-7px}}@keyframes ark-home-follow-puff{0%,100%{opacity:.25;scale:.75}50%{opacity:.9;scale:1.25}}',
     '@media(max-width:650px){.ark-home-drawer{min-height:158px!important;padding-bottom:20px!important}.ark-home-drawer--right{padding-right:84px!important}.ark-home-drawer--left{padding-left:84px!important}.ark-home-message{min-height:102px;padding:3px 2px 24px}.ark-home-message-bubble{padding:11px 12px}.ark-home-message-bubble p{font-size:11px}.ark-home-message:before{top:-70px;height:76px;right:35px}.ark-home-message:after{top:-75px;right:31px}.ark-home-message--left:before{left:35px;right:auto}.ark-home-message--left:after{left:31px;right:auto}}',
@@ -462,9 +463,11 @@
   function routeTargets(content) {
     var targets = [];
     var nodes = content.querySelectorAll(
-      '.ark-home-drawer, .ark-scene[data-ark-scene="true"], .ark-chi-stage, .ark-chi-reserve-demo, .ark-talent-demo, .ark-combat-demo'
+      '.ark-home-intro, .ark-home-drawer, .ark-scene[data-ark-scene="true"], .ark-chi-stage, .ark-chi-reserve-demo, .ark-talent-demo, .ark-combat-demo'
     );
     Array.prototype.forEach.call(nodes, function (node) {
+      if (node.hidden || (window.getComputedStyle && window.getComputedStyle(node).display === 'none')) return;
+      if (node.classList.contains('ark-home-intro')) { targets.push({anchor:node,message:node,robot:null,kind:'intro'}); return; }
       if (node.classList.contains('ark-home-drawer')) {
         var message = node.nextElementSibling;
         if (message && message.classList.contains('ark-home-message')) targets.push({anchor:node, message:message, robot:null, kind:'home'});
@@ -500,6 +503,9 @@
       var left = target.anchor.classList.contains('ark-home-drawer--left');
       x = left ? rect.left + 7 : rect.right - width - 7;
       y = rect.bottom - height + 5;
+    } else if (target.kind === 'intro') {
+      x = rect.left + 7;
+      y = rect.top + (rect.height - height) / 2;
     } else if (target.kind === 'holo') {
       x = rect.left + (rect.width - width) / 2;
       y = rect.top + (rect.height - height) / 2;
@@ -594,6 +600,50 @@
       });
     }
   }
+  function ensureArkHomeLayout() {
+    var box=document.querySelector('.ark-transfer-box');
+    if(!box) box=createArkTransferBox('idle');
+    var wrap=document.querySelector('.main .wrap') || document.querySelector('.wrap');
+    var heading=wrap && wrap.querySelector('.heading');
+    if(wrap && heading && box.parentNode!==wrap) wrap.insertBefore(box,heading);
+    var intro=wrap && wrap.querySelector('.ark-home-intro');
+    if(wrap && heading && !intro){
+      intro=document.createElement('section');
+      intro.className='ark-home-intro';
+      intro.setAttribute('aria-label','Apresentação do assistente A.R.K.');
+      intro.innerHTML='<span class="ark-home-intro-mark" aria-hidden="true"></span><div class="ark-home-intro-copy"><p>Olá! Eu sou o A.R.K., assistente virtual e sistema de segurança da Agência Interdimensional A Ordem.</p><p>Estou aqui para orientar sua navegação, apresentar os registros e ajudar você a conhecer a Nova Ordem — um RPG de interpretação com múltiplas realidades, personagens, organizações e histórias próprias. Pode explorar os arquivos; eu acompanho tudo por aqui.</p></div>';
+      wrap.insertBefore(intro,heading);
+    }
+    if(intro) intro.hidden=activeId()!=='overview';
+    return {box:box,intro:intro};
+  }
+  function startArkWelcomeArrival() {
+    if(window.__arkWelcomePlayed || activeId()!=='overview') return false;
+    var box=document.querySelector('.ark-transfer-box');
+    var frame=box && box.querySelector('.ark-transfer-frame');
+    var follower=arkRoute.follower || document.querySelector('.ark-home-follow-robot');
+    if(!box || !frame || !follower) return false;
+    var rect=frame.getBoundingClientRect();
+    var width=window.innerWidth<=650?66:78, height=window.innerWidth<=650?76:88;
+    var x=rect.left+(rect.width-width)/2, y=rect.top+(rect.height-height)/2;
+    window.__arkWelcomePlayed=true;
+    arkRoute.position={x:x,y:y};arkRoute.target=null;
+    follower.style.width=width+'px';follower.style.height=height+'px';
+    follower.style.display='grid';follower.style.transform='translate3d('+x+'px,'+y+'px,0)';
+    box.className='ark-transfer-box ark-transfer-box--arriving';
+    var status=box.querySelector('.ark-transfer-status'), sub=box.querySelector('.ark-transfer-substatus');
+    if(status) status.textContent='A.R.K. / INICIALIZANDO';
+    if(sub) sub.textContent='RECONSTRUINDO UNIDADE';
+    window.setTimeout(function(){
+      box.className='ark-transfer-box ark-transfer-box--idle';
+      if(status) status.textContent='A.R.K. / ACESSO PRIVADO';
+      if(sub) sub.textContent='PORTAL DE SISTEMA';
+      follower.classList.add('ark-route-exiting-door');
+      updateHomeArk();
+      window.setTimeout(function(){follower.classList.remove('ark-route-exiting-door');},480);
+    },900);
+    return true;
+  }
   function ensureHomeArk() {
     var follower=document.querySelector('.ark-home-follow-robot');
     if(!follower){
@@ -603,7 +653,9 @@
     }
     var trail=document.querySelector('.ark-route-trail');
     if(!trail){trail=document.createElement('div');trail.className='ark-route-trail';trail.setAttribute('aria-hidden','true');document.body.appendChild(trail);}
-    arkRoute.follower=follower;arkRoute.trail=trail;if(!document.querySelector('.ark-transfer-box'))createArkTransferBox('idle');updateHomeArk();
+    arkRoute.follower=follower;arkRoute.trail=trail;
+    ensureArkHomeLayout();
+    if(!startArkWelcomeArrival()) updateHomeArk();
   }
 
   function scheduleHomeArkUpdate() {
