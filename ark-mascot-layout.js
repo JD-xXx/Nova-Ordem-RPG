@@ -840,7 +840,7 @@ function setArkSpeaking(target) {
   }
 
   function syncArkToScroll() {
-    if(window.__arkPageTransition) return;
+    if(window.__arkPageTransition && window.__arkPageTransition!=='leaving') return;
     var follower=arkRoute.follower || document.querySelector('.ark-home-follow-robot');
     if(!follower || !arkRoute.target || follower.style.display==='none') { arkRoute.lastScrollY=window.scrollY||0; return; }
     var current=window.scrollY||0, delta=current-(arkRoute.lastScrollY||0);
