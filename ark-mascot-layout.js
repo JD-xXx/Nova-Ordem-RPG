@@ -629,7 +629,7 @@
     window.__arkWelcomePlayed=true;
     arkRoute.position={x:x,y:y};arkRoute.target=null;
     follower.style.width=width+'px';follower.style.height=height+'px';
-    follower.style.display='grid';follower.style.transform='translate3d('+x+'px,'+y+'px,0)';
+    follower.style.display='none';follower.style.transform='translate3d('+x+'px,'+y+'px,0)';
     box.className='ark-transfer-box ark-transfer-box--arriving';
     var status=box.querySelector('.ark-transfer-status'), sub=box.querySelector('.ark-transfer-substatus');
     if(status) status.textContent='A.R.K. / INICIALIZANDO';
@@ -638,6 +638,7 @@
       box.className='ark-transfer-box ark-transfer-box--idle';
       if(status) status.textContent='A.R.K. / ACESSO PRIVADO';
       if(sub) sub.textContent='PORTAL DE SISTEMA';
+      follower.style.display='grid';
       follower.classList.add('ark-route-exiting-door');
       updateHomeArk();
       window.setTimeout(function(){follower.classList.remove('ark-route-exiting-door');},480);
