@@ -410,7 +410,9 @@
       return !talentPanel || !!(talentPanel.compareDocumentPosition(node) & 4);
     });
     var classRows = classHeading && classHeading.nextElementSibling && classHeading.nextElementSibling.classList.contains('rows') ? classHeading.nextElementSibling : null;
-    if (!classRows) return;
+    // The unified Power System may wrap or decorate the class section differently.
+    // Fall back to the page content instead of silently skipping every hologram.
+    var rowScope = classRows || content;
 
     if (!document.getElementById('ark-talent-arm-holo-styles')) {
       var armStyle = document.createElement('style');
@@ -492,7 +494,7 @@
         'O primeiro A.R.K. oculta sua presença e atravessa o espaço sem ser percebido. Depois, ao reaparecer, impõe sua existência por meio de uma onda de pressão que derruba o observador.')}
     ];
     demos.forEach(function (item) {
-      var row = Array.prototype.find.call(classRows.querySelectorAll('.row'), function (node) {
+      var row = Array.prototype.find.call(rowScope.querySelectorAll('.row'), function (node) {
         var label = node.querySelector('b');
         return label && label.textContent.trim().toLowerCase() === item.row.toLowerCase();
       });
@@ -504,7 +506,10 @@
         demoNode = holder.firstElementChild;
       }
       // Keep each projection directly beneath its own class explanation.
-      if (demoNode) row.parentNode.insertBefore(demoNode, row.nextSibling);
+      // Do not move it again when the content observer runs.
+      if (demoNode && (demoNode.parentNode !== row.parentNode || row.nextElementSibling !== demoNode)) {
+        row.parentNode.insertBefore(demoNode, row.nextSibling);
+      }
     });
   }
 
