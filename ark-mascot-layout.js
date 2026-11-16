@@ -147,6 +147,9 @@
     '.ark-demo-holo-window{position:relative;z-index:3!important;transform:translateZ(12px)}',
     '.ark-demo-transmitter{z-index:1!important;transform:perspective(700px) translateZ(-55px) scale(.88);filter:drop-shadow(0 12px 10px rgba(0,0,0,.55)) drop-shadow(0 0 9px rgba(93,210,255,.55))}',
     '.ark-demo-presenter-robot{visibility:hidden!important;opacity:0!important}',
+    '.ark-chi-stage.ark-holo-active .ark-chi-robot,.ark-talent-demo.ark-holo-active .ark-demo-presenter-robot,.ark-combat-demo.ark-holo-active .ark-demo-presenter-robot{visibility:visible!important;opacity:1!important}',
+    '.ark-home-follow-robot.ark-route-docked{opacity:0!important;transition:opacity .28s ease!important}',
+    '.ark-home-follow-robot{opacity:1;transition:opacity .28s ease!important}',
     '.ark-demo-projection-beam{transform-origin:0 100%;clip-path:polygon(0 100%,0 100%,100% 100%,100% 100%)!important}',
     '.ark-home-message{height:0!important;min-height:0!important;max-height:0!important;margin:0!important;padding:0!important;overflow:hidden!important;opacity:0!important;visibility:hidden!important;transition:max-height .72s cubic-bezier(.2,.7,.2,1),padding .55s ease,margin .55s ease,opacity .3s ease}',
     '.ark-home-message.ark-is-speaking{height:auto!important;min-height:0!important;max-height:900px!important;margin:0 0 12px!important;padding:4px 8px 30px!important;overflow:visible!important;opacity:1!important;visibility:visible!important}',
@@ -443,6 +446,8 @@
     if (arkRoute.speaking && arkRoute.speaking.message) {
       arkRoute.speaking.message.classList.remove('ark-is-speaking', 'ark-holo-active');
     }
+    var follower=arkRoute.follower || document.querySelector('.ark-home-follow-robot');
+    if(follower) follower.classList.toggle('ark-route-docked',!!(target&&target.kind==='holo'));
     arkRoute.speaking = target || null;
     if (target && target.message) {
       if (target.kind === 'holo') target.message.classList.add('ark-holo-active');
