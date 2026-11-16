@@ -421,7 +421,7 @@
     feature.parentNode.insertBefore(holder, feature.nextSibling);
   }
 
-  var arkRoute = { target:null, index:-1, desiredIndex:-1, animation:null, follower:null, trail:null, speaking:null, timer:0 };
+  var arkRoute = { target:null, index:-1, desiredIndex:-1, animation:null, frame:0, position:null, follower:null, trail:null, speaking:null, timer:0 };
   function routeTargets(content) {
     var targets = [];
     var nodes = content.querySelectorAll(
@@ -488,31 +488,67 @@
   function updateHomeArk() {
     var content=document.getElementById('content'), follower=arkRoute.follower || document.querySelector('.ark-home-follow-robot');
     if (!content || !follower || !arkRoute.trail) return;
-    if (activeId()==='ark') { follower.style.display='none'; setArkSpeaking(null); return; }
+    if (activeId()==='ark') { follower.style.display='none'; setArkSpeaking(null); arkRoute.position=null; return; }
     var targets=routeTargets(content);
-    if (!targets.length) { follower.style.display='none'; setArkSpeaking(null); arkRoute.index=-1; arkRoute.target=null; return; }
-    var vh=window.innerHeight||document.documentElement.clientHeight, vw=window.innerWidth||document.documentElement.clientWidth, aimY=vh*.48;
-    var nearest=0, nearestDistance=Infinity;
-    targets.forEach(function(target,index){var rect=target.anchor.getBoundingClientRect(),distance=Math.abs((rect.top+rect.bottom)/2-aimY);if(distance<nearestDistance){nearestDistance=distance;nearest=index;}});
+    if (!targets.length) { follower.style.display='none'; setArkSpeaking(null); arkRoute.index=-1; arkRoute.target=null; arkRoute.position=null; return; }
+
+    var vh=window.innerHeight||document.documentElement.clientHeight;
+    var vw=window.innerWidth||document.documentElement.clientWidth;
+    var aimY=vh*.48, nearest=0, nearestDistance=Infinity;
+    targets.forEach(function(target,index){
+      var rect=target.anchor.getBoundingClientRect();
+      var distance=Math.abs((rect.top+rect.bottom)/2-aimY);
+      if(distance<nearestDistance){nearestDistance=distance;nearest=index;}
+    });
+
+    var previousTarget=arkRoute.target;
     arkRoute.desiredIndex=nearest;
-    if(arkRoute.index<0) arkRoute.index=nearest;
-    if(arkRoute.animation) return;
-    if(arkRoute.index!==arkRoute.desiredIndex) arkRoute.index+=arkRoute.desiredIndex>arkRoute.index?1:-1;
-    arkRoute.index=Math.max(0,Math.min(targets.length-1,arkRoute.index));
-    var target=targets[arkRoute.index],point=routePoint(target,vw,vh);
-    follower.style.width=point.width+'px';follower.style.height=point.height+'px';follower.style.display='grid';
-    if(arkRoute.target&&arkRoute.target.anchor===target.anchor){follower.style.transform='translate3d('+point.x+'px,'+point.y+'px,0)';setArkSpeaking(target);return;}
-    var current=follower.getBoundingClientRect(),from={x:current.left,y:current.top,width:point.width,height:point.height};
-    if(!arkRoute.target||current.width===0){follower.style.transform='translate3d('+point.x+'px,'+point.y+'px,0)';arkRoute.target=target;setArkSpeaking(target);if(arkRoute.index!==arkRoute.desiredIndex)window.setTimeout(updateHomeArk,80);return;}
-    setArkSpeaking(null);
-    var dx=point.x-from.x,dy=point.y-from.y,distance=Math.hypot(dx,dy);
-    if(distance<12){follower.style.transform='translate3d('+point.x+'px,'+point.y+'px,0)';arkRoute.target=target;setArkSpeaking(target);if(arkRoute.index!==arkRoute.desiredIndex)window.setTimeout(updateHomeArk,80);return;}
-    var bend=Math.max(30,Math.min(115,distance*.16)),c1x=from.x+dx*.28,c1y=from.y+dy*.18+(dy>=0?-bend:bend),c2x=from.x+dx*.72,c2y=from.y+dy*.82+(dy>=0?bend:-bend),frames=[];
-    for(var i=0;i<=32;i++){var t=i/32,inv=1-t,px=inv*inv*inv*from.x+3*inv*inv*t*c1x+3*inv*t*t*c2x+t*t*t*point.x,py=inv*inv*inv*from.y+3*inv*inv*t*c1y+3*inv*t*t*c2y+t*t*t*point.y;frames.push({transform:'translate3d('+px+'px,'+py+'px,0) rotate('+((dx>=0?1:-1)*Math.sin(Math.PI*t)*8)+'deg) scale('+(1+Math.sin(Math.PI*t)*.045)+')'});}
-    drawArkTrail(from,point);follower.classList.add('ark-route-moving');arkRoute.target=target;
-    var duration=Math.min(4200,Math.max(1500,distance*1.9));
-    arkRoute.animation=follower.animate(frames,{duration:duration,easing:'cubic-bezier(.38,.04,.24,1)',fill:'forwards'});
-    arkRoute.animation.onfinish=function(){var finished=arkRoute.animation;arkRoute.animation=null;if(finished)finished.cancel();follower.classList.remove('ark-route-moving');var liveTarget=targets[arkRoute.index]||target,livePoint=routePoint(liveTarget,window.innerWidth||vw,window.innerHeight||vh);follower.style.transform='translate3d('+livePoint.x+'px,'+livePoint.y+'px,0)';setArkSpeaking(liveTarget);if(arkRoute.index!==arkRoute.desiredIndex)window.setTimeout(updateHomeArk,90);};
+    arkRoute.index=nearest;
+    var target=targets[nearest], point=routePoint(target,vw,vh);
+    follower.style.width=point.width+'px';
+    follower.style.height=point.height+'px';
+    follower.style.display='grid';
+
+    if(!arkRoute.position){
+      var initial=follower.getBoundingClientRect();
+      arkRoute.position=initial.width?{x:initial.left,y:initial.top}:{x:point.x,y:point.y};
+      if(!initial.width) follower.style.transform='translate3d('+point.x+'px,'+point.y+'px,0)';
+    }
+
+    if(!previousTarget || previousTarget.anchor!==target.anchor){
+      var start={x:arkRoute.position.x,y:arkRoute.position.y,width:point.width,height:point.height};
+      if(previousTarget) drawArkTrail(start,point);
+      arkRoute.target=target;
+      setArkSpeaking(null);
+    }
+
+    var dx=point.x-arkRoute.position.x, dy=point.y-arkRoute.position.y;
+    var distance=Math.hypot(dx,dy);
+    if(distance<1.15){
+      arkRoute.position.x=point.x;
+      arkRoute.position.y=point.y;
+      follower.style.transform='translate3d('+point.x+'px,'+point.y+'px,0)';
+      follower.classList.remove('ark-route-moving');
+      setArkSpeaking(target);
+      return;
+    }
+
+    // Movimento contínuo: cada frame recalcula o destino pela posição REAL do elemento
+    // na tela. A rolagem pode mudar o destino no meio do trajeto sem reiniciar animações.
+    var factor=distance>180?.34:distance>60?.42:.5;
+    var step=Math.min(distance,Math.max(1.8,Math.min(38,distance*factor)));
+    var ratio=step/distance;
+    arkRoute.position.x+=dx*ratio;
+    arkRoute.position.y+=dy*ratio;
+    var tilt=Math.max(-7,Math.min(7,dx*.055));
+    follower.style.transform='translate3d('+arkRoute.position.x+'px,'+arkRoute.position.y+'px,0) rotate('+tilt+'deg)';
+    follower.classList.add('ark-route-moving');
+    if(!arkRoute.frame){
+      arkRoute.frame=window.requestAnimationFrame(function(){
+        arkRoute.frame=0;
+        updateHomeArk();
+      });
+    }
   }
   function ensureHomeArk() {
     var follower=document.querySelector('.ark-home-follow-robot');
@@ -809,7 +845,7 @@
       window.__arkHomeFollowBound = true;
       window.addEventListener('scroll', scheduleHomeArkUpdate, {passive:true});
       window.addEventListener('resize', scheduleHomeArkUpdate, {passive:true});
-      window.addEventListener('scrollend', function(){updateHomeArk(false);}, {passive:true});
+      window.addEventListener('scrollend', scheduleHomeArkUpdate, {passive:true});
     }
     if (content && window.MutationObserver) {
       var observer = new MutationObserver(function () {
