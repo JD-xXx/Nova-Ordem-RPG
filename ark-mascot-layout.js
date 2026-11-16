@@ -400,7 +400,7 @@
   }
 
   function addTalentHoloDemos(content) {
-    if (!content || content.querySelector('[data-ark-talent-demo="corporal"]')) return;
+    if (!content) return;
     var talentPanel = Array.prototype.find.call(content.querySelectorAll('.panel'), function (node) {
       var heading = node.querySelector('h3');
       return heading && /FORMAS DE UTILIZAÇÃO/i.test(heading.textContent);
@@ -496,10 +496,15 @@
         var label = node.querySelector('b');
         return label && label.textContent.trim().toLowerCase() === item.row.toLowerCase();
       });
-      if (!row || content.querySelector('[data-ark-talent-demo="' + item.key + '"]')) return;
-      var holder = document.createElement('div');
-      holder.innerHTML = item.html;
-      row.parentNode.insertBefore(holder.firstElementChild, row.nextSibling);
+      if (!row || !row.parentNode) return;
+      var demoNode = content.querySelector('[data-ark-talent-demo="' + item.key + '"]');
+      if (!demoNode) {
+        var holder = document.createElement('div');
+        holder.innerHTML = item.html;
+        demoNode = holder.firstElementChild;
+      }
+      // Keep each projection directly beneath its own class explanation.
+      if (demoNode) row.parentNode.insertBefore(demoNode, row.nextSibling);
     });
   }
 
@@ -1289,6 +1294,8 @@ function setArkSpeaking(target) {
       var previousGo = window.go;
       var wrappedGo = function () {
         var context=this, args=Array.prototype.slice.call(arguments);
+        // Chi and Talentos are legacy routes; both now open the unified Power System page.
+        if (args[0] === 'chi' || args[0] === 'talents') args[0] = 'power';
         if(window.__arkGoPending) return;
         window.__arkGoPending=true;
         runArkPageTransition(function(){
