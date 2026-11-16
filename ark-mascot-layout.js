@@ -182,6 +182,9 @@
     '.ark-route-trail{position:fixed;inset:0;z-index:79;pointer-events:none;overflow:visible}',
     '.ark-smoke-puff{position:absolute;width:15px;height:10px;border-radius:50%;background:radial-gradient(ellipse at 45% 45%,rgba(222,249,255,.96),rgba(103,211,255,.78) 42%,rgba(44,153,226,.22) 76%,transparent 100%);filter:blur(1.5px) drop-shadow(0 0 5px rgba(82,193,255,.48));opacity:0;transform:translate(-50%,-50%) scale(.48);animation:ark-cartoon-smoke .58s ease-out forwards}',
     '.ark-smoke-puff:before,.ark-smoke-puff:after{content:"";position:absolute;border-radius:50%;background:inherit;filter:blur(1px)}.ark-smoke-puff:before{width:9px;height:8px;left:-3px;top:-3px}.ark-smoke-puff:after{width:9px;height:8px;right:-3px;top:-2px}',
+    '.ark-home-follow-robot.ark-route-disintegrating{animation:ark-robot-data-break .68s ease-in forwards!important;pointer-events:none!important}@keyframes ark-robot-data-break{0%{opacity:1;filter:brightness(1) drop-shadow(0 0 12px #55caff);transform:scale(1)}35%{opacity:.9;filter:brightness(2.8) blur(1px) drop-shadow(0 0 18px #55caff)}100%{opacity:0;filter:brightness(3) blur(7px);scale:.18}}',
+    '.ark-data-snowfall{position:fixed;inset:0;z-index:78;overflow:hidden;pointer-events:none;contain:strict}.ark-data-snowflake{position:absolute;top:-18px;left:var(--snow-x);width:var(--snow-size);height:var(--snow-size);border-radius:1px;background:linear-gradient(135deg,#e5fbff,#65d4ff 58%,#258fe0);box-shadow:0 0 7px rgba(92,207,255,.8),0 0 15px rgba(48,158,255,.38);opacity:0;transform:translate3d(0,-15px,0) rotate(0deg);animation:ark-data-snow-fall var(--snow-duration) linear var(--snow-delay) forwards}.ark-data-snowflake:nth-child(3n){border-radius:50%;width:calc(var(--snow-size)*.72);height:calc(var(--snow-size)*.72);filter:blur(.35px)}.ark-data-snowflake:nth-child(4n){width:2px;height:12px;border-radius:2px;opacity:.8}.ark-data-snowfall:after{content:"";position:absolute;left:var(--snow-origin-x,50%);top:var(--snow-origin-y,50%);width:100px;height:100px;border-radius:50%;background:radial-gradient(circle,rgba(103,216,255,.28),rgba(61,170,255,.1) 38%,transparent 72%);transform:translate(-50%,-50%);animation:ark-data-snow-flash .8s ease-out forwards}',
+    '@keyframes ark-data-snow-fall{0%{opacity:0;transform:translate3d(0,-18px,0) rotate(0deg)}8%{opacity:.95}70%{opacity:.82}100%{opacity:0;transform:translate3d(var(--snow-drift),110vh,0) rotate(var(--snow-spin))}}@keyframes ark-data-snow-flash{0%{opacity:1;scale:.15}100%{opacity:0;scale:2.8}}',
     '@keyframes ark-cartoon-smoke{0%{opacity:0;transform:translate(-50%,-50%) scale(.42)}22%{opacity:.82}62%{opacity:.58}100%{opacity:0;transform:translate(-50%,-62%) scale(.9)}}',
     '.ark-transfer-box{position:relative;z-index:12;top:auto;left:auto;width:154px;margin:20px auto 14px;transform:none;padding:8px 9px 9px;transform:translateX(-50%);border:1px solid rgba(104,210,255,.5);border-radius:78px 78px 13px 13px;background:linear-gradient(155deg,rgba(8,32,50,.96),rgba(3,13,24,.98));box-shadow:0 10px 34px rgba(0,0,0,.38),0 0 20px rgba(64,177,235,.15);text-align:center;pointer-events:none;overflow:hidden;transition:box-shadow .25s ease,border-color .25s ease}',
     '.ark-home-intro{display:grid;grid-template-columns:92px minmax(0,1fr);align-items:center;gap:13px;min-height:142px;max-width:760px;margin:0 auto 24px;padding:12px 18px;border:1px solid rgba(84,178,226,.25);border-radius:13px;background:linear-gradient(112deg,rgba(11,30,46,.88),rgba(7,17,28,.94));overflow:visible}.ark-home-intro[hidden]{display:none!important}.ark-home-intro-copy{min-width:0;padding:12px 15px;border:1px solid rgba(91,177,232,.32);border-radius:12px;background:rgba(7,20,32,.82);color:#c8dced;font-size:12px;line-height:1.65;opacity:0;transform:translateY(8px);transition:opacity .38s ease,transform .42s ease}.ark-home-intro-copy:before{content:"A.R.K. / ASSISTENTE DA AGÊNCIA";display:block;margin-bottom:6px;color:#8dd4ff;font:700 9px var(--mono,monospace);letter-spacing:1px}.ark-home-intro-copy p{margin:0 0 6px}.ark-home-intro-copy p:last-child{margin-bottom:0}.ark-home-intro.ark-is-speaking .ark-home-intro-copy{opacity:1;transform:translateY(0)}.ark-home-intro .ark-home-intro-mark{width:100%;height:100%;min-height:100px;display:block;pointer-events:none}@media(max-width:650px){.ark-home-intro{grid-template-columns:70px minmax(0,1fr);gap:8px;min-height:130px;padding:9px;margin-bottom:19px}.ark-home-intro-copy{padding:10px;font-size:10px;line-height:1.55}.ark-home-intro-copy:before{font-size:8px;letter-spacing:.6px}}',
@@ -465,7 +468,7 @@
     feature.parentNode.insertBefore(holder, feature.nextSibling);
   }
 
-  var arkRoute = { target:null, index:-1, desiredIndex:-1, animation:null, frame:0, position:null, follower:null, trail:null, speaking:null, timer:0, smokeCount:0, lastSmoke:null };
+  var arkRoute = { target:null, index:-1, desiredIndex:-1, animation:null, frame:0, position:null, follower:null, trail:null, speaking:null, timer:0, smokeCount:0, lastSmoke:null, finished:false, snow:null };
   function routeTargets(content) {
     var targets = [];
     var nodes = content.querySelectorAll(
@@ -533,6 +536,42 @@
     arkRoute.smokeCount++;
     window.setTimeout(function(){if(puff.parentNode)puff.parentNode.removeChild(puff);},900);
   }
+  function disintegrateArkIntoSnow(follower) {
+    if (arkRoute.finished) return;
+    arkRoute.finished=true;
+    setArkSpeaking(null);
+    var rect=follower.getBoundingClientRect();
+    var layer=document.createElement('div');
+    layer.className='ark-data-snowfall';
+    layer.setAttribute('aria-hidden','true');
+    layer.style.setProperty('--snow-origin-x',(rect.left+rect.width/2)+'px');
+    layer.style.setProperty('--snow-origin-y',(rect.top+rect.height/2)+'px');
+    for(var i=0;i<46;i++){
+      var flake=document.createElement('i');
+      flake.className='ark-data-snowflake';
+      flake.style.setProperty('--snow-x',(Math.random()*100)+'vw');
+      flake.style.setProperty('--snow-size',(2+Math.random()*4)+'px');
+      flake.style.setProperty('--snow-duration',(3.1+Math.random()*2.4)+'s');
+      flake.style.setProperty('--snow-delay',(Math.random()*.75)+'s');
+      flake.style.setProperty('--snow-drift',((Math.random()-.5)*150)+'px');
+      flake.style.setProperty('--snow-spin',((Math.random()-.5)*720)+'deg');
+      layer.appendChild(flake);
+    }
+    document.body.appendChild(layer);
+    arkRoute.snow=layer;
+    follower.classList.remove('ark-route-moving','ark-route-docked');
+    follower.classList.add('ark-route-disintegrating');
+    window.setTimeout(function(){
+      if(arkRoute.finished) follower.style.display='none';
+      follower.classList.remove('ark-route-disintegrating');
+    },700);
+    window.setTimeout(function(){
+      if(layer.parentNode) layer.parentNode.removeChild(layer);
+      if(arkRoute.snow===layer) arkRoute.snow=null;
+    },6500);
+    arkRoute.target=null;
+    arkRoute.position=null;
+  }
   function updateHomeArk() {
     var content=document.getElementById('content'), follower=arkRoute.follower || document.querySelector('.ark-home-follow-robot');
     if (!content || !follower || !arkRoute.trail) return;
@@ -543,6 +582,19 @@
 
     var vh=window.innerHeight||document.documentElement.clientHeight;
     var vw=window.innerWidth||document.documentElement.clientWidth;
+    // O último ponto já passou: A.R.K. encerra o percurso em uma queda de dados.
+    var finalRect=targets[targets.length-1].anchor.getBoundingClientRect();
+    if(finalRect.bottom < -8){
+      disintegrateArkIntoSnow(follower);
+      return;
+    }
+    if(arkRoute.finished){
+      arkRoute.finished=false;
+      follower.classList.remove('ark-route-disintegrating');
+      follower.style.opacity='';
+      follower.style.display='grid';
+      arkRoute.position=null;
+    }
     var aimY=vh*.48, nearest=0, nearestDistance=Infinity;
     targets.forEach(function(target,index){
       var rect=target.anchor.getBoundingClientRect();
