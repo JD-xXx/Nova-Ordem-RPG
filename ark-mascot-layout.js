@@ -403,7 +403,7 @@
     if (!content || content.querySelector('[data-ark-talent-demo="corporal"]')) return;
     var talentPanel = Array.prototype.find.call(content.querySelectorAll('.panel'), function (node) {
       var heading = node.querySelector('h3');
-      return heading && /TALENTOS/i.test(heading.textContent);
+      return heading && /FORMAS DE UTILIZAÇÃO/i.test(heading.textContent);
     });
     var classHeading = Array.prototype.find.call(content.querySelectorAll('h3.section'), function (node) {
       if (!/^CLASSES(?:\s|$)/i.test(node.textContent.trim())) return false;
@@ -431,10 +431,12 @@
         '@keyframes ark-arm-vein-flow{to{stroke-dashoffset:-32}}',
         '@keyframes ark-arm-muscle-glow{0%,25%,100%{fill:rgba(75,155,190,.18);filter:drop-shadow(0 0 2px rgba(79,190,255,.25))}48%,72%{fill:rgba(49,169,245,.5);filter:drop-shadow(0 0 9px rgba(59,190,255,.95))}}',
         '@keyframes ark-arm-grip{0%,18%,68%,100%{transform:rotate(0)}34%,52%{transform:rotate(13deg)}}',
-        '.ark-talent-influence-robot .ark-talent-floating-sword{left:13px;right:auto;top:27px;width:78px;height:24px;transform-origin:100% 50%;animation:ark-talent-sword-grip 4.8s cubic-bezier(.25,.7,.2,1) infinite}',
-        '.ark-talent-influence-robot .ark-talent-floating-sword svg{transform:none}',
-        '@keyframes ark-talent-sword-grip{0%,46%{opacity:0;transform:translateX(24px) rotate(0) scale(.92)}57%{opacity:1;transform:translateX(11px) rotate(0) scale(1.02)}72%,100%{opacity:1;transform:translateX(0) rotate(0) scale(.96)}}',
-        '.ark-talent-influence-robot .ark-talent-raised-arm{animation-name:ark-talent-raise-arm-held}',
+        '.ark-talent-stage--influence .ark-talent-floating-sword{right:8%;left:auto;top:47%;width:78px;height:24px;transform-origin:12% 50%;animation:ark-talent-sword-pull 4.8s cubic-bezier(.25,.7,.2,1) infinite}',
+        '.ark-talent-stage--influence .ark-talent-floating-sword svg{transform:scaleX(-1)}',
+        '@keyframes ark-talent-sword-pull{0%,58%{right:8%;top:47%;opacity:1;transform:rotate(0) scale(1)}72%{right:27%;top:43%;opacity:1;transform:rotate(0) scale(1.02)}88%,100%{right:68%;top:43%;opacity:1;transform:rotate(0) scale(.96)}}',
+        '.ark-talent-stage--influence .ark-talent-energy-orb{animation-name:ark-talent-influence-orb}',
+        '@keyframes ark-talent-influence-orb{0%,18%{left:22%;top:54%;opacity:0;transform:scale(.4)}30%{left:38%;top:45%;opacity:1;transform:scale(1)}42%{left:55%;top:40%;opacity:1;transform:scale(1.15)}54%,59%{left:78%;top:40%;opacity:1;transform:scale(1.25)}64%,100%{left:78%;top:40%;opacity:0;transform:scale(.4)}}',
+        '.ark-talent-stage--influence .ark-talent-raised-arm{animation-name:ark-talent-raise-arm-held}',
         '@keyframes ark-talent-raise-arm-held{0%,12%{opacity:0;transform:rotate(0)}22%,82%{opacity:1;transform:rotate(-4deg)}100%{opacity:0;transform:rotate(0)}}',
         '@media(max-width:700px){.ark-talent-arm-xray{height:132px}.ark-talent-influence-robot .ark-talent-floating-sword{left:9px;top:23px;width:62px;height:20px}}'
       ].join('');
@@ -475,8 +477,8 @@
     var influenceArm = '<svg class="ark-talent-raised-arm" viewBox="0 0 140 150" aria-hidden="true"><path d="M92 77L105 63L111 43"/><circle cx="111" cy="43" r="5"/></svg>';
     var sword = '<svg viewBox="0 0 90 24" role="img" aria-label="Espada holográfica, com a ponta da lâmina voltada para a esquerda"><path d="M5 15L70 5L84 8L70 11L7 19Z" fill="#d9f6ff" stroke="#72d8ff" stroke-width="1.4"/><path d="M12 15L71 8" stroke="#fff" stroke-width="1.5"/><path d="M68 4L72 13" stroke="#c6f2ff" stroke-width="3"/><path d="M72 8L88 8L88 13L72 13Z" fill="#7baac5" stroke="#d5f5ff" stroke-width="1"/><path d="M76 8L84 13M76 13L84 8" stroke="#345e7b" stroke-width="1"/></svg>';
     var influenceStage = '<div class="ark-talent-influence-actor">' +
-      robot('ark-talent-influence-robot', influenceArm + '<div class="ark-talent-floating-sword">' + sword + '</div>') +
-      '</div><span class="ark-talent-energy-orb" aria-hidden="true"></span>';
+      robot('ark-talent-influence-robot', influenceArm) +
+      '</div><div class="ark-talent-floating-sword">' + sword + '</div><span class="ark-talent-energy-orb" aria-hidden="true"></span>';
     var existenceStage = '<div class="ark-talent-existence-actor">' + robot('ark-talent-existence-robot') + '</div>' +
       '<div class="ark-talent-existence-observer"><div class="ark-talent-robot-svg">' + arkHologramSvg + '</div><span class="ark-talent-existence-question">?</span></div>' +
       '<div class="ark-talent-existence-wave" aria-hidden="true"></div>';
@@ -610,12 +612,13 @@ function setArkSpeaking(target) {
       '.ark-route-trail{opacity:1!important}',
       '.ark-data-snowfall{position:fixed;inset:0;z-index:78;overflow:hidden;pointer-events:none;contain:strict}',
       '.ark-data-snowfall .ark-data-snowflake{top:-28px!important;animation:ark-data-snow-loop var(--snow-duration) linear var(--snow-delay) infinite!important}',
-      '.ark-data-snowbank{position:absolute;left:0;right:0;bottom:0;height:38px;z-index:2;pointer-events:none}',
+      '.ark-data-snowbank{position:absolute;left:0;right:0;bottom:0;height:26px;z-index:2;pointer-events:none;background:linear-gradient(180deg,rgba(196,239,255,0) 0%,rgba(167,224,255,.18) 38%,rgba(225,249,255,.78) 100%);box-shadow:0 -3px 12px rgba(91,190,255,.16)}',
+      '.ark-data-snowbank:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 0%,rgba(234,250,255,.35) 65%,rgba(241,252,255,.9) 100%);clip-path:polygon(0 48%,5% 35%,11% 54%,18% 29%,24% 49%,31% 34%,39% 52%,47% 30%,54% 48%,62% 33%,70% 51%,78% 28%,86% 49%,93% 34%,100% 48%,100% 100%,0 100%)}',
       '.ark-data-snowbank i{position:absolute;bottom:0;display:block;border-radius:55% 55% 0 0;background:radial-gradient(ellipse at 50% 100%,rgba(231,250,255,.96) 0 23%,rgba(139,218,255,.72) 50%,rgba(54,151,220,.16) 76%,transparent 100%);filter:drop-shadow(0 -2px 5px rgba(94,200,255,.45));transform:scaleY(0);transform-origin:bottom;animation:ark-data-snowbank-grow 2.6s ease-out forwards}',
-      '.ark-data-snowbank i:nth-child(1){left:5%;width:126px;height:24px;animation-delay:.15s}',
-      '.ark-data-snowbank i:nth-child(2){left:25%;width:92px;height:17px;animation-delay:.55s}',
-      '.ark-data-snowbank i:nth-child(3){left:53%;width:154px;height:29px;animation-delay:.9s}',
-      '.ark-data-snowbank i:nth-child(4){left:82%;width:112px;height:21px;animation-delay:1.2s}',
+      '.ark-data-snowbank i:nth-child(1){left:0;width:25%;height:20px;animation-delay:.15s}',
+      '.ark-data-snowbank i:nth-child(2){left:24%;width:27%;height:16px;animation-delay:.55s}',
+      '.ark-data-snowbank i:nth-child(3){left:49%;width:28%;height:22px;animation-delay:.9s}',
+      '.ark-data-snowbank i:nth-child(4){left:75%;width:25%;height:18px;animation-delay:1.2s}',
       '@keyframes ark-data-snow-loop{0%{opacity:0;transform:translate3d(0,0,0) rotate(0)}9%{opacity:.96}82%{opacity:.82}100%{opacity:0;transform:translate3d(var(--snow-drift),calc(100vh + 45px),0) rotate(var(--snow-spin))}}',
       '@keyframes ark-data-snowbank-grow{to{transform:scaleY(1)}}'
     ].join('');
