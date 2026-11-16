@@ -1001,7 +1001,6 @@
           window.__arkGoPending=false;
           var result=previousGo.apply(context,args);
           window.setTimeout(enhance,0);
-          window.setTimeout(function(){finishArkPageTransition();},90);
           return result;
         });
       };
