@@ -9,7 +9,9 @@
     '.ark-scene-robot{width:112px;height:122px;flex:0 0 112px;display:grid;place-items:center;filter:drop-shadow(0 8px 13px rgba(65,174,235,.22));animation:ark-hover 3.6s ease-in-out infinite}',
     '.ark-scene-robot svg{width:100%;height:100%;overflow:visible}',
     '.ark-scene-robot .ark-eye{transform-box:fill-box;transform-origin:center;animation:ark-eye-blink 5.8s ease-in-out infinite}.ark-scene-robot .ark-eye--right{animation-delay:.08s}@keyframes ark-eye-blink{0%,91%,94%,100%{transform:scaleY(1)}92%,93%{transform:scaleY(.12)}}',
-    '.ark-scene-bubble{position:relative;flex:1;min-width:0;padding:12px 15px;border:1px solid rgba(92,172,224,.3);border-radius:10px;background:rgba(8,20,32,.82);color:#c8dced;font-size:13px;line-height:1.65}',
+    '.ark-scene-bubble{position:relative;flex:1;min-width:0;padding:12px 15px;border:1px solid rgba(92,172,224,.3);border-radius:14px 14px 14px 5px;background:rgba(8,20,32,.88);color:#c8dced;font-size:13px;line-height:1.65;box-shadow:0 5px 15px rgba(0,0,0,.14)}',
+    '.ark-scene-bubble:after{content:"";position:absolute;left:-8px;bottom:14px;width:13px;height:13px;background:rgba(8,20,32,.94);border-left:1px solid rgba(92,172,224,.3);border-bottom:1px solid rgba(92,172,224,.3);transform:rotate(45deg);pointer-events:none}',
+    '.ark-scene--peek .ark-scene-bubble:after{left:auto;right:-8px;background:rgba(12,10,16,.9);border-color:rgba(151,99,116,.36);transform:rotate(-45deg)}',
     '.ark-scene-bubble:before{content:"A.R.K.  /  GUIA DA AGÊNCIA";display:block;margin-bottom:5px;color:#8dd4ff;font:700 9px var(--mono,monospace);letter-spacing:1.1px}',
     '.ark-scene-bubble p{margin:0;color:inherit;font-size:inherit;line-height:inherit}',
     '.ark-scene--compact{padding:10px 13px;gap:10px;margin:15px 0}.ark-scene--compact .ark-scene-robot{width:82px;height:92px;flex-basis:82px}.ark-scene--compact .ark-scene-bubble{font-size:12px;padding:10px 12px}',
@@ -214,30 +216,33 @@
     '.ark-visor-glint{animation:ark-visor-shine 5.6s ease-in-out infinite;transform-box:fill-box;transform-origin:center}',
     '.ark-eye{transform-box:fill-box;transform-origin:center;animation:ark-eye-blink 5.8s ease-in-out infinite}',
     '.ark-eye--right{animation-delay:.08s}',
+    '.ark-core-light{transform-box:fill-box;transform-origin:center;animation:ark-core-breathe 3.2s ease-in-out infinite}',
     '@keyframes ark-arm-drift{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-2px) rotate(2deg)}}',
     '@keyframes ark-visor-shine{0%,72%,100%{opacity:.3;transform:translateX(-3px)}38%{opacity:.9;transform:translateX(3px)}}',
     '@keyframes ark-eye-blink{0%,91%,94%,100%{transform:scaleY(1)}92%,93%{transform:scaleY(.12)}}',
-    '@media(prefers-reduced-motion:reduce){.ark-arm,.ark-visor-glint,.ark-eye{animation:none!important}}'
+    '@keyframes ark-core-breathe{0%,100%{opacity:.78;filter:brightness(1)}50%{opacity:1;filter:brightness(1.35)}}',
+    '@media(prefers-reduced-motion:reduce){.ark-arm,.ark-visor-glint,.ark-eye,.ark-core-light{animation:none!important}}'
   ].join('\\n');
   document.head.appendChild(arkCharacterStyle);
 
-  var robotSvg = '<svg viewBox="0 0 180 190" role="img" aria-label="A.R.K., androide branco flutuante com visor escuro e olhos azuis expressivos">' +
-    '<defs><linearGradient id="ark-shell-v5" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff"/><stop offset=".48" stop-color="#f3faff"/><stop offset="1" stop-color="#b6d0df"/></linearGradient><linearGradient id="ark-shell-edge-v5" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#c4dbe7"/></linearGradient><linearGradient id="ark-visor-v5" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#173b55"/><stop offset=".5" stop-color="#061a2a"/><stop offset="1" stop-color="#020b15"/></linearGradient><radialGradient id="ark-eye-v5"><stop stop-color="#fff"/><stop offset=".34" stop-color="#a8f1ff"/><stop offset="1" stop-color="#168bd3"/></radialGradient><radialGradient id="ark-core-v5"><stop stop-color="#f0ffff"/><stop offset=".42" stop-color="#75e5ff"/><stop offset="1" stop-color="#168bc4"/></radialGradient><filter id="ark-glow-v5"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>' +
-    '<ellipse cx="90" cy="178" rx="34" ry="5" fill="#39b9f4" opacity=".2"/><ellipse cx="90" cy="176" rx="20" ry="2.5" fill="#b7efff" opacity=".7"/>' +
-    '<g class="ark-arm ark-arm--left"><path d="M63 108Q52 105 45 115L36 136Q32 144 39 149Q46 153 51 144L64 124Z" fill="url(#ark-shell-v5)" stroke="#9ebaca" stroke-width="2" stroke-linejoin="round"/><circle cx="54" cy="114" r="8" fill="url(#ark-shell-edge-v5)" stroke="#91afc1" stroke-width="1.5"/><path d="M37 138L34 145" stroke="#7edfff" stroke-width="2.5" stroke-linecap="round"/></g>' +
-    '<g class="ark-arm ark-arm--right"><path d="M117 108Q128 105 135 115L144 136Q148 144 141 149Q134 153 129 144L116 124Z" fill="url(#ark-shell-v5)" stroke="#9ebaca" stroke-width="2" stroke-linejoin="round"/><circle cx="126" cy="114" r="8" fill="url(#ark-shell-edge-v5)" stroke="#91afc1" stroke-width="1.5"/><path d="M143 138L146 145" stroke="#7edfff" stroke-width="2.5" stroke-linecap="round"/></g>' +
-    '<path d="M66 103Q56 108 54 121L59 153Q72 166 90 168Q108 166 121 153L126 121Q124 108 114 103L105 111H75Z" fill="url(#ark-shell-v5)" stroke="#a5c0cf" stroke-width="2" stroke-linejoin="round"/>' +
-    '<path d="M69 112Q90 122 111 112" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".92"/><path d="M74 151Q90 158 106 151" fill="none" stroke="#8cb7ca" stroke-width="1.6" stroke-linecap="round" opacity=".8"/>' +
-    '<path d="M90 118L101 132L90 145L79 132Z" fill="url(#ark-core-v5)" stroke="#a8efff" stroke-width="1.5" filter="url(#ark-glow-v5)"/><circle cx="90" cy="132" r="3" fill="#f2ffff"/><path d="M67 130L74 133M113 130L106 133" stroke="#79d7f4" stroke-width="2" stroke-linecap="round"/>' +
-    '<path d="M90 14C63 14 43 33 43 59L43 73C43 98 61 114 90 114C119 114 137 98 137 73L137 59C137 33 117 14 90 14Z" fill="url(#ark-shell-edge-v5)" stroke="#9ebaca" stroke-width="2"/>' +
-    '<path d="M54 37Q65 18 90 18Q115 18 126 37" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".95"/>' +
-    '<path d="M46 51Q90 38 134 51L131 83Q90 99 49 83Z" fill="url(#ark-visor-v5)" stroke="#5e8da7" stroke-width="1.6"/>' +
-    '<path class="ark-visor-glint" d="M56 53Q90 43 124 53" fill="none" stroke="#b7efff" stroke-width="1.6" stroke-linecap="round" opacity=".7"/>' +
-    '<ellipse class="ark-eye ark-eye--left" cx="69" cy="67" rx="7" ry="10" fill="url(#ark-eye-v5)" filter="url(#ark-glow-v5)"/><ellipse class="ark-eye ark-eye--right" cx="111" cy="67" rx="7" ry="10" fill="url(#ark-eye-v5)" filter="url(#ark-glow-v5)"/>' +
-    '<circle cx="67" cy="63" r="2.2" fill="#fff" opacity=".9"/><circle cx="109" cy="63" r="2.2" fill="#fff" opacity=".9"/>' +
-    '<path d="M79 91Q90 96 101 91" fill="none" stroke="#78dfff" stroke-width="1.8" stroke-linecap="round" opacity=".9"/>' +
-    '<path d="M90 14V8" stroke="#8bdcff" stroke-width="2" stroke-linecap="round"/><circle cx="90" cy="7" r="3.5" fill="#8be7ff" filter="url(#ark-glow-v5)"/>' +
-    '<path d="M78 166L90 171L102 166" fill="none" stroke="#8ddcff" stroke-width="2" stroke-linecap="round" opacity=".85"/></svg>';
+  var robotSvg = '<svg viewBox="0 0 180 190" role="img" aria-label="A.R.K., androide branco flutuante de silhueta humanoide, visor escuro e olhos azuis expressivos">' +
+    '<defs><linearGradient id="ark-shell-v6" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff"/><stop offset=".48" stop-color="#f2f9fd"/><stop offset="1" stop-color="#b6cfdd"/></linearGradient><linearGradient id="ark-shell-edge-v6" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#bcd5e2"/></linearGradient><linearGradient id="ark-visor-v6" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#173b55"/><stop offset=".5" stop-color="#061a2a"/><stop offset="1" stop-color="#020b15"/></linearGradient><radialGradient id="ark-eye-v6"><stop stop-color="#fff"/><stop offset=".32" stop-color="#b7f5ff"/><stop offset="1" stop-color="#168bd3"/></radialGradient><linearGradient id="ark-core-v6" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#e9ffff"/><stop offset=".48" stop-color="#78e8ff"/><stop offset="1" stop-color="#168bc4"/></linearGradient><filter id="ark-glow-v6"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>' +
+    '<ellipse cx="90" cy="180" rx="31" ry="4.5" fill="#39b9f4" opacity=".18"/><ellipse cx="90" cy="178" rx="17" ry="2" fill="#b7efff" opacity=".72"/>' +
+    '<g class="ark-arm ark-arm--left"><path d="M64 101Q54 100 49 111L39 133Q36 141 42 145Q49 149 54 140L68 115Z" fill="url(#ark-shell-v6)" stroke="#9ebaca" stroke-width="1.8" stroke-linejoin="round"/><circle cx="56" cy="108" r="7" fill="url(#ark-shell-edge-v6)" stroke="#91afc1" stroke-width="1.4"/><path d="M40 134L37 141" stroke="#79dfff" stroke-width="2.5" stroke-linecap="round"/></g>' +
+    '<g class="ark-arm ark-arm--right"><path d="M116 101Q126 100 131 111L141 133Q144 141 138 145Q131 149 126 140L112 115Z" fill="url(#ark-shell-v6)" stroke="#9ebaca" stroke-width="1.8" stroke-linejoin="round"/><circle cx="124" cy="108" r="7" fill="url(#ark-shell-edge-v6)" stroke="#91afc1" stroke-width="1.4"/><path d="M140 134L143 141" stroke="#79dfff" stroke-width="2.5" stroke-linecap="round"/></g>' +
+    '<path d="M69 94Q59 98 57 113L52 148Q51 159 65 166Q90 178 115 166Q129 159 128 148L123 113Q121 98 111 94Q90 102 69 94Z" fill="url(#ark-shell-v6)" stroke="#9ebaca" stroke-width="2" stroke-linejoin="round"/>' +
+    '<path d="M68 103Q90 112 112 103" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".94"/><path d="M61 147Q90 160 119 147" fill="none" stroke="#8bb9cd" stroke-width="1.7" stroke-linecap="round" opacity=".85"/>' +
+    '<path d="M78 113Q90 118 102 113L101 145Q90 151 79 145Z" fill="#dceef5" stroke="#9fc8d9" stroke-width="1.2"/><rect class="ark-core-light" x="85" y="119" width="10" height="23" rx="5" fill="url(#ark-core-v6)" filter="url(#ark-glow-v6)"/><path d="M88 124H92M88 131H92M88 138H92" stroke="#f1ffff" stroke-width="1.5" stroke-linecap="round"/>' +
+    '<path d="M72 157Q90 165 108 157" fill="none" stroke="#77dfff" stroke-width="2" stroke-linecap="round" opacity=".8"/><path d="M78 169Q90 173 102 169" fill="none" stroke="#8ce7ff" stroke-width="2" stroke-linecap="round" opacity=".9"/>' +
+    '<path d="M90 12C66 12 50 26 49 48L49 70C49 88 64 99 90 101C116 99 131 88 131 70L131 48C130 26 114 12 90 12Z" fill="url(#ark-shell-edge-v6)" stroke="#9ebaca" stroke-width="2"/>' +
+    '<path d="M58 34Q70 17 90 17Q110 17 122 34" fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round" opacity=".96"/>' +
+    '<path d="M51 47Q90 35 129 47L127 76Q90 90 53 76Z" fill="url(#ark-visor-v6)" stroke="#5e8da7" stroke-width="1.6"/>' +
+    '<path class="ark-visor-glint" d="M59 49Q90 40 121 49" fill="none" stroke="#c0f4ff" stroke-width="1.6" stroke-linecap="round" opacity=".72"/>' +
+    '<ellipse class="ark-eye ark-eye--left" cx="71" cy="63" rx="8" ry="11.5" fill="url(#ark-eye-v6)" filter="url(#ark-glow-v6)"/><ellipse class="ark-eye ark-eye--right" cx="109" cy="63" rx="8" ry="11.5" fill="url(#ark-eye-v6)" filter="url(#ark-glow-v6)"/>' +
+    '<circle cx="68.5" cy="59" r="2.4" fill="#fff" opacity=".96"/><circle cx="106.5" cy="59" r="2.4" fill="#fff" opacity=".96"/>' +
+    '<path d="M81 84Q90 89 99 84" fill="none" stroke="#7fe2ff" stroke-width="1.8" stroke-linecap="round" opacity=".9"/>' +
+    '<path d="M90 12V7" stroke="#8bdcff" stroke-width="2" stroke-linecap="round"/><circle cx="90" cy="6" r="3.5" fill="#8be7ff" filter="url(#ark-glow-v6)"/>' +
+    '<path d="M66 91L72 97M114 91L108 97" stroke="#8bdcff" stroke-width="2" stroke-linecap="round" opacity=".9"/></svg>';
 
   var arkHologramSvg = '<svg viewBox="0 0 140 150" role="img" aria-label="Modelo antigo do A.R.K. usado como representação holográfica">' +
     '<defs><linearGradient id="ark-shell-v2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff"/><stop offset=".58" stop-color="#e6f3fa"/><stop offset="1" stop-color="#a9c7d9"/></linearGradient><linearGradient id="ark-screen-v2" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#123e60"/><stop offset="1" stop-color="#061827"/></linearGradient><filter id="ark-glow-v2"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>' +
@@ -260,11 +265,11 @@
     '.ark-rank-title{position:relative;display:block;margin:0 0 8px;font:900 clamp(15px,2.5vw,22px)/1.1 var(--display,Arial),sans-serif;letter-spacing:1.5px;text-transform:uppercase}',
     '.ark-rank-title--pillar{color:#ff594f;text-shadow:0 0 5px #ff392b,0 0 13px #ff351d,0 0 24px #f30;animation:ark-pillar-fire 1.35s ease-in-out infinite alternate}',
     '.ark-rank-title--lord{color:#ffe39a;text-shadow:0 0 5px #ffd15b,0 0 14px #d99a24;animation:ark-lord-electric 1.8s steps(2,end) infinite}',
-    '.ark-rank-title--commander{color:#d8f1ff;text-shadow:0 0 6px #8ddcff,0 0 15px #58baff;animation:ark-commander-glint 2.4s ease-in-out infinite}',
-    '.ark-rank-title--pillar:after,.ark-rank-title--lord:after,.ark-rank-title--commander:after{content:"";position:absolute;inset:-7px -12px;z-index:-1;pointer-events:none}',
+    '.ark-rank-title--sentinel{color:#a6f5d9;text-shadow:0 0 6px #52d9b2,0 0 15px #178b78;animation:ark-sentinel-aura 2.6s ease-in-out infinite}',
+    '.ark-rank-title--pillar:after,.ark-rank-title--lord:after,.ark-rank-title--sentinel:after{content:"";position:absolute;inset:-7px -12px;z-index:-1;pointer-events:none}',
     '.ark-rank-title--pillar:after{background:radial-gradient(ellipse,rgba(255,76,25,.25),transparent 70%);filter:blur(5px);animation:ark-flame-halo .9s ease-in-out infinite alternate}',
     '.ark-rank-title--lord:after{background:linear-gradient(115deg,transparent 15%,rgba(255,245,185,.0) 38%,rgba(255,245,185,.9) 50%,transparent 62%);background-size:220% 100%;animation:ark-lightning 2.2s linear infinite}',
-    '.ark-rank-title--commander:after{background:linear-gradient(115deg,transparent 20%,rgba(180,235,255,.75) 50%,transparent 80%);background-size:220% 100%;animation:ark-lightning 3.2s linear infinite}',
+    '.ark-rank-title--sentinel:after{background:linear-gradient(115deg,transparent 20%,rgba(174,255,225,.78) 50%,transparent 80%);background-size:220% 100%;animation:ark-sentinel-shimmer 3s linear infinite}',
     '.ark-rank-robot{width:min(100%,132px);height:142px;display:grid;place-items:center;filter:drop-shadow(0 7px 15px rgba(78,190,244,.24));animation:ark-rank-float 3.5s ease-in-out infinite}',
     '.ark-rank-card--first .ark-rank-robot{width:min(100%,154px);height:164px;filter:drop-shadow(0 0 15px rgba(255,83,52,.25))}',
     '.ark-rank-robot svg{width:100%;height:100%;overflow:visible}',
@@ -281,7 +286,8 @@
     '@keyframes ark-flame-halo{from{opacity:.45;transform:scale(.9)}to{opacity:1;transform:scale(1.12)}}',
     '@keyframes ark-lord-electric{0%,18%,22%,65%,70%,100%{filter:brightness(1);text-shadow:0 0 5px #ffe39a,0 0 14px #d99a24}20%,68%{filter:brightness(1.7);text-shadow:0 0 8px #fff6c7,0 0 22px #ffbf36,2px 0 3px #fff}}',
     '@keyframes ark-lightning{0%{background-position:120% 0;opacity:0}18%{opacity:.8}38%{opacity:0}100%{background-position:-120% 0;opacity:0}}',
-    '@keyframes ark-commander-glint{0%,100%{filter:brightness(1);text-shadow:0 0 6px #8ddcff,0 0 15px #58baff}50%{filter:brightness(1.5);text-shadow:0 0 10px #e4f8ff,0 0 23px #69cfff}}',
+    '@keyframes ark-sentinel-aura{0%,100%{filter:brightness(1);text-shadow:0 0 6px #52d9b2,0 0 15px #178b78}50%{filter:brightness(1.5);text-shadow:0 0 10px #d9fff1,0 0 23px #32d8aa}}',
+    '@keyframes ark-sentinel-shimmer{0%{background-position:120% 0;opacity:0}20%{opacity:.8}42%{opacity:0}100%{background-position:-120% 0;opacity:0}}',
     '@media(max-width:560px){.ark-rank-podium{gap:5px;padding:28px 8px 12px;margin:18px -2px 24px}.ark-rank-card--first{transform:translateY(-9px)}.ark-rank-title{font-size:clamp(10px,3.1vw,15px);letter-spacing:.6px;margin-bottom:5px}.ark-rank-robot{height:105px}.ark-rank-card--first .ark-rank-robot{height:124px}.ark-rank-plinth{height:54px}.ark-rank-card--first .ark-rank-plinth{height:82px}.ark-rank-card--second .ark-rank-plinth{height:67px}.ark-rank-card--third .ark-rank-plinth{height:48px}.ark-rank-plinth b{font-size:17px}.ark-rank-card--first .ark-rank-plinth b{font-size:22px}.ark-rank-caption{font-size:6px;letter-spacing:.3px}}',
     '@media(prefers-reduced-motion:reduce){.ark-rank-podium:after,.ark-rank-title,.ark-rank-title:after,.ark-rank-robot{animation:none!important}}'
   ].join('\n');
@@ -293,7 +299,7 @@
     holder.innerHTML = '<section class="ark-rank-podium" data-ark-scene="true" data-ark-key="rank-podium" aria-label="Pódio dos três maiores ranks">' +
       '<article class="ark-rank-card ark-rank-card--second"><h3 class="ark-rank-title ark-rank-title--lord">LORD</h3><div class="ark-rank-robot" aria-hidden="true">' + robotSvg + '</div><div class="ark-rank-plinth"><b>2º</b></div><div class="ark-rank-caption">SEGUNDO LUGAR</div></article>' +
       '<article class="ark-rank-card ark-rank-card--first"><h3 class="ark-rank-title ark-rank-title--pillar">PILAR</h3><div class="ark-rank-robot" aria-hidden="true">' + robotSvg + '</div><div class="ark-rank-plinth"><b>1º</b></div><div class="ark-rank-caption">PRIMEIRO LUGAR</div></article>' +
-      '<article class="ark-rank-card ark-rank-card--third"><h3 class="ark-rank-title ark-rank-title--commander">COMANDANTE-GERAL</h3><div class="ark-rank-robot" aria-hidden="true">' + robotSvg + '</div><div class="ark-rank-plinth"><b>3º</b></div><div class="ark-rank-caption">TERCEIRO LUGAR</div></article>' +
+      '<article class="ark-rank-card ark-rank-card--third"><h3 class="ark-rank-title ark-rank-title--sentinel">SENTINELA</h3><div class="ark-rank-robot" aria-hidden="true">' + robotSvg + '</div><div class="ark-rank-plinth"><b>3º</b></div><div class="ark-rank-caption">TERCEIRO LUGAR</div></article>' +
       '</section>';
     var anchor = content.querySelector('.panel') || content.querySelector('.rows') || content.firstElementChild;
     if (anchor && anchor.parentNode) anchor.parentNode.insertBefore(holder.firstElementChild, anchor);
