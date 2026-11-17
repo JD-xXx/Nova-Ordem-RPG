@@ -216,8 +216,11 @@
   var arkCharacterStyle = document.createElement('style');
   arkCharacterStyle.id = 'ark-character-animation-styles';
   arkCharacterStyle.textContent = [
-    '.ark-arm{transform-box:fill-box;transform-origin:50% 50%;animation:ark-arm-drift 4.8s ease-in-out infinite}',
-    '.ark-arm--right{animation-delay:-2.4s}',
+    '.ark-arm{transform-box:fill-box;will-change:transform}',
+    '.ark-arm--left{transform-origin:100% 4%;animation:ark-arm-drift-left 6.4s cubic-bezier(.42,0,.25,1) infinite}',
+    '.ark-arm--right{transform-origin:0% 4%;animation:ark-arm-drift-right 6.4s cubic-bezier(.42,0,.25,1) -3.1s infinite}',
+    '@keyframes ark-arm-drift-left{0%,100%{transform:rotate(0deg) translateY(0)}42%{transform:rotate(-1.1deg) translateY(-.5px)}61%{transform:rotate(.25deg) translateY(-1px)}78%{transform:rotate(0deg) translateY(0)}}',
+    '@keyframes ark-arm-drift-right{0%,100%{transform:rotate(0deg) translateY(0)}42%{transform:rotate(1.1deg) translateY(-.5px)}61%{transform:rotate(-.25deg) translateY(-1px)}78%{transform:rotate(0deg) translateY(0)}}',
     '.ark-visor-glint{animation:ark-visor-shine 5.6s ease-in-out infinite;transform-box:fill-box;transform-origin:center}',
     '.ark-eye{transform-box:fill-box;transform-origin:center;animation:ark-eye-blink 5.8s ease-in-out infinite}',
     '.ark-eye--right{animation-delay:.08s}',
