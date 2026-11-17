@@ -245,6 +245,11 @@
   function roleGreeting() {
     var roles = Array.isArray(state.access.roles) ? state.access.roles : [];
     var codes = roles.map(function (role) { return role.code; });
+    if (codes.indexOf('avaliador_fichas') >= 0 && codes.indexOf('balanceador') >= 0) return {
+      title:'Orientação do Avaliador e Balanceador',
+      message:'Você pode avaliar informações básicas, histórias pessoais e poderes. Na história, verifique coerência sem exigir ligação com a trama principal. Nos poderes, analise capacidades, aplicações, limitações e fraquezas, propondo ajustes negociáveis com o jogador.',
+      question:'Tenho os cargos de Avaliador de Fichas e Balanceador na Nova Ordem. Explique minhas responsabilidades nas três seções, os critérios de análise e como evitar exigir que uma história pessoal altere a Lore principal.'
+    };
     if (codes.indexOf('avaliador_fichas') >= 0) return {
       title:'Orientação do Avaliador de Fichas',
       message:'Você recebe informações básicas e histórias para análise. A história pode ser pessoal e independente da trama principal; avalie a coerência com o universo e as regras, sem exigir que o personagem altere a Lore central.',
