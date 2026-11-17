@@ -197,6 +197,11 @@
     return result.data;
   }
 
+  async function waitForCharacterReviewModule() {
+    if (window.NovaOrdemCharacterReview) return;
+    await new Promise(resolve => window.addEventListener('nova-ordem-review-ready', resolve, {once:true}));
+  }
+
   async function authenticate(mode) {
     if (busy) return;
     const email = $('[data-no-email]') && $('[data-no-email]').value.trim();
@@ -355,6 +360,7 @@
     if (result.error || !result.data || !['draft','rejected'].includes(result.data.status)) { clearActiveDraft(); return false; }
     characterId = saved.characterId;
     completed = false;
+    await waitForCharacterReviewModule();
     if (window.NovaOrdemCharacterReview) {
       if (result.data.status === 'rejected') {
         const reviews = await rpc('get_my_character_review_status',{p_character_id:saved.characterId});
@@ -377,6 +383,7 @@
         authScreen('Para criar um personagem, primeiro crie seu perfil ou entre na sua conta. Você encontra essa opção na coluna de navegação.');
         return;
       }
+      if (window.NovaOrdemCharacterReview) window.NovaOrdemCharacterReview.clearContext();
       if (window.go) window.go('character-creation');
       if (!characterId) await createDraft();
       if (creator()) creator().render();
@@ -994,6 +1001,7 @@
       if (result.error) throw result.error;
       if (!result.data) throw new Error('Essa ficha não está mais disponível para edição.');
       const row = result.data;
+      await waitForCharacterReviewModule();
       if (window.NovaOrdemCharacterReview) {
         if (row.status === 'rejected') {
           const reviews = await rpc('get_my_character_review_status',{p_character_id:row.id});
