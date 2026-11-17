@@ -592,4 +592,5 @@
     var lockObserver = new MutationObserver(function () { applyReviewLocks(); });
     lockObserver.observe(root(), {childList:true,subtree:true});
   }
+  window.dispatchEvent(new Event('nova-ordem-review-ready'));
 })();
