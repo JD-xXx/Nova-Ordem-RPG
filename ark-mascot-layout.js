@@ -440,7 +440,53 @@
         '@keyframes ark-talent-influence-orb{0%,18%{left:22%;top:54%;opacity:0;transform:scale(.4)}30%{left:38%;top:45%;opacity:1;transform:scale(1)}42%{left:55%;top:40%;opacity:1;transform:scale(1.15)}54%,59%{left:78%;top:40%;opacity:1;transform:scale(1.25)}64%,100%{left:78%;top:40%;opacity:0;transform:scale(.4)}}',
         '.ark-talent-stage--influence .ark-talent-raised-arm{animation-name:ark-talent-raise-arm-held}',
         '@keyframes ark-talent-raise-arm-held{0%,12%{opacity:0;transform:rotate(0)}22%,82%{opacity:1;transform:rotate(-4deg)}100%{opacity:0;transform:rotate(0)}}',
-        '@media(max-width:700px){.ark-talent-arm-xray{height:132px}.ark-talent-influence-robot .ark-talent-floating-sword{left:9px;top:23px;width:62px;height:20px}}'
+        '.ark-talent-demo{border-radius:5px;padding:16px 18px 14px;background:linear-gradient(145deg,rgba(5,19,31,.98),rgba(8,31,47,.96));border:1px solid rgba(104,193,228,.34);box-shadow:inset 0 1px rgba(203,244,255,.06),0 18px 42px rgba(0,0,0,.26)}',
+        '.ark-talent-demo h3{font-size:10px;letter-spacing:2px;color:#b8e9fb;padding-bottom:10px;border-bottom:1px solid rgba(121,203,234,.17)}',
+        '.ark-talent-demo .ark-demo-composition{min-height:286px}',
+        '.ark-talent-demo .ark-demo-holo-window{min-height:232px;padding:28px 10px 10px;border-radius:4px;background:radial-gradient(ellipse at 50% 52%,rgba(22,103,143,.22),rgba(3,13,23,.9) 74%);border:1px solid rgba(115,208,244,.26);box-shadow:inset 0 0 42px rgba(63,177,220,.08)}',
+        '.ark-talent-demo .ark-demo-transmission{font-size:8px;letter-spacing:1.8px;color:#9ddcf1}',
+        '.ark-talent-stage{min-height:190px;background:radial-gradient(ellipse at 50% 78%,rgba(30,155,202,.14),transparent 67%)}',
+        '.ark-talent-stage--corporal,.ark-talent-stage--influence,.ark-talent-stage--existence{min-height:190px;padding:0 5px}',
+        '.ark-holo-arm{width:100%;height:190px;max-width:900px;filter:drop-shadow(0 0 11px rgba(61,182,229,.24))}',
+        '.ark-holo-arm .arm-shell{fill:url(#arm-outer-metal);stroke:#b8edff;stroke-width:1.8}',
+        '.ark-holo-arm .arm-shell--fore{fill:url(#arm-inner-metal)}',
+        '.ark-holo-arm .arm-muscle{fill:rgba(57,158,196,.3);stroke:#a6e9ff;stroke-width:1.5;filter:drop-shadow(0 0 7px rgba(60,190,238,.2));animation:arm-muscle-pulse 3.8s ease-in-out infinite}',
+        '.ark-holo-arm .arm-muscle--fore{animation-delay:1.1s}',
+        '.ark-holo-arm .arm-rib,.ark-holo-arm .arm-bone{fill:none;stroke:rgba(208,246,255,.68);stroke-width:2;stroke-linecap:round}',
+        '.ark-holo-arm .arm-bone{stroke-width:5;opacity:.42}',
+        '.ark-holo-arm .arm-plate-seam{fill:none;stroke:rgba(216,247,255,.55);stroke-width:1.2;stroke-dasharray:3 5}',
+        '.ark-holo-arm .arm-joint circle{fill:#0a2940;stroke:#9ceaff;stroke-width:2}.ark-holo-arm .arm-joint circle:nth-child(2){fill:#164e70}.ark-holo-arm .arm-joint circle:nth-child(3){fill:url(#arm-joint-core);filter:url(#arm-holo-glow)}',
+        '.ark-holo-arm .arm-vein{fill:none;stroke:url(#arm-chi-flow);stroke-width:4;stroke-linecap:round;stroke-dasharray:14 9;filter:url(#arm-holo-glow);animation:arm-chi-current 1.35s linear infinite}',
+        '.ark-holo-arm .arm-vein--branch{stroke-width:2.2;animation-duration:1.9s}',
+        '.ark-holo-arm .arm-hand-palm{fill:url(#arm-outer-metal);stroke:#d0f5ff;stroke-width:2}',
+        '.ark-holo-arm .arm-hand-joint{fill:none;stroke:#79d8ff;stroke-width:2}',
+        '.ark-holo-arm .arm-fingers{fill:none;stroke:#d7f7ff;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;transform-box:fill-box;transform-origin:0% 50%;animation:arm-finger-flex 4.2s cubic-bezier(.45,0,.25,1) infinite}',
+        '.ark-holo-arm .arm-energy-points circle{fill:#baf5ff;filter:url(#arm-holo-glow);animation:arm-node-breathe 2.6s ease-in-out infinite}.ark-holo-arm .arm-energy-points circle:nth-child(2){animation-delay:.6s}.ark-holo-arm .arm-energy-points circle:nth-child(3){animation-delay:1.2s}',
+        '@keyframes arm-chi-current{to{stroke-dashoffset:-46}}@keyframes arm-muscle-pulse{0%,100%{fill:rgba(57,158,196,.2)}50%{fill:rgba(74,196,229,.52);filter:drop-shadow(0 0 12px rgba(66,196,239,.7))}}@keyframes arm-finger-flex{0%,20%,75%,100%{transform:rotate(0)}42%,58%{transform:rotate(-8deg)}}@keyframes arm-node-breathe{0%,100%{opacity:.5}50%{opacity:1}}',
+        '.ark-talent-influence-holo,.ark-talent-existence-holo{display:block;width:100%;height:190px;max-width:900px;overflow:visible;filter:drop-shadow(0 0 10px rgba(64,182,229,.22))}',
+        '.ark-talent-influence-holo .agent-torso,.ark-talent-influence-holo .agent-shoulder,.ark-talent-influence-holo .agent-neck,.ark-talent-influence-holo .agent-head,.ark-talent-influence-holo .agent-arm,.ark-talent-influence-holo .agent-gauntlet{fill:url(#influence-armor);stroke:#a9eaff;stroke-width:2;stroke-linejoin:round}',
+        '.ark-talent-influence-holo .agent-visor{fill:#071d2d;stroke:#8bdfff;stroke-width:1.4}',
+        '.ark-talent-influence-holo .agent-arm{stroke-width:12;stroke-linecap:round}.ark-talent-influence-holo .agent-gauntlet{stroke-width:2}',
+        '.ark-talent-influence-holo .agent-hand{fill:none;stroke:#d3f7ff;stroke-width:5;stroke-linecap:round;stroke-linejoin:round;filter:url(#influence-glow)}',
+        '.ark-talent-influence-holo .agent-joint{fill:#0c3551;stroke:#a7ecff;stroke-width:2}.ark-talent-influence-holo .agent-palm-core{fill:url(#influence-palm);filter:url(#influence-glow)}',
+        '.ark-talent-influence-holo .agent-circuit{fill:none;stroke:#8be5ff;stroke-width:2;stroke-dasharray:5 6;filter:url(#influence-glow)}',
+        '.ark-talent-influence-holo .influence-thread{stroke-width:2.8;stroke-dasharray:8 10;animation:influence-thread-flow 1.8s linear infinite}.ark-talent-influence-holo .influence-thread--two{stroke-width:1.4;animation-duration:2.4s}',
+        '.ark-talent-influence-holo .influence-arc{stroke-width:1.5;opacity:.7;animation:influence-arc-breathe 2.8s ease-in-out infinite}',
+        '.ark-talent-influence-holo .influence-pulse{animation:influence-palm-pulse 2.1s ease-in-out infinite}.ark-talent-influence-holo .influence-pulse--two{fill:none;stroke:#7de3ff;stroke-width:1.5;animation:influence-ring 2.1s ease-out infinite}',
+        '.ark-talent-influence-holo .influence-sword{filter:url(#influence-glow);transform-box:view-box;transform-origin:520px 83px;animation:influence-sword-draw 5.6s cubic-bezier(.25,.7,.2,1) infinite}',
+        '.ark-talent-influence-holo .influence-readout{opacity:.72}',
+        '@keyframes influence-thread-flow{to{stroke-dashoffset:-54}}@keyframes influence-arc-breathe{0%,100%{opacity:.25}50%{opacity:.9}}@keyframes influence-palm-pulse{0%,100%{opacity:.55}50%{opacity:1}}@keyframes influence-ring{0%{transform:scale(.5);opacity:.8}100%{transform:scale(2.3);opacity:0}}@keyframes influence-sword-draw{0%,12%{transform:translate(72px,-9px);opacity:.35}32%,65%{transform:translate(0,0);opacity:1}84%,100%{transform:translate(-135px,-20px);opacity:.15}}',
+        '.ark-talent-existence-holo .existence-cloak,.ark-talent-existence-holo .existence-head,.ark-talent-existence-holo .existence-visor,.ark-talent-existence-holo .existence-shoulder,.ark-talent-existence-holo .existence-leg{fill:url(#existence-body);stroke:#b2efff;stroke-width:1.8;stroke-linejoin:round}',
+        '.ark-talent-existence-holo .existence-visor{fill:#071b2a;stroke:#8be5ff;stroke-width:1.2}',
+        '.ark-talent-existence-holo .existence-cloak,.ark-talent-existence-holo .existence-shoulder{filter:url(#existence-glow)}',
+        '.ark-talent-existence-holo .existence-afterimage{stroke-width:1.6;stroke-dasharray:4 7;opacity:.4;animation:existence-afterimage 3.8s ease-in-out infinite}',
+        '.ark-talent-existence-holo .existence-subject{transform-box:fill-box;transform-origin:center bottom;animation:existence-phase 3.8s ease-in-out infinite}',
+        '.ark-talent-existence-holo .existence-observer{transform-box:fill-box;transform-origin:center bottom;animation:existence-observer-recoil 3.8s ease-in-out infinite}',
+        '.ark-talent-existence-holo .observer-arm{fill:none;stroke:#b8efff;stroke-width:12;stroke-linecap:round;stroke-linejoin:round}',
+        '.ark-talent-existence-holo .existence-pressure{stroke-width:2.5;stroke-dasharray:8 10;animation:existence-pressure-wave 3.8s ease-out infinite}',
+        '.ark-talent-existence-holo .existence-scan{opacity:.4;animation:existence-scan-pulse 3.8s ease-in-out infinite}',
+        '@keyframes existence-phase{0%,12%{opacity:1;filter:drop-shadow(0 0 9px rgba(92,209,255,.5))}34%,52%{opacity:.08;filter:blur(2px)}68%,100%{opacity:1;filter:drop-shadow(0 0 13px rgba(92,209,255,.8))}}@keyframes existence-afterimage{0%,12%,68%,100%{opacity:.08}34%,52%{opacity:.85}}@keyframes existence-pressure-wave{0%,54%{opacity:0;stroke-dashoffset:0;transform:scale(.65)}68%{opacity:1}100%{opacity:0;stroke-dashoffset:-60;transform:scale(1.3)}}@keyframes existence-observer-recoil{0%,62%,100%{transform:translateX(0)}76%,88%{transform:translateX(18px) rotate(2deg)}}@keyframes existence-scan-pulse{0%,100%{opacity:.18}50%{opacity:.7}}',
+        '@media(max-width:700px){.ark-talent-demo{padding:12px 10px}.ark-talent-demo .ark-demo-composition{min-height:248px}.ark-talent-demo .ark-demo-holo-window{min-height:190px}.ark-talent-stage--corporal,.ark-talent-stage--influence,.ark-talent-stage--existence{min-height:160px;padding:0}.ark-holo-arm,.ark-talent-influence-holo,.ark-talent-existence-holo{height:160px;min-width:530px;position:relative;left:50%;transform:translateX(-50%)}.ark-talent-demo>p{font-size:10px;line-height:1.55}}'
       ].join('');
       document.head.appendChild(armStyle);
     }
@@ -462,29 +508,51 @@
         '</div><p>' + caption + '</p></section>';
     }
 
-    var corporalStage = '<svg class="ark-talent-arm-xray" viewBox="0 0 170 100" role="img" aria-label="Holograma de um braço robótico anatômico visto como raio X, com veias de Chi azuis e mão articulada">' +
-      '<defs><linearGradient id="ark-arm-metal-gradient" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#d9f7ff" stop-opacity=".9"/><stop offset=".45" stop-color="#4d91b4" stop-opacity=".62"/><stop offset="1" stop-color="#153e5e" stop-opacity=".86"/></linearGradient></defs>' +
-      '<path class="arm-shell" d="M8 38C17 25 31 23 45 29L77 31C88 30 101 34 109 42L116 45L115 64L106 67C96 73 85 74 75 70L44 72C29 79 14 69 8 57Z"/>' +
-      '<path class="arm-muscle" d="M19 38C27 30 38 31 48 36L62 42L55 62L40 67C28 67 19 59 17 50Z"/>' +
-      '<path class="arm-muscle arm-muscle--fore" d="M57 39L80 37C92 36 101 41 108 47L105 61C96 67 85 66 75 64L55 60Z"/>' +
-      '<path class="arm-rib" d="M23 40L42 62M32 34L51 64M65 42L84 61M77 39L95 61M91 41L103 57"/>' +
-      '<circle class="arm-joint" cx="56" cy="51" r="7"/><circle class="arm-joint" cx="108" cy="55" r="6"/>' +
-      '<path class="arm-vein" d="M10 52C24 52 30 46 41 48S54 55 63 51S77 45 86 50S99 53 111 53"/>' +
-      '<path class="arm-vein arm-vein--branch" d="M37 48C35 40 31 37 27 33M42 49C44 58 48 63 54 68M64 51C65 43 70 39 76 35M82 49C83 58 88 63 94 67M99 52C102 45 106 41 112 38"/>' +
-      '<path class="arm-vein arm-vein--branch" d="M26 51L20 61M74 49L71 31M91 51L97 35"/>' +
-      '<g class="arm-hand"><path class="arm-hand-palm" d="M108 44L119 43L125 51L122 65L112 66L106 59Z"/><g class="arm-fingers">' +
-      '<path d="M119 46L128 34L143 31"/><path d="M122 50L139 45L150 46"/><path d="M122 56L140 57L150 62"/><path d="M119 62L132 72L144 77"/><path d="M111 49L115 39L123 35"/>' +
-      '</g></g></svg>';
+    var corporalStage = '<svg class="ark-talent-arm-xray ark-holo-arm" viewBox="0 0 700 230" role="img" aria-label="Projeção holográfica de um braço biomecânico em vista anatômica, com placas articuladas, musculatura sintética e fluxo de Chi">' +
+      '<defs><linearGradient id="arm-outer-metal" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#e5fbff" stop-opacity=".88"/><stop offset=".22" stop-color="#74b4d0" stop-opacity=".76"/><stop offset=".58" stop-color="#1c587a" stop-opacity=".88"/><stop offset="1" stop-color="#0b263e" stop-opacity=".94"/></linearGradient><linearGradient id="arm-inner-metal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#a7eaff" stop-opacity=".56"/><stop offset=".5" stop-color="#235b7b" stop-opacity=".72"/><stop offset="1" stop-color="#071b2d" stop-opacity=".9"/></linearGradient><linearGradient id="arm-chi-flow" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#197bc4"/><stop offset=".5" stop-color="#d9fbff"/><stop offset="1" stop-color="#42c9ff"/></linearGradient><radialGradient id="arm-joint-core"><stop stop-color="#f4ffff"/><stop offset=".3" stop-color="#70dcff"/><stop offset="1" stop-color="#12649a"/></radialGradient><filter id="arm-holo-glow"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>' +
+      '<g class="holo-grid" fill="none" stroke="#73cfff" opacity=".22"><path d="M35 190H665M55 205H645M80 20V210M620 20V210" stroke-dasharray="3 9"/><ellipse cx="350" cy="118" rx="315" ry="91" stroke-dasharray="2 12"/><ellipse cx="350" cy="118" rx="275" ry="72" stroke-dasharray="1 9"/></g>' +
+      '<g class="arm-hud" fill="#9ceaff" font-family="monospace" font-size="9" letter-spacing="2"><text x="38" y="28">BIOMETRIC SCAN / UPPER LIMB</text><text x="505" y="28">CHI FLOW // 01</text><text x="38" y="216">STRUCTURE: SYNTHETIC MUSCLE</text><text x="518" y="216">LOAD: 38.4%</text></g>' +
+      '<g class="arm-callouts" fill="none" stroke="#73d8ff" stroke-width="1" opacity=".72"><path d="M170 55L170 35H220"/><path d="M335 45L335 28H390"/><path d="M515 68L545 42H610"/><circle cx="170" cy="55" r="3" fill="#baf4ff"/><circle cx="335" cy="45" r="3" fill="#baf4ff"/><circle cx="515" cy="68" r="3" fill="#baf4ff"/></g>' +
+      '<g class="arm-anatomy">' +
+      '<path class="arm-shell arm-shell--upper" d="M66 91Q78 60 119 55L225 63Q260 63 285 81L302 102L292 147Q271 165 234 163L119 171Q78 164 66 135Z"/>' +
+      '<path class="arm-muscle arm-muscle--upper" d="M91 91Q111 69 147 75L230 80Q256 82 271 102L263 133Q240 151 208 145L122 151Q94 145 83 122Z"/>' +
+      '<path class="arm-shell arm-shell--fore" d="M307 88Q337 72 371 78L493 91Q522 94 545 111L544 143Q517 161 483 157L365 149Q330 155 304 135Z"/>' +
+      '<path class="arm-muscle arm-muscle--fore" d="M329 98Q355 86 382 94L476 104Q502 108 520 123L509 143Q484 150 458 143L369 135Q343 140 326 123Z"/>' +
+      '<path class="arm-bone" d="M105 109Q178 101 277 117M326 116Q414 111 522 129"/>' +
+      '<path class="arm-rib" d="M113 85L149 151M137 77L174 151M164 78L198 150M193 80L222 148M222 84L247 144M348 91L374 142M377 94L403 145M408 98L434 147M441 101L467 149M472 106L493 147"/>' +
+      '<path class="arm-plate-seam" d="M84 104Q160 91 247 104M90 132Q170 145 255 129M333 108Q420 100 514 120M337 132Q420 145 510 135"/>' +
+      '<g class="arm-joint"><circle cx="294" cy="119" r="25"/><circle cx="294" cy="119" r="15"/><circle cx="294" cy="119" r="7"/><circle cx="535" cy="127" r="14"/><circle cx="535" cy="127" r="7"/></g>' +
+      '<path class="arm-vein" d="M74 119C116 110 138 118 173 112S228 104 263 117S312 129 351 119S414 113 453 124S500 132 545 127"/>' +
+      '<path class="arm-vein arm-vein--branch" d="M143 115Q137 95 119 88M174 112Q184 135 207 144M236 112Q239 91 257 85M375 118Q372 99 389 91M414 119Q425 141 447 146M475 126Q482 107 501 103"/>' +
+      '<path class="arm-vein arm-vein--branch" d="M109 118L98 139M217 112L220 91M394 119L395 145M487 128L504 145"/>' +
+      '<g class="arm-hand"><path class="arm-hand-palm" d="M541 108Q558 99 576 107L593 120L588 148Q574 162 553 151L538 137Z"/><path class="arm-hand-joint" d="M558 112L567 104L576 112M566 151L573 159"/><g class="arm-fingers"><path d="M575 111L590 87Q594 81 600 85L603 89L589 119"/><path d="M584 119L610 101Q617 97 621 103L621 108L594 132"/><path d="M587 129L617 123Q624 122 626 129L624 134L590 141"/><path d="M579 141L602 154Q608 159 603 165L598 166L571 151"/><path d="M551 115L541 96Q537 89 544 85L550 86L564 109"/></g></g>' +
+      '<g class="arm-energy-points" filter="url(#arm-holo-glow)"><circle cx="74" cy="119" r="4"/><circle cx="294" cy="119" r="5"/><circle cx="535" cy="127" r="4"/><circle cx="625" cy="129" r="3"/></g></g>' +
+      '<g class="arm-measure" fill="none" stroke="#8ce3ff" opacity=".58"><path d="M65 184V193M65 189H292M292 184V193M306 184V193M306 189H535M535 184V193"/><path d="M65 189l6 -3v6zM535 189l-6 -3v6z" fill="#8ce3ff"/></g></svg>';
 
-    var influenceArm = '<svg class="ark-talent-raised-arm" viewBox="0 0 140 150" aria-hidden="true"><path d="M92 77L105 63L111 43"/><circle cx="111" cy="43" r="5"/></svg>';
-    var sword = '<svg viewBox="0 0 90 24" role="img" aria-label="Espada holográfica, com a ponta da lâmina voltada para a esquerda"><path d="M5 15L70 5L84 8L70 11L7 19Z" fill="#d9f6ff" stroke="#72d8ff" stroke-width="1.4"/><path d="M12 15L71 8" stroke="#fff" stroke-width="1.5"/><path d="M68 4L72 13" stroke="#c6f2ff" stroke-width="3"/><path d="M72 8L88 8L88 13L72 13Z" fill="#7baac5" stroke="#d5f5ff" stroke-width="1"/><path d="M76 8L84 13M76 13L84 8" stroke="#345e7b" stroke-width="1"/></svg>';
-    var influenceStage = '<div class="ark-talent-influence-actor">' +
-      robot('ark-talent-influence-robot', influenceArm) +
-      '</div><div class="ark-talent-floating-sword">' + sword + '</div><span class="ark-talent-energy-orb" aria-hidden="true"></span>';
-    var existenceStage = '<div class="ark-talent-existence-actor">' + robot('ark-talent-existence-robot') + '</div>' +
-      '<div class="ark-talent-existence-observer"><div class="ark-talent-robot-svg">' + arkHologramSvg + '</div><span class="ark-talent-existence-question">?</span></div>' +
-      '<div class="ark-talent-existence-wave" aria-hidden="true"></div>';
+    var influenceStage = '<svg class="ark-talent-influence-holo" viewBox="0 0 700 230" role="img" aria-label="Holograma de um agente projetando Chi pela mão para atrair uma espada suspensa no ar">' +
+      '<defs><linearGradient id="influence-armor" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#d8f7ff" stop-opacity=".82"/><stop offset=".45" stop-color="#397b9f" stop-opacity=".7"/><stop offset="1" stop-color="#102d47" stop-opacity=".96"/></linearGradient><linearGradient id="influence-blade" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff"/><stop offset=".3" stop-color="#b7f1ff"/><stop offset=".7" stop-color="#48b6e8"/><stop offset="1" stop-color="#1b5d8b"/></linearGradient><radialGradient id="influence-palm"><stop stop-color="#edffff"/><stop offset=".3" stop-color="#7de4ff"/><stop offset="1" stop-color="#1c80bd"/></radialGradient><filter id="influence-glow"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>' +
+      '<g fill="none" stroke="#6acfff" opacity=".18"><path d="M25 190H675M50 210H650"/><ellipse cx="350" cy="119" rx="320" ry="91" stroke-dasharray="3 12"/><path d="M350 22V204M50 119H650" stroke-dasharray="2 10"/></g>' +
+      '<g fill="#9ceaff" font-family="monospace" font-size="9" letter-spacing="2"><text x="32" y="25">VECTOR CONTROL / EXTERNAL OBJECT</text><text x="515" y="25">TARGET LOCKED // 01</text><text x="32" y="215">CHI EMISSION: STABLE</text></g>' +
+      '<g class="influence-agent">' +
+      '<path class="agent-torso" d="M114 151Q117 111 151 96L193 91Q230 103 241 151L224 195H128Z"/><path class="agent-shoulder" d="M150 101Q170 82 194 92L219 112L207 135L157 131Z"/><path class="agent-neck" d="M164 75L165 94L189 100L195 77Z"/><path class="agent-head" d="M151 35Q165 20 186 29Q203 38 200 61L190 81Q178 91 163 80L151 62Z"/><path class="agent-visor" d="M153 48Q177 37 198 48L195 62Q176 71 156 61Z"/>' +
+      '<path class="agent-arm" d="M203 108Q222 102 236 119L271 91L294 64L318 48Q327 43 333 51L329 61L309 82L289 116L252 151Q233 161 218 145Z"/>' +
+      '<path class="agent-gauntlet" d="M299 66L314 49Q321 40 330 47L339 55L331 67L315 83Z"/><path class="agent-hand" d="M328 51L339 39L346 41L343 49L351 38L358 41L352 53L361 45L367 50L355 63L341 70L329 65Z"/>' +
+      '<circle class="agent-joint" cx="236" cy="119" r="12"/><circle class="agent-joint" cx="294" cy="64" r="9"/><circle class="agent-palm-core" cx="345" cy="53" r="7"/>' +
+      '<path class="agent-circuit" d="M146 128L183 116L213 128L236 119L270 91L294 64L329 55M174 148L213 143L236 119"/>' +
+      '</g>' +
+      '<g class="influence-field" fill="none" stroke="#79ddff" filter="url(#influence-glow)"><path class="influence-thread" d="M348 52C397 31 423 84 463 79S525 58 567 79"/><path class="influence-thread influence-thread--two" d="M348 52C397 76 417 45 460 56S520 96 567 79"/><path class="influence-arc" d="M355 47Q430 -2 505 49Q547 75 568 79" stroke-dasharray="3 8"/><circle class="influence-pulse" cx="350" cy="52" r="9" fill="url(#influence-palm)"/><circle class="influence-pulse influence-pulse--two" cx="350" cy="52" r="17"/></g>' +
+      '<g class="influence-sword"><path d="M424 88L551 66L594 72L552 81L429 100Z" fill="url(#influence-blade)" stroke="#d7f7ff" stroke-width="1.7"/><path d="M433 89L552 73" stroke="#fff" stroke-width="2" opacity=".9"/><path d="M548 63L556 84" stroke="#e5fbff" stroke-width="4"/><path d="M557 68L605 67L607 79L559 82Z" fill="#4b7e9b" stroke="#c6efff" stroke-width="1.5"/><path d="M568 68L595 80M568 80L595 68" stroke="#d9f7ff" stroke-width="2"/><path d="M605 67L617 62L617 84L607 79Z" fill="#a9d8e8" stroke="#e5fbff" stroke-width="1.3"/></g>' +
+      '<g class="influence-readout" fill="#9ceaff" font-family="monospace" font-size="8" letter-spacing="1"><text x="388" y="130">REMOTE GRIP</text><path d="M418 123L451 93" stroke="#79ddff" fill="none"/><text x="536" y="117">OBJECT</text><path d="M559 110L573 87" stroke="#79ddff" fill="none"/></g></svg>';
 
+    var existenceStage = '<svg class="ark-talent-existence-holo" viewBox="0 0 700 230" role="img" aria-label="Holograma demonstrando ocultação de presença e imposição de existência por uma onda de pressão">' +
+      '<defs><linearGradient id="existence-body" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#c8f3ff" stop-opacity=".78"/><stop offset=".5" stop-color="#397da0" stop-opacity=".65"/><stop offset="1" stop-color="#102a43" stop-opacity=".9"/></linearGradient><radialGradient id="existence-wave"><stop stop-color="#e7fcff" stop-opacity=".8"/><stop offset=".25" stop-color="#75dcff" stop-opacity=".45"/><stop offset="1" stop-color="#3caeff" stop-opacity="0"/></radialGradient><filter id="existence-glow"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>' +
+      '<g fill="none" stroke="#70d5ff" opacity=".18"><path d="M25 190H675M50 210H650"/><ellipse cx="350" cy="120" rx="320" ry="88" stroke-dasharray="3 12"/><path d="M350 22V205M50 120H650" stroke-dasharray="2 10"/></g>' +
+      '<g fill="#9ceaff" font-family="monospace" font-size="9" letter-spacing="2"><text x="32" y="25">EXISTENCE FIELD / PHASE SHIFT</text><text x="525" y="25">PRESENCE: VARIABLE</text><text x="32" y="215">FIELD INTERACTION: ACTIVE</text></g>' +
+      '<g class="existence-subject"><path class="existence-cloak" d="M153 79Q166 45 196 58L214 91L235 153L224 186H131L122 153Z"/><path class="existence-head" d="M163 42Q179 24 197 40L204 63L194 82L174 81L161 65Z"/><path class="existence-visor" d="M165 51L201 48L198 64L169 67Z"/><path class="existence-shoulder" d="M146 91Q176 76 208 92L230 143L207 157L146 150L126 124Z"/><path class="existence-leg" d="M147 145L184 149L176 195H145ZM190 149L222 145L235 193H202Z"/></g>' +
+      '<g class="existence-afterimage" fill="none" stroke="#a8eaff"><path d="M153 79Q166 45 196 58L214 91L235 153L224 186H131L122 153Z"/><path d="M163 42Q179 24 197 40L204 63L194 82L174 81L161 65Z"/></g>' +
+      '<g class="existence-observer"><path d="M512 96Q530 77 552 91L565 115L582 160L575 185H496L488 160Z" fill="url(#existence-body)" stroke="#a8eaff" stroke-width="2"/><path d="M520 57Q534 42 550 55L557 76L549 91L530 90L518 76Z" fill="url(#existence-body)" stroke="#a8eaff" stroke-width="2"/><path d="M520 67L555 65L553 77L522 79Z" fill="#061b2b" stroke="#78dfff" stroke-width="1.2"/><path class="observer-arm" d="M502 111L473 134L451 128M566 111L588 137L608 129" fill="none" stroke="#b8efff" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/></g>' +
+      '<g class="existence-pressure" fill="none" stroke="#8be4ff" filter="url(#existence-glow)"><ellipse cx="232" cy="119" rx="35" ry="60"/><ellipse cx="232" cy="119" rx="35" ry="60"/><path d="M255 119C320 84 370 85 423 117S475 147 505 128" stroke-dasharray="5 9"/><path d="M255 119C320 154 370 153 423 121S475 91 505 110" stroke-dasharray="5 9"/></g>' +
+      '<g class="existence-scan" fill="none" stroke="#a6edff"><path d="M120 40H238M120 197H238M118 40V197M240 40V197" stroke-dasharray="2 7"/><circle cx="232" cy="119" r="82" stroke-dasharray="2 10"/></g></svg>';
     var demos = [
       {key:'corporal',row:'Corporal',html:demo('corporal','01 / CORPORAL','corporal',corporalStage,
         'O holograma apresenta somente um braço mecânico em posição horizontal, como um raio X. Veias azuis de Chi percorrem a estrutura e, ao alcançar os músculos mecânicos, fazem essas partes brilharem; a mão abre e fecha para demonstrar o reforço.')},
