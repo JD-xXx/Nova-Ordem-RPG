@@ -539,7 +539,7 @@
     var locked = {
       profile: map.profile === 'approved',
       story: map.story === 'approved',
-      powers: map.powers === 'approved' || map.powers === 'not_applicable'
+      powers: map.powers === 'approved'
     };
     var fieldSections = {
       name:'profile', age:'profile', height:'profile', gender:'profile', weight:'profile',
