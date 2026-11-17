@@ -84,6 +84,88 @@ nav button:hover,nav button.active{background:#0b2940;box-shadow:inset 2px 0 #55
 @media(prefers-reduced-motion:reduce){#thanatos-alert .ta-pulse{animation:none}}
 
 /* NOVA ORDEM V8.2 */
+</style><style id="no-content-design-system">
+/* Componentes de conteúdo — aplicados às páginas de sistemas, funções, fichas e guias */
+#content .intro-lead{max-width:920px;margin:0 0 24px;padding:17px 20px;border:1px solid rgba(111,190,225,.2);border-left:2px solid #66c9f2;border-radius:0 8px 8px 0;background:linear-gradient(100deg,rgba(20,54,75,.34),rgba(9,21,32,.18));color:#c1d2de;font-size:14px;line-height:1.8}
+#content .v6-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:22px 0 28px}
+#content .v6-item{position:relative;min-width:0;padding:20px 20px 18px;border:1px solid rgba(119,171,200,.2);border-radius:8px;background:linear-gradient(145deg,rgba(17,35,49,.96),rgba(9,19,29,.98));box-shadow:inset 0 1px rgba(226,246,255,.035),0 10px 28px rgba(0,0,0,.13);overflow:hidden;transition:border-color .22s ease,transform .22s ease,box-shadow .22s ease}
+#content .v6-item:before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:linear-gradient(180deg,#73d2f4,rgba(75,146,184,.08));opacity:.7}
+#content .v6-item:hover{transform:translateY(-2px);border-color:rgba(112,199,235,.42);box-shadow:0 16px 34px rgba(0,0,0,.22),0 0 20px rgba(64,157,201,.06)}
+#content .v6-item h3{margin:9px 0 7px;color:#e4f2fa;font:600 19px var(--display);letter-spacing:.025em}
+#content .v6-item p{margin:0;color:#a8bdcb;font-size:13px;line-height:1.72}
+#content .v6-item button{margin-top:14px;padding:8px 0;border:0;border-top:1px solid rgba(120,190,220,.15);background:transparent;color:#8bd8f8;font:600 9px var(--mono);letter-spacing:1.1px;cursor:pointer}
+#content .v6-item button:hover{color:#fff;letter-spacing:1.35px}
+#content .v6-pill{display:inline-flex;align-items:center;min-height:22px;padding:4px 8px;border:1px solid rgba(103,184,219,.24);border-radius:3px;background:rgba(29,78,103,.2);color:#8ed3ef;font:500 8px var(--mono);letter-spacing:1.1px}
+#content .v6-hub{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:22px 0}
+#content .v6-tile{position:relative;display:grid;grid-template-columns:42px minmax(0,1fr);column-gap:13px;align-content:start;text-align:left;min-height:142px;padding:19px;border:1px solid rgba(117,174,203,.22);border-radius:8px;background:linear-gradient(145deg,#122a3a,#0a1824);color:#e8f4fa;cursor:pointer;transition:transform .22s ease,border-color .22s ease,background .22s ease}
+#content .v6-tile:hover{transform:translateY(-3px);border-color:rgba(108,202,240,.5);background:linear-gradient(145deg,#17374b,#0c1e2c)}
+#content .v6-tile .symbol{grid-row:1/4;display:grid;place-items:center;width:40px;height:40px;border:1px solid rgba(116,201,235,.3);border-radius:7px;background:rgba(49,124,158,.14);color:#9be1fa;font-size:22px}
+#content .v6-tile h3{margin:0 0 6px;color:#e5f3fa;font:600 18px var(--display)}
+#content .v6-tile p{margin:0;color:#a6bbc9;font-size:12px;line-height:1.65}
+#content .v6-spec{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:16px 0 25px}
+#content .v6-spec article{min-width:0;display:flex;flex-direction:column;gap:7px;padding:15px;border:1px solid rgba(111,171,201,.18);border-radius:7px;background:linear-gradient(145deg,rgba(17,35,49,.88),rgba(9,19,29,.96))}
+#content .v6-spec article b{color:#a9def2;font:600 14px var(--display);letter-spacing:.02em}
+#content .v6-spec article span{color:#a8bbc8;font-size:12px;line-height:1.65}
+#content .v6-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:18px 0 26px;padding:22px;border:1px solid rgba(113,174,205,.22);border-radius:9px;background:linear-gradient(145deg,rgba(16,34,48,.94),rgba(8,18,28,.98))}
+#content .v6-form label{display:flex;flex-direction:column;gap:7px;min-width:0;color:#9dc4d8;font:500 9px var(--mono);letter-spacing:.8px}
+#content .v6-form label:has(textarea){grid-column:1/-1}
+#content .v6-form input,#content .v6-form textarea,#content .v6-form select{width:100%;min-height:42px;padding:11px 12px;border:1px solid rgba(122,176,203,.23);border-radius:5px;background:#081521;color:#e5f1f7;font:13px var(--sans);letter-spacing:0}
+#content .v6-form textarea{min-height:112px;resize:vertical;line-height:1.6}
+#content .v6-form input:focus,#content .v6-form textarea:focus,#content .v6-form select:focus{outline:0;border-color:#68c6ed;box-shadow:0 0 0 3px rgba(80,173,216,.1)}
+#content .v6-form .v6-action{grid-column:1/-1;justify-self:start;min-height:42px;padding:10px 17px;border:1px solid rgba(107,198,235,.52);border-radius:5px;background:linear-gradient(110deg,#174b67,#103149);color:#eaf8ff;font:600 9px var(--mono);letter-spacing:1.1px;cursor:pointer}
+#content .v6-form .v6-action:hover{background:linear-gradient(110deg,#1d6285,#17415c)}
+#content .v6-muted,#content .v6-hidden{color:#829aaa;font-size:11px;line-height:1.7}
+#content .cc-top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:11px 14px;border:1px solid rgba(112,181,211,.2);border-radius:6px;background:rgba(14,34,48,.82);color:#8fcce5;font:9px var(--mono);letter-spacing:1px}
+#content .cc-progress{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px;margin:14px 0 18px}
+#content .cc-progress button{min-width:0;padding:9px 4px;border:1px solid rgba(112,171,198,.2);border-radius:5px;background:#0b1a27;color:#829dad;cursor:pointer}
+#content .cc-progress button b{display:grid;place-items:center;width:23px;height:23px;margin:0 auto 5px;border:1px solid currentColor;border-radius:50%;font:10px var(--mono)}
+#content .cc-progress button small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:9px}
+#content .cc-progress button.active{border-color:#68c9f0;background:rgba(34,99,129,.28);color:#c6efff;box-shadow:inset 0 0 0 1px rgba(104,201,240,.12)}
+#content .cc-progress button.done{border-color:rgba(103,207,169,.35);color:#8bd9b8}
+#content .cc-card{padding:22px;border:1px solid rgba(113,174,205,.24);border-radius:9px;background:linear-gradient(145deg,#112738,#091722);box-shadow:0 14px 34px rgba(0,0,0,.18)}
+#content .cc-card h3{color:#e7f5fb;font:600 23px var(--display)}
+#content .cc-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#content .cc-field,#content .cc-card label{display:flex;flex-direction:column;gap:7px;color:#a2c6d9;font:9px var(--mono);letter-spacing:.65px}
+#content .cc-field input,#content .cc-field textarea,#content .cc-card input,#content .cc-card textarea,#content .cc-card select{width:100%;padding:11px 12px;border:1px solid rgba(121,178,205,.22);border-radius:5px;background:#081521;color:#e7f1f7;font:13px var(--sans);letter-spacing:0}
+#content .cc-module-card{margin:12px 0;padding:15px;border:1px solid rgba(110,174,205,.22);border-radius:7px;background:rgba(8,22,33,.75)}
+#content .cc-module-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;color:#a7dff4;font:9px var(--mono);letter-spacing:1px}
+#content .cc-nav{display:flex;justify-content:space-between;gap:10px;margin-top:20px;padding-top:16px;border-top:1px solid rgba(119,177,204,.18)}
+#content .cc-hint{color:#8ca4b4;font-size:11px;line-height:1.7}
+#content .cc-status,#content .cc-summary,#content .cc-rolls{padding:13px 15px;border:1px solid rgba(104,184,218,.2);border-radius:6px;background:rgba(19,48,65,.45);color:#bad5e3}
+#content .no87-section{margin:20px 0;padding:20px;border:1px solid rgba(111,173,203,.2);border-radius:8px;background:linear-gradient(145deg,rgba(15,32,45,.84),rgba(8,18,27,.94))}
+#content .no87-section h3{margin-top:0;color:#dceef6;font:600 18px var(--display)}
+#content .no87-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:15px 0}
+#content .no87-card{padding:16px;border:1px solid rgba(110,176,207,.2);border-radius:6px;background:rgba(9,24,36,.85)}
+#content .no87-card h4{margin:8px 0;color:#b7e2f3;font:600 15px var(--display)}
+#content .no87-card p{margin:0;color:#a6bbc9;font-size:12px;line-height:1.7}
+#content .no87-tag{color:#80c7e8;font:8px var(--mono);letter-spacing:1.2px}
+#content .rows{border-radius:7px;background:linear-gradient(145deg,rgba(15,30,43,.94),rgba(9,18,27,.96));border-color:rgba(115,171,199,.2)}
+#content .row{border-color:rgba(119,174,201,.13);font-size:13px;line-height:1.65}
+#content .row b{color:#dcebf3}
+#content .row span{color:#a9bdca}
+#content .special{border-radius:7px;border-color:rgba(114,173,201,.2);background:linear-gradient(145deg,#112738,#0a1925)}
+#content .special b{color:#b9e4f5;font-size:16px}
+#content .special span{font-size:12px;line-height:1.7}
+#content .tablebox{border-radius:7px;border-color:rgba(113,176,206,.22)}
+#content .tablebox th{background:#142d40;color:#a5ddf2}
+#content .tablebox td{color:#b8cbd6}
+#content .panel{border-radius:8px;border-color:rgba(113,176,206,.2);background:linear-gradient(145deg,#112738,#0a1925)}
+#content .callout{border-left-color:#70c9ee;background:linear-gradient(100deg,rgba(23,65,86,.42),rgba(12,27,39,.8));border-radius:0 6px 6px 0}
+@media(max-width:900px){#content .v6-spec{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){
+ #content .v6-list,#content .v6-hub{grid-template-columns:1fr;gap:10px}
+ #content .v6-item{padding:16px}
+ #content .v6-spec{grid-template-columns:1fr 1fr;gap:8px}
+ #content .v6-spec article{padding:12px}
+ #content .v6-form{grid-template-columns:1fr;padding:15px;gap:12px}
+ #content .v6-form label:has(textarea),#content .v6-form .v6-action{grid-column:1}
+ #content .cc-progress{grid-template-columns:repeat(4,minmax(0,1fr))}
+ #content .cc-card{padding:15px}
+ #content .cc-grid,#content .no87-grid{grid-template-columns:1fr}
+ #content .no87-section{padding:14px}
+ #content .intro-lead{padding:13px 14px;font-size:13px}
+}
+@media(prefers-reduced-motion:reduce){#content .v6-item,#content .v6-tile{transition:none!important}}
 </style></head><body><aside class="side"><div class="brand"><div class="logo">N<span>O</span></div><div><b>NOVA ORDEM</b><small>AGÊNCIA INTERDIMENSIONAL</small></div></div><div class="navtitle">CENTRAL DE DADOS</div><nav id="nav"></nav><div class="sidefoot"><i></i>SISTEMA OPERACIONAL<br><br>DATABASE BUILD V8.7</div></aside><main class="main"><header class="top"><div class="crumb">AGÊNCIA / <b id="crumb">VISÃO GERAL</b></div><div class="topright"><input class="search" id="search" placeholder="Pesquisar..." type="search"><button class="admin" id="admin">ÁREA ADMIN</button></div></header><section class="hero" id="hero"><div class="eyebrow">ARQUIVO INSTITUCIONAL · ACESSO PÚBLICO</div><h1>NOVA<br><em>ORDEM</em></h1><p>Um mundo. Infinitas possibilidades. Nenhum destino garantido.</p><br><small>EXPLORE O UNIVERSO DA NOVA ORDEM</small></section><div class="wrap"><div class="heading"><div class="eyebrow" id="code">ARQUIVO 00 / CENTRAL</div><h2 id="title">Visão geral</h2><p id="desc">Central de consulta dos registros da Nova Ordem.</p></div><div id="content"></div><footer><span>NOVA ORDEM /// AGÊNCIA INTERDIMENSIONAL</span><span>DOCUMENTAÇÃO DO RPG · V8.7</span></footer></div></main><button class="back-float" id="backFloat" type="button" aria-label="Voltar à página anterior" title="Voltar">←</button><div class="modalbg" id="modalbg" hidden><section class="modal"><div class="modalhead"><div><div class="eyebrow">CONTROLE INTERNO</div><h2>Área administrativa</h2></div><button class="close" id="close" type="button">FECHAR ×</button></div><div class="notice"><b>Importante:</b> esta primeira versão salva alterações apenas neste navegador. Para vários administradores editarem o mesmo site público, será necessário adicionar login e banco de dados compartilhado numa próxima etapa.</div><form id="edit"><label>TÍTULO DA PÁGINA<input name="title"></label><label>DESCRIÇÃO<input name="desc"></label><label>TEXTO PRINCIPAL<textarea name="body"></textarea></label><button class="save">SALVAR NESTE NAVEGADOR</button></form><p style="font-size:10px;color:#8995a5">Esta edição rápida não altera todos os módulos nem publica automaticamente mudanças para outros visitantes.</p></section></div>
 <script>
 const pages={
