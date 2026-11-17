@@ -6,7 +6,7 @@
  var groups=[
   {label:'CENTRAL',items:[['overview','Início','⌂'],['lore','Cosmologia','◉'],['agency','A Agência','⌘'],['organizations','Organizações','▣']]},
   {label:'PARTICIPAÇÃO',items:[['characters','Personagens','♙'],['protocol','Protocolo','▤']]},
-  {label:'SISTEMAS',items:[['systems','Índice de sistemas','▦'],['power','Power System','ϟ'],['combat','Combate','⚔'],['progression','Progressão','↗'],['races','Raças','◇'],['equipment','Equipamentos','⬡'],['crafting','Criação e crafting','⌁'],['economy','Economia','¤'],['ranks','Ranks e hierarquia','⌖'],['honor','Honra','✧'],['karma','Karma','◈']]}
+  {label:'SISTEMAS',items:[['systems','Índice de sistemas','▦'],['power','Power System','ϟ'],['combat','Combate','⚔'],['progression','Progressão','↗'],['races','Raças','◇'],['equipment','Equipamentos','⬡'],['crafting','Criação e crafting','⌁'],['economy','Economia','¤'],['ranks','Ranks e hierarquia','⌖']]}
  ];
  var descriptions={
   overview:'CENTRAL DE CONSULTA',lore:'ARQUIVO DE COSMOLOGIA',agency:'DIRETORIA INSTITUCIONAL',
@@ -36,18 +36,25 @@
   buildNavigation();
   document.body.setAttribute('data-no-route',current);
  }
+
+ function installMobileNav(){
+  if(document.getElementById('no-mobile-nav'))return;
+  var dock=document.createElement('nav');dock.id='no-mobile-nav';dock.setAttribute('aria-label','Navegação principal');
+  dock.innerHTML='<button type="button" data-id="overview"><b>⌂</b><span>Início</span></button><button type="button" data-id="lore"><b>◉</b><span>Cosmologia</span></button><button type="button" data-id="systems"><b>▦</b><span>Sistemas</span></button><button type="button" data-id="characters"><b>♙</b><span>Personagens</span></button>';
+  document.body.appendChild(dock);
+ }
  function routeFromButton(ev){
   var btn=ev.target.closest('#nav button[data-id]');
   if(btn){ev.preventDefault();if(typeof window.go==='function')window.go(btn.dataset.id);}
  }
  document.addEventListener('click',routeFromButton,true);
  if(typeof originalGo==='function'){
-  window.go=function(id,fromHistory){var result=originalGo.call(window,id,fromHistory);var normalized=(id==='chi'||id==='talents')?'power':((id==='missions')?'progression':id);decoratePage(normalized);return result;};
+  window.go=function(id,fromHistory){var result=originalGo.call(window,id,fromHistory);var normalized=(id==='chi'||id==='talents')?'power':((id==='missions'||id==='honor'||id==='karma')?'progression':id);decoratePage(normalized);return result;};
  }
  document.addEventListener('DOMContentLoaded',function(){
   var title=document.querySelector('.brand b');
   var sub=document.querySelector('.brand small');
-  if(title)title.textContent='NOVA ORDEM';
+  installMobileNav();\n  if(title)title.textContent='NOVA ORDEM';
   if(sub)sub.textContent='AGÊNCIA INTERDIMENSIONAL';
   var navtitle=document.querySelector('.navtitle');if(navtitle)navtitle.textContent='ÍNDICE DE ACESSO';
   var foot=document.querySelector('.sidefoot');if(foot)foot.innerHTML='<i></i> SISTEMA OPERACIONAL<br><span style="display:block;margin:8px 0 0 14px">ARQUIVOS PÚBLICOS · V8</span>';
