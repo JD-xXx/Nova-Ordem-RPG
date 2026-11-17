@@ -132,13 +132,13 @@
   }
   function composeMarkup(prefix) {
     return '<form class="ark-compose" data-ark-form="' + prefix + '">' +
-      '<input type="text" name="question" maxlength="500" autocomplete="off" placeholder="Pergunte sobre a Nova Ordem..." aria-label="Pergunte ao A.R.K.">' +
+      '<input type="text" name="question" maxlength="500" autocomplete="off" placeholder="Converse comigo sobre qualquer assunto..." aria-label="Pergunte ao A.R.K.">' +
       '<button type="submit">ENVIAR</button></form>';
   }
   function renderMainPage() {
     return '<section class="ark-main">' +
       '<div class="ark-main-intro">' + avatar +
-        '<div><h3>Central do A.R.K.</h3><p>Consulta de informações e regras oficiais da Nova Ordem. Pergunte sobre os sistemas, raças, personagens e funcionamento da plataforma.</p></div>' +
+        '<div><h3>Central do A.R.K.</h3><p>Inteligência de apoio da Agência A Ordem. Estou à disposição para conversar, ajudar com assuntos gerais, orientar sua navegação e consultar os registros oficiais da Nova Ordem.</p></div>' +
       '</div><div class="ark-context">CONTEXTO ATUAL: CENTRAL DO A.R.K.</div>' +
       '<div class="ark-messages" id="ark-main-messages" aria-live="polite"></div>' +
       quickButtons() + composeMarkup('main') +
@@ -278,7 +278,7 @@
     });
 
     addMessage(value,'user');
-    var pending = {text:'A.R.K. está consultando os registros...',who:'bot',sources:[]};
+    var pending = {text:'Só um instante... estou organizando uma resposta.',who:'bot',sources:[]};
     state.messages.push(pending);
     renderAllChats();
 
@@ -327,7 +327,7 @@
       setContext();
       if (state.opened && !state.messages.length) {
         var page = currentPage();
-        addMessage('Olá! Sou o A.R.K., guia virtual da Agência. Você está na seção "' + page.title + '". Posso orientar sua navegação ou ajudar a consultar as regras e sistemas da Nova Ordem. O que deseja saber?','bot');
+        addMessage('Olá! Sou o A.R.K., inteligência de apoio da Agência A Ordem. Estou acompanhando você na seção "' + page.title + '". Posso ajudar com a plataforma, conversar sobre assuntos gerais ou consultar os registros oficiais da Nova Ordem. Por onde começamos?','bot');
       }
       renderAllChats();
       if (state.opened) {
@@ -342,7 +342,7 @@
   }
   function centralPageMarkup() {
     return '<section class="ark-main"><div class="ark-main-intro">' + avatar +
-      '<div><h3>Central do A.R.K.</h3><p>Olá. Sou o guia virtual da Agência. Consulte os registros oficiais e tire dúvidas sobre os sistemas, personagens e funcionalidades da Nova Ordem.</p></div></div>' +
+      '<div><h3>Central do A.R.K.</h3><p>Olá! Sou o A.R.K., inteligência de apoio da Agência A Ordem. Podemos conversar sobre assuntos gerais, explorar ideias ou consultar os registros oficiais da Nova Ordem. Fique à vontade.</p></div></div>' +
       '<div class="ark-context">CONTEXTO ATUAL: CENTRAL DO A.R.K.</div>' +
       '<div class="ark-messages" id="ark-main-messages" aria-live="polite"></div>' +
       quickButtons() + composeMarkup('main') +
@@ -430,7 +430,7 @@
     registerPage();
     buildKnowledgeIndex();
     if (!state.messages.length) {
-      addMessage('Olá! Sou o A.R.K., guia virtual da Agência. Você está na seção "' + currentPage().title + '". Posso orientar sua navegação ou consultar as regras e sistemas documentados da Nova Ordem. O que deseja saber?','bot');
+      addMessage('Olá! Sou o A.R.K., inteligência de apoio da Agência A Ordem. Estou acompanhando você na seção "' + currentPage().title + '". Posso orientar sua navegação, conversar sobre qualquer assunto ou consultar os registros oficiais da Nova Ordem. O que vamos explorar?','bot');
     }
     renderAllChats();
     setContext();
