@@ -186,7 +186,7 @@ footer{border-color:var(--line);color:#698396;font-size:8px;letter-spacing:1px}
  body.no-mobile-nav-open .side{transform:translateX(0)}
  body.no-mobile-nav-open:after{content:"";position:fixed;inset:0;background:rgba(0,7,13,.68);z-index:10020;backdrop-filter:blur(3px)}
  .main{margin:0}.top{height:62px;padding:0 12px;gap:10px}
- .top:before{content:"";display:block;flex:0 0 34px;height:34px;border:1px solid rgba(104,190,230,.35);border-radius:7px;background:linear-gradient(145deg,#163b52,#0b1a27);mask:none}
+ .top:before{display:none}.no-mobile-nav-toggle{display:none}
  .crumb{font-size:8px;letter-spacing:.7px;flex:1;min-width:0}
  .topright{gap:6px}.search{width:31vw;min-width:90px;padding:8px;font-size:12px}
  .admin{font-size:8px;padding:8px 9px}
@@ -638,4 +638,43 @@ function agencyPage(){return `<div class="panel"><h3>Agência Interdimensional A
 <script src="./ark-assistant.js"></script>
 <script src="./admin-nova-ordem.js"></script>
 <script src="./ark-mascot-layout.js"></script>
-</body></html>
+<script>
+(function(){
+ function setupMobileNavigation(){
+  var top=document.querySelector('.top');
+  var side=document.querySelector('.side');
+  if(!top||!side||top.querySelector('.no-mobile-nav-toggle'))return;
+  var toggle=document.createElement('button');
+  toggle.type='button';
+  toggle.className='no-mobile-nav-toggle';
+  toggle.setAttribute('aria-label','Abrir menu de navegação');
+  toggle.setAttribute('aria-expanded','false');
+  toggle.innerHTML='<span></span><span></span><span></span>';
+  var crumb=top.querySelector('.crumb');
+  top.insertBefore(toggle,crumb||top.firstChild);
+  function close(){document.body.classList.remove('no-mobile-nav-open');toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-label','Abrir menu de navegação');}
+  toggle.addEventListener('click',function(){
+   var open=!document.body.classList.contains('no-mobile-nav-open');
+   document.body.classList.toggle('no-mobile-nav-open',open);
+   toggle.setAttribute('aria-expanded',String(open));
+   toggle.setAttribute('aria-label',open?'Fechar menu de navegação':'Abrir menu de navegação');
+  });
+  side.addEventListener('click',function(e){if(e.target.closest('nav button'))close();});
+  document.addEventListener('click',function(e){
+   if(!document.body.classList.contains('no-mobile-nav-open'))return;
+   if(!side.contains(e.target)&&!toggle.contains(e.target))close();
+  });
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setupMobileNavigation,{once:true});
+ else setupMobileNavigation();
+})();
+</script>
+<style>
+.no-mobile-nav-toggle{width:36px;height:36px;flex:0 0 36px;display:none;flex-direction:column;justify-content:center;align-items:center;gap:4px;border:1px solid rgba(104,190,230,.32);border-radius:7px;background:linear-gradient(145deg,#163b52,#0b1a27);cursor:pointer}
+.no-mobile-nav-toggle span{width:15px;height:1.5px;border-radius:2px;background:#c9efff;transition:transform .2s,opacity .2s}
+.no-mobile-nav-toggle[aria-expanded="true"] span:first-child{transform:translateY(5.5px) rotate(45deg)}
+.no-mobile-nav-toggle[aria-expanded="true"] span:nth-child(2){opacity:0}
+.no-mobile-nav-toggle[aria-expanded="true"] span:last-child{transform:translateY(-5.5px) rotate(-45deg)}
+@media(max-width:650px){.no-mobile-nav-toggle{display:flex}}
+</style></body></html>
