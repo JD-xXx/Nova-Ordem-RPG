@@ -60,7 +60,12 @@
       return '<button type="button" class="' + (active ? 'active' : '') + '" data-id="' + esc(item[0]) + '">' + esc(item[1]) + '</button>';
     }).join('');
     nav.querySelectorAll('button[data-id]').forEach(function (button) {
-      button.onclick = function () { if (window.go) window.go(button.dataset.id); };
+      button.onclick = function () {
+        var id = button.dataset.id;
+        if (id === 'team') { setRoute('team'); renderTeamPage(); return; }
+        if (id === 'staff-workbench') { setRoute('staff-workbench'); renderWorkbench(); return; }
+        if (window.go) window.go(id);
+      };
     });
   }
   function setNavItem(id, label, enabled) {
