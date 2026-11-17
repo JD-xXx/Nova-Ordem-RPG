@@ -140,3 +140,57 @@ footer{margin-top:52px!important;padding:19px 0!important;border-color:var(--no-
 }
 @media(max-width:430px){.admin{padding:8px 9px!important;font-size:8px!important}.topright{gap:5px}.search{width:31vw!important;min-width:75px}.hero small{font-size:7px!important}#content .v6-spec{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+
+/* A.R.K. / three genuinely different holographic demonstrations */
+.ark-talent-demo{position:relative;overflow:hidden;border-radius:3px!important;background:linear-gradient(145deg,#0a151e,#071018)!important;border-color:rgba(131,201,213,.2)!important}
+.ark-talent-demo>h3{font:8px var(--no-mono)!important;letter-spacing:1.8px!important;color:#b7c8c8!important}
+.ark-talent-demo .ark-demo-holo-window{position:relative;overflow:hidden;border-radius:2px!important;background:radial-gradient(ellipse at 50% 55%,rgba(45,78,87,.2),rgba(3,10,16,.97) 72%)!important;border:1px solid rgba(131,201,213,.18)!important;box-shadow:inset 0 0 45px rgba(93,151,155,.06)!important}
+.ark-talent-demo .ark-demo-holo-window:after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.22;background:repeating-linear-gradient(0deg,transparent 0 5px,rgba(177,223,220,.12) 6px,transparent 7px)}
+.ark-talent-demo .ark-demo-transmission{position:absolute;z-index:2;top:11px;left:13px;color:#92b2b5!important;font:7px var(--no-mono)!important;letter-spacing:1.5px!important}
+.ark-talent-stage{position:relative;isolation:isolate}
+.ark-talent-stage--corporal{--holo-main:#7fd5e4;--holo-glow:rgba(78,191,214,.32);background:radial-gradient(ellipse at 50% 65%,rgba(52,151,173,.16),transparent 64%)!important}
+.ark-talent-stage--influence{--holo-main:#e0bd86;--holo-glow:rgba(209,157,87,.3);background:radial-gradient(ellipse at 52% 58%,rgba(170,120,61,.17),transparent 64%)!important}
+.ark-talent-stage--existence{--holo-main:#c2a0d8;--holo-glow:rgba(162,112,194,.3);background:radial-gradient(ellipse at 50% 58%,rgba(131,76,159,.17),transparent 64%)!important}
+.ark-talent-stage--corporal:before,.ark-talent-stage--influence:before,.ark-talent-stage--existence:before{content:"";position:absolute;z-index:-1;left:12%;right:12%;bottom:17px;height:1px;background:linear-gradient(90deg,transparent,var(--holo-main),transparent);opacity:.5}
+.ark-talent-arm-xray{filter:drop-shadow(0 0 8px rgba(74,195,221,.24))!important}
+.ark-talent-arm-xray .arm-vein{stroke:#6fe5f2!important;stroke-dasharray:8 9!important;animation:ark-arm-flow-rebuilt 1.05s linear infinite!important}
+.ark-talent-arm-xray .arm-energy-points circle{fill:#b9fbff;animation:ark-arm-core-pulse 1.8s ease-in-out infinite alternate}
+.ark-talent-arm-xray .arm-joint circle:first-child{fill:#0b2530;stroke:#9ceaf0}
+.ark-talent-arm-xray .arm-joint circle:nth-child(2){fill:#164e5b;stroke:#b8f5f3}
+.ark-talent-arm-xray .arm-fingers{animation:ark-arm-grip-rebuilt 3.2s ease-in-out infinite!important;transform-origin:580px 125px}
+@keyframes ark-arm-flow-rebuilt{to{stroke-dashoffset:-34}}
+@keyframes ark-arm-core-pulse{from{opacity:.45;r:3}to{opacity:1;r:7}}
+@keyframes ark-arm-grip-rebuilt{0%,22%,72%,100%{transform:rotate(0)}38%,55%{transform:rotate(10deg)}}
+.ark-talent-influence-holo{filter:drop-shadow(0 0 9px rgba(211,164,100,.22))!important}
+.ark-talent-influence-holo .agent-torso,.ark-talent-influence-holo .agent-shoulder,.ark-talent-influence-holo .agent-head{fill:url(#influence-armor);stroke:#d8c09b;stroke-width:1.5}
+.ark-talent-influence-holo .agent-arm{transform-box:fill-box;transform-origin:0% 15%;animation:ark-influence-aim 4.8s ease-in-out infinite}
+.ark-talent-influence-holo .agent-hand,.ark-talent-influence-holo .agent-gauntlet{fill:#d6b887;stroke:#fff0cf;stroke-width:1.2}
+.ark-talent-influence-holo .agent-circuit{stroke:#f3d5a4;stroke-width:2;fill:none;stroke-dasharray:5 7;animation:ark-influence-circuit 1.2s linear infinite}
+.ark-talent-influence-holo .influence-thread{stroke:#e7c18a;stroke-width:2.2;stroke-dasharray:5 8;animation:ark-influence-thread 1.8s linear infinite}
+.ark-talent-influence-holo .influence-thread--two{animation-delay:-.9s;opacity:.6}
+.ark-talent-influence-holo .influence-pulse{fill:#f3d5a4;stroke:#fff0d0;animation:ark-influence-pulse 2.4s ease-out infinite}
+.ark-talent-influence-holo .influence-pulse--two{animation-delay:1.2s}
+.ark-talent-influence-holo .influence-sword{transform-box:fill-box;transform-origin:20% 50%;animation:ark-influence-sword 4.8s cubic-bezier(.3,.05,.25,1) infinite}
+.ark-talent-influence-holo .influence-readout{fill:#e5c89c!important}
+@keyframes ark-influence-aim{0%,15%{transform:rotate(0)}35%,70%{transform:rotate(-4deg)}90%,100%{transform:rotate(0)}}
+@keyframes ark-influence-circuit{to{stroke-dashoffset:-24}}
+@keyframes ark-influence-thread{to{stroke-dashoffset:-39}}
+@keyframes ark-influence-pulse{0%{opacity:0;transform:scale(.35)}20%{opacity:1}80%{opacity:.7}100%{opacity:0;transform:scale(2.2)}}
+@keyframes ark-influence-sword{0%,18%{transform:translate(0,0) rotate(0)}48%,67%{transform:translate(-95px,-5px) rotate(-2deg)}82%,100%{transform:translate(0,0) rotate(0)}}
+.ark-talent-existence-holo{filter:drop-shadow(0 0 10px rgba(166,119,199,.23))!important}
+.ark-talent-existence-holo .existence-cloak,.ark-talent-existence-holo .existence-head,.ark-talent-existence-holo .existence-shoulder,.ark-talent-existence-holo .existence-leg{fill:url(#existence-body);stroke:#d5b9ec;stroke-width:1.6}
+.ark-talent-existence-holo .existence-subject{transform-box:fill-box;transform-origin:center;animation:ark-existence-phase 5.6s ease-in-out infinite}
+.ark-talent-existence-holo .existence-afterimage{stroke:#d9b8fa;stroke-width:1.4;stroke-dasharray:3 7;opacity:0;animation:ark-existence-afterimage 5.6s ease-in-out infinite}
+.ark-talent-existence-holo .existence-observer{transform-box:fill-box;transform-origin:center;animation:ark-existence-observer 5.6s ease-in-out infinite}
+.ark-talent-existence-holo .existence-pressure{stroke:#d6b3f1;stroke-width:2.2;stroke-dasharray:4 8;animation:ark-existence-wave 5.6s ease-out infinite}
+.ark-talent-existence-holo .existence-scan{stroke:#d2b3e9;opacity:.7;animation:ark-existence-scan 5.6s ease-in-out infinite}
+@keyframes ark-existence-phase{0%,12%{opacity:1;transform:translateX(0)}28%,53%{opacity:.07;transform:translateX(-24px)}72%,100%{opacity:1;transform:translateX(0)}}
+@keyframes ark-existence-afterimage{0%,18%{opacity:0;transform:translateX(0)}30%,55%{opacity:.8;transform:translateX(24px)}70%,100%{opacity:0;transform:translateX(0)}}
+@keyframes ark-existence-observer{0%,62%{transform:translateX(0)}78%,88%{transform:translateX(28px)}100%{transform:translateX(0)}}
+@keyframes ark-existence-wave{0%,55%{opacity:0;transform:scale(.55)}68%{opacity:1}100%{opacity:0;transform:scale(1.8)}}
+@keyframes ark-existence-scan{0%,15%,75%,100%{opacity:.65}35%,55%{opacity:.08}}
+.ark-demo-transmitter{border-color:rgba(131,201,213,.14)!important;background:rgba(7,14,20,.8)!important}
+.ark-demo-presenter-label{color:#849da0!important;font:7px var(--no-mono)!important;letter-spacing:1.4px!important}
+@media(max-width:650px){.ark-talent-demo .ark-demo-composition{min-height:230px}.ark-talent-demo .ark-demo-holo-window{min-height:195px}.ark-talent-stage--corporal,.ark-talent-stage--influence,.ark-talent-stage--existence{min-height:175px}}
+@media(prefers-reduced-motion:reduce){.ark-talent-arm-xray *, .ark-talent-influence-holo *, .ark-talent-existence-holo *{animation:none!important}}
