@@ -240,7 +240,7 @@
       return {title:entry.title, text:entry.text};
     });
 
-    return fetch(String(config.url).replace(/\\/+$/, '') + '/functions/v1/ark-ai-chat', {
+    return fetch(String(config.url).replace(/\/+$/, '') + '/functions/v1/ark-ai-chat', {
       method:'POST',
       headers:{
         'Content-Type':'application/json',
@@ -288,7 +288,7 @@
     }).catch(function (error) {
       console.warn('[A.R.K.] IA generativa indisponível; usando a base local.', error);
       var fallback = answer(value);
-      pending.text = fallback.text + '\\n\\nA inteligência generativa está temporariamente indisponível. Esta resposta foi consultada na base local da Nova Ordem.';
+      pending.text = fallback.text + '\n\nA inteligência generativa está temporariamente indisponível. Esta resposta foi consultada na base local da Nova Ordem.';
       pending.sources = fallback.sources || [];
     }).finally(function () {
       renderAllChats();
