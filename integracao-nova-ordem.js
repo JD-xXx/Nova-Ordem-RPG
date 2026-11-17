@@ -352,9 +352,15 @@
     try { saved = JSON.parse(sessionStorage.getItem(ACTIVE_DRAFT_KEY) || 'null'); } catch (_) { saved = null; }
     if (!saved || !saved.characterId || !saved.userId || saved.userId !== session.user.id) return false;
     const result = await db.from('characters').select('id,status').eq('id', saved.characterId).maybeSingle();
-    if (result.error || !result.data || result.data.status !== 'draft') { clearActiveDraft(); return false; }
+    if (result.error || !result.data || !['draft','rejected'].includes(result.data.status)) { clearActiveDraft(); return false; }
     characterId = saved.characterId;
     completed = false;
+    if (window.NovaOrdemCharacterReview) {
+      if (result.data.status === 'rejected') {
+        const reviews = await rpc('get_my_character_review_status',{p_character_id:saved.characterId});
+        window.NovaOrdemCharacterReview.setContext(result.data.status,reviews || []);
+      } else window.NovaOrdemCharacterReview.clearContext();
+    }
     if (creator() && saved.state) creator().update(saved.state);
     return true;
   }
@@ -571,6 +577,7 @@
       await rpc('submit_character', {p_character_id:characterId});
       characterId = null;
       clearActiveDraft();
+      if (window.NovaOrdemCharacterReview) window.NovaOrdemCharacterReview.clearContext();
       completed = true;
       if (root()) {
         root().innerHTML =
@@ -913,6 +920,11 @@
       .eq('player_id', user.id)
       .eq('status','draft')
       .order('updated_at',{ascending:false});
+    const rejectedResult = await db.from('characters')
+      .select('id,name,status,created_at,updated_at')
+      .eq('player_id', user.id)
+      .eq('status','rejected')
+      .order('updated_at',{ascending:false});
     let progress = null;
     let progressError = null;
     try {
@@ -920,12 +932,18 @@
     } catch (error) {
       progressError = error;
     }
-    if (draftsResult.error) {
-      el.innerHTML = '<section class="no-profile-card"><h3>Perfil do jogador</h3><p>Não foi possível carregar seus rascunhos: ' + escapeHtml(draftsResult.error.message) + '</p></section>';
+    if (draftsResult.error || rejectedResult.error) {
+      const failure = draftsResult.error || rejectedResult.error;
+      el.innerHTML = '<section class="no-profile-card"><h3>Perfil do jogador</h3><p>Não foi possível carregar suas fichas: ' + escapeHtml(failure.message) + '</p></section>';
       return;
     }
     if (currentPage !== 'profile') return;
     const drafts = draftsResult.data || [];
+    const rejected = rejectedResult.data || [];
+    const rejectedReviews = await Promise.all(rejected.map(async character => {
+      try { return {character, reviews:await rpc('get_my_character_review_status',{p_character_id:character.id})}; }
+      catch (error) { return {character, reviews:[], error}; }
+    }));
     const draftLimit = 2;
     const activeCount = progress && Number(progress.active_character_count) || 0;
     const draftHtml = drafts.length ? drafts.map((draft,index) =>
@@ -934,12 +952,21 @@
     const progressHtml = progress
       ? '<p>Rascunhos em andamento: <b>' + drafts.length + '/' + draftLimit + '</b>.</p><p>Personagens aprovados no RPG: <b>' + activeCount + '/2</b>.</p>'
       : '<p role="alert">Não foi possível consultar as regras de limite e salvamento no banco. Verifique se as migrations oficiais do projeto foram aplicadas e se sua sessão está ativa. ' + escapeHtml(progressError && progressError.message || '') + '</p>';
+    const reviewStatusLabels = {pending:'Pendente',approved:'Aprovada',needs_revision:'Devolvida para revisão',not_applicable:'Não se aplica'};
+    const reviewSectionLabels = {profile:'Informações básicas',story:'História e origem',powers:'Talento e poderes'};
+    const reviewHtml = rejectedReviews.length
+      ? '<section class="no-profile-card"><h3>Fichas devolvidas para revisão</h3><p>As partes já aprovadas permanecem bloqueadas. Abra a ficha para corrigir somente as seções ainda não aprovadas.</p><div class="no-draft-list">' + rejectedReviews.map(({character,reviews},index) => {
+          const rows = Array.isArray(reviews) ? reviews : [];
+          const statusHtml = rows.map(item => '<p><b>' + escapeHtml(reviewSectionLabels[item.section_key] || item.section_key) + ':</b> ' + escapeHtml(reviewStatusLabels[item.status] || item.status) + (item.note ? ' — ' + escapeHtml(item.note) : '') + '</p>').join('');
+          return '<article class="no-draft"><div><b>' + escapeHtml(character.name || ('Ficha devolvida ' + (index+1))) + '</b><small>' + escapeHtml(character.updated_at ? new Date(character.updated_at).toLocaleString('pt-BR') : 'Data indisponível') + '</small>' + statusHtml + '</div><button class="save" type="button" data-no-open-draft="' + escapeHtml(character.id) + '">CORRIGIR FICHA</button></article>';
+        }).join('') + '</div></section>'
+      : '';
     el.innerHTML =
       '<section class="no-profile-card"><div class="eyebrow">AGÊNCIA A ORDEM · PORTAL DO JOGADOR</div><h3>Seu perfil</h3><p>Conta conectada: <b>' + escapeHtml(user.email || 'usuário autenticado') + '</b></p>' +
       (message ? '<p role="status">' + escapeHtml(message) + '</p>' : '') +
       '<div class="no-profile-actions"><button class="save" type="button" data-no-start>Criar personagem</button><button class="close" type="button" data-no-logout>Sair da conta</button></div></section>' +
       '<section class="no-profile-card"><h3>Segurança da conta</h3><form data-no-change-password><label class="cc-field">Nova senha<input data-no-change-password-value type="password" minlength="6" autocomplete="new-password" required placeholder="Digite a nova senha"></label><label class="cc-field">Confirmar senha<input data-no-change-password-confirm type="password" minlength="6" autocomplete="new-password" required placeholder="Digite novamente"></label><div class="no-profile-actions"><button class="save" type="submit">ALTERAR SENHA</button></div></form></section>' +
-      '<section class="no-profile-card"><h3>Meus rascunhos <small>(' + drafts.length + '/' + (draftLimit == null ? '—' : draftLimit) + ')</small></h3>' + progressHtml + '<p>As fichas que ainda não foram enviadas ficam disponíveis aqui para você continuar depois.</p><div class="no-draft-list">' + draftHtml + '</div></section>';
+      '<section class="no-profile-card"><h3>Meus rascunhos <small>(' + drafts.length + '/' + (draftLimit == null ? '—' : draftLimit) + ')</small></h3>' + progressHtml + '<p>As fichas que ainda não foram enviadas ficam disponíveis aqui para você continuar depois.</p><div class="no-draft-list">' + draftHtml + '</div></section>' + reviewHtml;
   }
 
   function renderCharacterIntro(message) {
@@ -963,10 +990,16 @@
     try {
       const result = await db.from('characters')
         .select('id,player_id,name,age,height_cm,weight_kg,gender,personality,appearance,backstory,race,common_skills,supernatural_skills,chi_reserve,talent_rarity,specializations,cybernetic_modules,ficha_data,status')
-        .eq('id',draftId).eq('status','draft').maybeSingle();
+        .eq('id',draftId).in('status',['draft','rejected']).maybeSingle();
       if (result.error) throw result.error;
-      if (!result.data) throw new Error('Esse rascunho não está mais disponível.');
+      if (!result.data) throw new Error('Essa ficha não está mais disponível para edição.');
       const row = result.data;
+      if (window.NovaOrdemCharacterReview) {
+        if (row.status === 'rejected') {
+          const reviews = await rpc('get_my_character_review_status',{p_character_id:row.id});
+          window.NovaOrdemCharacterReview.setContext(row.status,reviews || []);
+        } else window.NovaOrdemCharacterReview.clearContext();
+      }
       let state = row.ficha_data && row.ficha_data.draftState;
       if (!state) {
         try {
@@ -1081,6 +1114,7 @@
     if (event === 'SIGNED_OUT' || !session) {
       characterId = null;
       completed = false;
+      if (window.NovaOrdemCharacterReview) window.NovaOrdemCharacterReview.clearContext();
     }
   });
 
