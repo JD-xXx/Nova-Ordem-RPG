@@ -119,7 +119,7 @@
     var actions = row.status === 'submitted'
       ? '<div class="no-admin-review"><label for="no-admin-review-note">Motivo / orientação para devolução</label><textarea id="no-admin-review-note" rows="3" maxlength="2000" placeholder="Explique o que precisa ser corrigido para devolver a ficha ao jogador."></textarea><div class="no-admin-actions"><button type="button" class="no-admin-primary" data-admin-approve="' + esc(row.id) + '">APROVAR FICHA</button><button type="button" class="no-admin-secondary" data-admin-return="' + esc(row.id) + '">DEVOLVER PARA AJUSTES</button></div></div>'
       : '<p class="no-admin-muted">Esta ficha não está aguardando avaliação. As ações de aprovação e devolução ficam indisponíveis.</p>';
-    return '<section class="no-admin-detail"><div class="no-admin-detail-head"><div><small>ANÁLISE INDIVIDUAL</small><h3>' + esc(row.name || 'Personagem sem nome') + '</h3></div><button type="button" class="no-admin-secondary" data-admin-close-detail>FECHAR</button></div>' +
+    return '<section class="no-admin-detail" data-character-id="' + esc(row.id) + '"><div class="no-admin-detail-head"><div><small>ANÁLISE INDIVIDUAL</small><h3>' + esc(row.name || 'Personagem sem nome') + '</h3></div><button type="button" class="no-admin-secondary" data-admin-close-detail>FECHAR</button></div>' +
       '<div class="no-admin-detail-grid">' +
       field('Jogador', state.profiles[row.player_id] || row.player_id) +
       field('Status', statusLabels[row.status] || row.status) +
@@ -503,4 +503,14 @@
       });
     }
   });
+})();
+
+/* Carrega o console de cargos e avaliações por seção sem alterar a integração do A.R.K. */
+(function () {
+  if (document.querySelector('script[data-staff-console]')) return;
+  var script = document.createElement('script');
+  script.src = 'staff-console.js';
+  script.async = true;
+  script.setAttribute('data-staff-console', 'true');
+  document.head.appendChild(script);
 })();
