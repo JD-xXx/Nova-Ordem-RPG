@@ -207,16 +207,6 @@
     '@keyframes ark-home-levitate{0%,100%{margin-top:0}50%{margin-top:-7px}}@keyframes ark-home-follow-puff{0%,100%{opacity:.25;scale:.75}50%{opacity:.9;scale:1.25}}',
     '@media(max-width:650px){.ark-home-drawer{min-height:158px!important;padding-bottom:20px!important}.ark-home-drawer--right{padding-right:84px!important}.ark-home-drawer--left{padding-left:84px!important}.ark-home-message{min-height:102px;padding:3px 2px 24px}.ark-home-message-bubble{padding:11px 12px}.ark-home-message-bubble p{font-size:11px}.ark-home-message:before{top:-70px;height:76px;right:35px}.ark-home-message:after{top:-75px;right:31px}.ark-home-message--left:before{left:35px;right:auto}.ark-home-message--left:after{left:31px;right:auto}}',
     '@media(prefers-reduced-motion:reduce){.ark-home-follow-robot,.ark-home-follow-robot>svg,.ark-home-follow-smoke{animation:none!important;transition:none!important}}',
-    '.ark-scene{border:1px solid rgba(105,184,222,.22);border-radius:10px;background:linear-gradient(115deg,rgba(14,34,49,.97),rgba(7,17,27,.98));box-shadow:0 14px 36px rgba(0,0,0,.2)}',
-    '.ark-scene:before{background:linear-gradient(#9be3ff,#327fa8)}',
-    '.ark-scene-bubble,.ark-scene--comic .ark-scene-bubble,.ark-scene--fencer .ark-scene-bubble,.ark-scene--peek-comic .ark-scene-bubble,.ark-feature-guide .ark-scene-bubble{background:rgba(8,22,33,.96)!important;border:1px solid rgba(105,184,222,.24)!important;border-radius:8px!important;color:#c6dbe7!important;box-shadow:inset 0 1px rgba(255,255,255,.025),0 8px 22px rgba(0,0,0,.16)!important}',
-    '.ark-scene-bubble:before,.ark-scene--comic .ark-scene-bubble:before,.ark-scene--fencer .ark-scene-bubble:before,.ark-feature-guide .ark-scene-bubble:before{content:"A.R.K. / ASSISTÊNCIA INSTITUCIONAL"!important;color:#83c9e9!important;font:600 8px var(--mono,monospace)!important;letter-spacing:1.4px!important}',
-    '.ark-scene-bubble:after,.ark-scene--comic .ark-scene-bubble:after,.ark-scene--fencer .ark-scene-bubble:after,.ark-feature-guide .ark-scene-bubble:after{background:#0a1a27!important;border-color:rgba(105,184,222,.24)!important}',
-    '.ark-scene--peek{border-color:rgba(105,184,222,.2);background:linear-gradient(115deg,rgba(12,25,36,.98),rgba(7,15,24,.98))}.ark-scene--peek .ark-scene-bubble{color:#c6dbe7!important}',
-    '.ark-scene-robot{filter:drop-shadow(0 0 15px rgba(65,174,235,.2));animation:ark-hover 5.2s ease-in-out infinite}',
-    '.ark-feature-guide .ark-scene{background:transparent!important}.ark-feature-guide .ark-scene-bubble{font-size:12px!important;line-height:1.65!important}',
-    '.ark-chi-robot,.ark-demo-robot,.ark-transfer-robot{filter:drop-shadow(0 0 18px rgba(69,177,224,.2))}',
-    '@media(max-width:650px){.ark-scene{gap:10px;padding:11px}.ark-scene-robot{width:76px;height:86px;flex-basis:76px}.ark-scene-bubble{font-size:12px;padding:10px}.ark-scene--peek{transform:none;max-width:100%}}',
   ].join('\n');
   var style = document.createElement('style');
   style.id = 'ark-scene-layout-styles';
@@ -240,26 +230,24 @@
   ].join('\\n');
   document.head.appendChild(arkCharacterStyle);
 
-  var robotSvg = '<svg viewBox="0 0 180 190" role="img" aria-label="EVE, interface visual profissional da inteligência A.R.K.">' +
-    '<defs><linearGradient id="eve-shell" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#dce8ef"/><stop offset=".38" stop-color="#718b9d"/><stop offset=".72" stop-color="#263d50"/><stop offset="1" stop-color="#111f2c"/></linearGradient><linearGradient id="eve-edge" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#b8d9e9"/><stop offset="1" stop-color="#31536a"/></linearGradient><linearGradient id="eve-visor" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#102c40"/><stop offset=".55" stop-color="#06131f"/><stop offset="1" stop-color="#02080e"/></linearGradient><linearGradient id="eve-light" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#5bb9e7" stop-opacity=".15"/><stop offset=".5" stop-color="#b7edff"/><stop offset="1" stop-color="#5bb9e7" stop-opacity=".15"/></linearGradient><filter id="eve-glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>' +
-    '<ellipse cx="90" cy="179" rx="42" ry="5" fill="#3ab8ef" opacity=".16"/><ellipse cx="90" cy="178" rx="24" ry="2" fill="#a8eaff" opacity=".5"/>' +
-    '<path d="M43 151L49 119Q53 103 70 99L90 94L110 99Q127 103 131 119L137 151L119 166H61Z" fill="url(#eve-shell)" stroke="#6d9bb5" stroke-width="1.6"/>' +
-    '<path d="M57 119L68 110L90 106L112 110L123 119L117 151L90 161L63 151Z" fill="#152c3d" stroke="#6e9bb3" stroke-width="1.2"/>' +
-    '<path d="M70 119L90 115L110 119L105 144L90 150L75 144Z" fill="#0a1c2a" stroke="#4f91b3" stroke-width="1.2"/>' +
-    '<path d="M81 124H99L96 143H84Z" fill="url(#eve-light)" filter="url(#eve-glow)" opacity=".9"/><path d="M86 129H94M85 135H95M87 141H93" stroke="#d7f7ff" stroke-width="1.2" stroke-linecap="round"/>' +
-    '<path d="M48 126L32 145L39 160L58 151M132 126L148 145L141 160L122 151" fill="url(#eve-shell)" stroke="#6d9bb5" stroke-width="1.5" stroke-linejoin="round"/>' +
-    '<path d="M35 145L27 158M145 145L153 158" stroke="#69c7ef" stroke-width="2" stroke-linecap="round"/>' +
-    '<path d="M90 8L111 15L126 31L130 53L123 82L109 99L90 105L71 99L57 82L50 53L54 31L69 15Z" fill="url(#eve-shell)" stroke="#82aabe" stroke-width="1.8" stroke-linejoin="round"/>' +
-    '<path d="M68 19L90 12L112 19L122 34L90 29L58 34Z" fill="#d8e7ee" opacity=".68"/>' +
-    '<path d="M55 42L90 34L125 42L120 70L108 83L90 88L72 83L60 70Z" fill="url(#eve-visor)" stroke="#4e89a7" stroke-width="1.6" stroke-linejoin="round"/>' +
-    '<path d="M64 48L90 42L116 48" fill="none" stroke="#8ddfff" stroke-width="1.2" opacity=".55"/>' +
-    '<path d="M70 61L85 57L90 57L95 57L110 61" fill="none" stroke="#a9edff" stroke-width="2.4" stroke-linecap="round" filter="url(#eve-glow)"/>' +
-    '<path d="M78 70H102" stroke="#4fb9e9" stroke-width="1.4" stroke-linecap="round" opacity=".75"/>' +
-    '<path d="M65 82L75 91L90 95L105 91L115 82" fill="none" stroke="#8adcf8" stroke-width="1.4" opacity=".8"/>' +
-    '<path d="M90 8V2" stroke="#8bdfff" stroke-width="1.8"/><path d="M84 3H96" stroke="#b5efff" stroke-width="2" stroke-linecap="round" filter="url(#eve-glow)"/>' +
-    '<path d="M45 115H59M121 115H135M52 157H128" stroke="#73c8ee" stroke-width="1.4" opacity=".62"/>' +
-    '<path d="M73 169H107" stroke="#9de7ff" stroke-width="2" stroke-linecap="round" opacity=".7"/>' +
-    '</svg>';
+  var robotSvg = '<svg viewBox="0 0 180 190" role="img" aria-label="A.R.K., androide branco flutuante de silhueta humanoide, visor escuro e olhos azuis expressivos">' +
+    '<defs><linearGradient id="ark-shell-v6" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff"/><stop offset=".48" stop-color="#f2f9fd"/><stop offset="1" stop-color="#b6cfdd"/></linearGradient><linearGradient id="ark-shell-edge-v6" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#bcd5e2"/></linearGradient><linearGradient id="ark-visor-v6" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#173b55"/><stop offset=".5" stop-color="#061a2a"/><stop offset="1" stop-color="#020b15"/></linearGradient><radialGradient id="ark-eye-v6"><stop stop-color="#fff"/><stop offset=".32" stop-color="#b7f5ff"/><stop offset="1" stop-color="#168bd3"/></radialGradient><linearGradient id="ark-core-v6" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#e9ffff"/><stop offset=".48" stop-color="#78e8ff"/><stop offset="1" stop-color="#168bc4"/></linearGradient><filter id="ark-glow-v6"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>' +
+    '<ellipse cx="90" cy="180" rx="31" ry="4.5" fill="#39b9f4" opacity=".18"/><ellipse cx="90" cy="178" rx="17" ry="2" fill="#b7efff" opacity=".72"/>' +
+    '<g class="ark-arm ark-arm--left"><path d="M64 101Q54 100 49 111L39 133Q36 141 42 145Q49 149 54 140L68 115Z" fill="url(#ark-shell-v6)" stroke="#9ebaca" stroke-width="1.8" stroke-linejoin="round"/><circle cx="56" cy="108" r="7" fill="url(#ark-shell-edge-v6)" stroke="#91afc1" stroke-width="1.4"/><path d="M40 134L37 141" stroke="#79dfff" stroke-width="2.5" stroke-linecap="round"/></g>' +
+    '<g class="ark-arm ark-arm--right"><path d="M116 101Q126 100 131 111L141 133Q144 141 138 145Q131 149 126 140L112 115Z" fill="url(#ark-shell-v6)" stroke="#9ebaca" stroke-width="1.8" stroke-linejoin="round"/><circle cx="124" cy="108" r="7" fill="url(#ark-shell-edge-v6)" stroke="#91afc1" stroke-width="1.4"/><path d="M140 134L143 141" stroke="#79dfff" stroke-width="2.5" stroke-linecap="round"/></g>' +
+    '<path d="M69 94Q59 98 57 113L52 148Q51 159 65 166Q90 178 115 166Q129 159 128 148L123 113Q121 98 111 94Q90 102 69 94Z" fill="url(#ark-shell-v6)" stroke="#9ebaca" stroke-width="2" stroke-linejoin="round"/>' +
+    '<path d="M68 103Q90 112 112 103" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".94"/><path d="M61 147Q90 160 119 147" fill="none" stroke="#8bb9cd" stroke-width="1.7" stroke-linecap="round" opacity=".85"/>' +
+    '<path d="M78 113Q90 118 102 113L101 145Q90 151 79 145Z" fill="#dceef5" stroke="#9fc8d9" stroke-width="1.2"/><rect class="ark-core-light" x="85" y="119" width="10" height="23" rx="5" fill="url(#ark-core-v6)" filter="url(#ark-glow-v6)"/><path d="M88 124H92M88 131H92M88 138H92" stroke="#f1ffff" stroke-width="1.5" stroke-linecap="round"/>' +
+    '<path d="M72 157Q90 165 108 157" fill="none" stroke="#77dfff" stroke-width="2" stroke-linecap="round" opacity=".8"/><path d="M78 169Q90 173 102 169" fill="none" stroke="#8ce7ff" stroke-width="2" stroke-linecap="round" opacity=".9"/>' +
+    '<path d="M90 12C66 12 50 26 49 48L49 70C49 88 64 99 90 101C116 99 131 88 131 70L131 48C130 26 114 12 90 12Z" fill="url(#ark-shell-edge-v6)" stroke="#9ebaca" stroke-width="2"/>' +
+    '<path d="M58 34Q70 17 90 17Q110 17 122 34" fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round" opacity=".96"/>' +
+    '<path d="M51 47Q90 35 129 47L127 76Q90 90 53 76Z" fill="url(#ark-visor-v6)" stroke="#5e8da7" stroke-width="1.6"/>' +
+    '<path class="ark-visor-glint" d="M59 49Q90 40 121 49" fill="none" stroke="#c0f4ff" stroke-width="1.6" stroke-linecap="round" opacity=".72"/>' +
+    '<ellipse class="ark-eye ark-eye--left" cx="71" cy="63" rx="8" ry="11.5" fill="url(#ark-eye-v6)" filter="url(#ark-glow-v6)"/><ellipse class="ark-eye ark-eye--right" cx="109" cy="63" rx="8" ry="11.5" fill="url(#ark-eye-v6)" filter="url(#ark-glow-v6)"/>' +
+    '<circle cx="68.5" cy="59" r="2.4" fill="#fff" opacity=".96"/><circle cx="106.5" cy="59" r="2.4" fill="#fff" opacity=".96"/>' +
+    '<path d="M81 84Q90 89 99 84" fill="none" stroke="#7fe2ff" stroke-width="1.8" stroke-linecap="round" opacity=".9"/>' +
+    '<path d="M90 12V7" stroke="#8bdcff" stroke-width="2" stroke-linecap="round"/><circle cx="90" cy="6" r="3.5" fill="#8be7ff" filter="url(#ark-glow-v6)"/>' +
+    '<path d="M66 91L72 97M114 91L108 97" stroke="#8bdcff" stroke-width="2" stroke-linecap="round" opacity=".9"/></svg>';
 
   var arkHologramSvg = '<svg viewBox="0 0 140 150" role="img" aria-label="Modelo antigo do A.R.K. usado como representação holográfica">' +
     '<defs><linearGradient id="ark-shell-v2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff"/><stop offset=".58" stop-color="#e6f3fa"/><stop offset="1" stop-color="#a9c7d9"/></linearGradient><linearGradient id="ark-screen-v2" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#123e60"/><stop offset="1" stop-color="#061827"/></linearGradient><filter id="ark-glow-v2"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>' +
