@@ -19,6 +19,9 @@
     '.ark-head-copy{flex:1;min-width:0}.ark-head-copy b{display:block;font:700 16px var(--display,Arial);letter-spacing:1px}.ark-head-copy small{display:block;color:#a6c6df;font:9px var(--mono,monospace);margin-top:3px}',
     '.ark-close{border:1px solid #345b78;background:#10283b;color:#dff3ff;border-radius:5px;padding:7px 10px;cursor:pointer}',
     '.ark-context{padding:8px 14px;background:#0c1a29;color:#9dbbd3;font:9px var(--mono,monospace);border-bottom:1px solid #1b354d}',
+    '.ark-modebar{display:flex;gap:7px;padding:10px 12px;background:#0a1825;border-bottom:1px solid #1b354d}',
+    '.ark-modebar button{flex:1;border:1px solid #294b66;border-radius:7px;background:#0d2030;color:#9dbbd3;padding:9px 7px;font:600 10px var(--mono,monospace);cursor:pointer}',
+    '.ark-modebar button[aria-pressed="true"]{border-color:#64c5ff;background:#123b59;color:#effaff;box-shadow:inset 0 0 0 1px #64c5ff33}',
     '.ark-messages{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:11px;scroll-behavior:smooth}',
     '.ark-message{max-width:91%;padding:10px 12px;border-radius:10px;font-size:13px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}',
     '.ark-message.ark-bot{align-self:flex-start;background:#12283a;border:1px solid #244965;color:#e0f1ff;border-top-left-radius:3px}',
@@ -49,7 +52,7 @@
   var avatar = '<span class="ark-avatar">' + robot + '</span>';
   var pageRegistry = (typeof pages !== 'undefined' ? pages : window.pages);
   var navigationRegistry = (typeof navItems !== 'undefined' ? navItems : window.navItems);
-  var state = {messages: [], opened: false, index: [], page: 'overview'};
+  var state = {messages: [], opened: false, index: [], page: 'overview', mode: 'free'};
   var pageTitles = {
     overview: 'Início', lore: 'Cosmologia', agency: 'A Agência',
     organizations: 'Organizações', characters: 'Personagens e fichas',
@@ -87,7 +90,7 @@
     context.forEach(function (node) { node.textContent = 'CONTEXTO ATUAL: ' + title.toUpperCase(); });
   }
   function addMessage(text, who, sources) {
-    state.messages.push({text:text, who:who, sources:sources || []});
+    state.messages.push({text:text, who:who, sources:sources || [], mode:state.mode});
     if (state.messages.length > 60) state.messages.shift();
     renderAllChats();
   }
@@ -115,12 +118,41 @@
   function renderMessages(container) {
     if (!container) return;
     container.textContent = '';
-    state.messages.forEach(function (message) { container.appendChild(makeMessage(message)); });
+    state.messages.filter(function (message) { return (message.mode || 'free') === state.mode; }).forEach(function (message) { container.appendChild(makeMessage(message)); });
     container.scrollTop = container.scrollHeight;
   }
   function renderAllChats() {
     renderMessages(document.getElementById('ark-float-messages'));
     renderMessages(document.getElementById('ark-main-messages'));
+  }
+  function modeMarkup() {
+    return '<div class="ark-modebar" role="group" aria-label="Modo de conversa">' +
+      '<button type="button" data-ark-mode="free" aria-pressed="' + (state.mode === 'free' ? 'true' : 'false') + '">CONVERSA LIVRE</button>' +
+      '<button type="button" data-ark-mode="system" aria-pressed="' + (state.mode === 'system' ? 'true' : 'false') + '">ASSISTENTE DA NOVA ORDEM</button>' +
+      '</div>';
+  }
+  function updateModeUI() {
+    document.querySelectorAll('.ark-modebar').forEach(function (bar) {
+      bar.querySelectorAll('[data-ark-mode]').forEach(function (button) {
+        button.setAttribute('aria-pressed', button.getAttribute('data-ark-mode') === state.mode ? 'true' : 'false');
+      });
+    });
+    document.querySelectorAll('.ark-quick').forEach(function (bar) { bar.style.display = state.mode === 'system' ? 'flex' : 'none'; });
+    document.querySelectorAll('.ark-context').forEach(function (node) {
+      node.textContent = state.mode === 'system' ? 'MODO: ASSISTENTE DA NOVA ORDEM' : 'MODO: CONVERSA LIVRE';
+    });
+    renderAllChats();
+  }
+  function switchMode(mode) {
+    if (mode !== 'free' && mode !== 'system') return;
+    if (state.mode === mode) return;
+    state.mode = mode;
+    if (!state.messages.some(function (message) { return message.mode === mode; })) {
+      addMessage(mode === 'free'
+        ? 'Conversa livre ativada! Podemos falar sobre ideias, curiosidades, histórias ou qualquer outro assunto. O que está pensando?'
+        : 'Assistente da Nova Ordem ativado. Pode perguntar sobre os sistemas, regras, lore e recursos da plataforma. Vou me basear nos registros oficiais e avisar quando algo não estiver documentado.', 'bot');
+    }
+    updateModeUI();
   }
   function quickButtons() {
     return '<div class="ark-quick">' +
@@ -139,7 +171,7 @@
     return '<section class="ark-main">' +
       '<div class="ark-main-intro">' + avatar +
         '<div><h3>Central do A.R.K.</h3><p>Inteligência de apoio da Agência A Ordem. Estou à disposição para conversar, ajudar com assuntos gerais, orientar sua navegação e consultar os registros oficiais da Nova Ordem.</p></div>' +
-      '</div><div class="ark-context">CONTEXTO ATUAL: CENTRAL DO A.R.K.</div>' +
+      '</div>' + modeMarkup() + '<div class="ark-context">MODO: CONVERSA LIVRE</div>' +
       '<div class="ark-messages" id="ark-main-messages" aria-live="polite"></div>' +
       quickButtons() + composeMarkup('main') +
       '<div class="ark-foot">A.R.K. // CENTRAL DE CONHECIMENTO DA AGÊNCIA</div></section>' +
@@ -236,9 +268,9 @@
       return Promise.reject(new Error('A conexão da IA não está configurada.'));
     }
 
-    var matches = findAnswers(question).slice(0,4).map(function (entry) {
+    var matches = state.mode === 'system' ? findAnswers(question).slice(0,4).map(function (entry) {
       return {title:entry.title, text:entry.text};
-    });
+    }) : [];
 
     return fetch(String(config.url).replace(/\/+$/, '') + '/functions/v1/ark-ai-chat', {
       method:'POST',
@@ -248,7 +280,8 @@
       },
       body:JSON.stringify({
         question:question,
-        page:currentPage(),
+        mode:state.mode,
+        page:state.mode === 'system' ? currentPage() : null,
         knowledge:matches,
         history:history
       })
@@ -270,7 +303,7 @@
     var value = String(question || '').trim();
     if (!value) return;
 
-    var history = state.messages.slice(-8).map(function (message) {
+    var history = state.messages.filter(function (message) { return (message.mode || 'free') === state.mode; }).slice(-8).map(function (message) {
       return {
         role:message.who === 'user' ? 'user' : 'model',
         text:String(message.text || '').slice(0,800)
@@ -286,10 +319,9 @@
       pending.text = result.text;
       pending.sources = result.sources || [];
     }).catch(function (error) {
-      console.warn('[A.R.K.] IA generativa indisponível; usando a base local.', error);
-      var fallback = answer(value);
-      pending.text = fallback.text + '\n\nA inteligência generativa está temporariamente indisponível. Esta resposta foi consultada na base local da Nova Ordem.';
-      pending.sources = fallback.sources || [];
+      console.warn('[A.R.K.] Falha na resposta generativa.', error);
+      pending.text = 'Não consegui concluir essa resposta agora. A conexão com a inteligência generativa falhou. Tente novamente em instantes.';
+      pending.sources = [];
     }).finally(function () {
       renderAllChats();
     });
@@ -315,7 +347,7 @@
     panel.innerHTML = '<div class="ark-head">' + avatar +
       '<div class="ark-head-copy"><b>A.R.K.</b><small>ASSISTENTE DA AGÊNCIA</small></div>' +
       '<button class="ark-close" type="button" aria-label="Fechar">×</button></div>' +
-      '<div class="ark-context">CONTEXTO ATUAL: INÍCIO</div>' +
+      modeMarkup() + '<div class="ark-context">MODO: CONVERSA LIVRE</div>' +
       '<div class="ark-messages" id="ark-float-messages" aria-live="polite"></div>' +
       quickButtons() + composeMarkup('float') +
       '<div class="ark-foot">IA GENERATIVA + REGISTROS PÚBLICOS DA NOVA ORDEM</div>';
@@ -325,6 +357,7 @@
       state.opened = !state.opened;
       panel.classList.toggle('ark-open',state.opened);
       setContext();
+      updateModeUI();
       if (state.opened && !state.messages.length) {
         var page = currentPage();
         addMessage('Olá! Sou o A.R.K., inteligência de apoio da Agência A Ordem. Estou acompanhando você na seção "' + page.title + '". Posso ajudar com a plataforma, conversar sobre assuntos gerais ou consultar os registros oficiais da Nova Ordem. Por onde começamos?','bot');
@@ -343,7 +376,7 @@
   function centralPageMarkup() {
     return '<section class="ark-main"><div class="ark-main-intro">' + avatar +
       '<div><h3>Central do A.R.K.</h3><p>Olá! Sou o A.R.K., inteligência de apoio da Agência A Ordem. Podemos conversar sobre assuntos gerais, explorar ideias ou consultar os registros oficiais da Nova Ordem. Fique à vontade.</p></div></div>' +
-      '<div class="ark-context">CONTEXTO ATUAL: CENTRAL DO A.R.K.</div>' +
+      modeMarkup() + '<div class="ark-context">MODO: CONVERSA LIVRE</div>' +
       '<div class="ark-messages" id="ark-main-messages" aria-live="polite"></div>' +
       quickButtons() + composeMarkup('main') +
       '<div class="ark-foot">A.R.K. // CENTRAL DE CONHECIMENTO DA AGÊNCIA</div></section>' +
@@ -414,6 +447,8 @@
   document.addEventListener('click',function (event) {
     var askButton = event.target.closest('[data-ark-ask]');
     if (askButton) { ask(askButton.getAttribute('data-ark-ask')); return; }
+    var modeButton = event.target.closest('[data-ark-mode]');
+    if (modeButton) { switchMode(modeButton.getAttribute('data-ark-mode')); return; }
     var openButton = event.target.closest('[data-ark-open]');
     if (openButton && typeof window.go === 'function') {
       window.go(openButton.getAttribute('data-ark-open'));
@@ -434,6 +469,7 @@
     }
     renderAllChats();
     setContext();
+    updateModeUI();
     var content = document.getElementById('content');
     if (content && window.MutationObserver) {
       var observer = new MutationObserver(function () {
