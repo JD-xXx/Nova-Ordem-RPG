@@ -311,7 +311,7 @@
     });
 
     addMessage(value,'user');
-    var pending = {text:'Só um instante... estou organizando uma resposta.',who:'bot',sources:[]};
+    var pending = {text:'Só um instante... estou organizando uma resposta.',who:'bot',sources:[],mode:state.mode};
     state.messages.push(pending);
     renderAllChats();
 
