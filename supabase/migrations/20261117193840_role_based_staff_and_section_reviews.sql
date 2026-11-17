@@ -275,6 +275,18 @@ begin
     left join private.staff_permissions p on p.code = x
     where p.code is null
   ) then raise exception 'O cargo contém uma permissão desconhecida.'; end if;
+  if 'characters.review.profile.decide' = any(p_permissions)
+     and not ('characters.review.profile.read' = any(p_permissions)) then
+    raise exception 'A permissão de decidir informações básicas exige a permissão de leitura correspondente.';
+  end if;
+  if 'characters.review.story.decide' = any(p_permissions)
+     and not ('characters.review.story.read' = any(p_permissions)) then
+    raise exception 'A permissão de decidir histórias exige a permissão de leitura correspondente.';
+  end if;
+  if 'characters.review.powers.decide' = any(p_permissions)
+     and not ('characters.review.powers.read' = any(p_permissions)) then
+    raise exception 'A permissão de decidir poderes exige a permissão de leitura correspondente.';
+  end if;
 
   insert into private.staff_roles(code, label, description, is_system, created_by)
   values (p_code, btrim(p_label), coalesce(btrim(p_description), ''), false, auth.uid());
