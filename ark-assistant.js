@@ -143,7 +143,7 @@
       '<div class="ark-messages" id="ark-main-messages" aria-live="polite"></div>' +
       quickButtons() + composeMarkup('main') +
       '<div class="ark-foot">A.R.K. // CENTRAL DE CONHECIMENTO DA AGÊNCIA</div></section>' +
-      '<div class="ark-disclaimer">As respostas desta versão são montadas a partir das regras confirmadas e dos registros disponíveis no próprio site. Quando uma informação não estiver documentada, o A.R.K. avisará em vez de inventar uma regra.</div>';
+      '<div class="ark-disclaimer">A A.R.K. combina inteligência artificial generativa com os registros públicos do site. Não envie senhas, tokens, dados pessoais ou informações privadas. Quando uma regra não estiver documentada, ela deve informar a limitação.</div>';
   }
 
   function addKnowledge(title, id, text, terms) {
@@ -230,12 +230,69 @@
       return array.findIndex(function (item) { return item.id === entry.id; }) === index;
     })};
   }
+  function requestGenerativeAnswer(question, history) {
+    var config = window.NOVA_ORDEM_SUPABASE_CONFIG;
+    if (!config || !config.url || !config.anonKey) {
+      return Promise.reject(new Error('A conexão da IA não está configurada.'));
+    }
+
+    var matches = findAnswers(question).slice(0,4).map(function (entry) {
+      return {title:entry.title, text:entry.text};
+    });
+
+    return fetch(String(config.url).replace(/\\/+$/, '') + '/functions/v1/ark-ai-chat', {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'apikey':config.anonKey
+      },
+      body:JSON.stringify({
+        question:question,
+        page:currentPage(),
+        knowledge:matches,
+        history:history
+      })
+    }).then(function (response) {
+      return response.json().catch(function () { return {}; }).then(function (data) {
+        if (!response.ok) throw new Error(data.error || 'A IA está temporariamente indisponível.');
+        if (!data.answer) throw new Error('A IA não retornou uma resposta.');
+        return {text:String(data.answer),sources:matches.map(function (entry) {
+          var found = state.index.find(function (item) { return item.title === entry.title; });
+          return found ? {title:found.title,id:found.id} : null;
+        }).filter(Boolean).filter(function (entry,index,array) {
+          return array.findIndex(function (item) { return item.id === entry.id; }) === index;
+        })};
+      });
+    });
+  }
+
   function ask(question) {
     var value = String(question || '').trim();
     if (!value) return;
+
+    var history = state.messages.slice(-8).map(function (message) {
+      return {
+        role:message.who === 'user' ? 'user' : 'model',
+        text:String(message.text || '').slice(0,800)
+      };
+    });
+
     addMessage(value,'user');
-    var result = answer(value);
-    window.setTimeout(function () { addMessage(result.text,'bot',result.sources); }, 120);
+    var pending = {text:'A.R.K. está consultando os registros...',who:'bot',sources:[]};
+    state.messages.push(pending);
+    renderAllChats();
+
+    requestGenerativeAnswer(value,history).then(function (result) {
+      pending.text = result.text;
+      pending.sources = result.sources || [];
+    }).catch(function (error) {
+      console.warn('[A.R.K.] IA generativa indisponível; usando a base local.', error);
+      var fallback = answer(value);
+      pending.text = fallback.text + '\\n\\nA inteligência generativa está temporariamente indisponível. Esta resposta foi consultada na base local da Nova Ordem.';
+      pending.sources = fallback.sources || [];
+    }).finally(function () {
+      renderAllChats();
+    });
   }
   function sendFromForm(form) {
     var input = form.querySelector('input[name="question"]');
@@ -261,7 +318,7 @@
       '<div class="ark-context">CONTEXTO ATUAL: INÍCIO</div>' +
       '<div class="ark-messages" id="ark-float-messages" aria-live="polite"></div>' +
       quickButtons() + composeMarkup('float') +
-      '<div class="ark-foot">RESPOSTAS BASEADAS NOS REGISTROS DA NOVA ORDEM</div>';
+      '<div class="ark-foot">IA GENERATIVA + REGISTROS PÚBLICOS DA NOVA ORDEM</div>';
     document.body.appendChild(launcher);
     document.body.appendChild(panel);
     launcher.addEventListener('click',function () {
@@ -290,7 +347,7 @@
       '<div class="ark-messages" id="ark-main-messages" aria-live="polite"></div>' +
       quickButtons() + composeMarkup('main') +
       '<div class="ark-foot">A.R.K. // CENTRAL DE CONHECIMENTO DA AGÊNCIA</div></section>' +
-      '<div class="ark-disclaimer">Esta versão consulta as informações confirmadas e a documentação presente no site. Quando um detalhe não estiver documentado, o A.R.K. informa a limitação em vez de inventar uma resposta.</div>';
+      '<div class="ark-disclaimer">A A.R.K. combina inteligência artificial generativa com os registros públicos do site. Não envie senhas, tokens, dados pessoais ou informações privadas. Quando um detalhe não estiver documentado, ela informa a limitação.</div>';
   }
   function registerPage() {
     if (!pageRegistry || !navigationRegistry || typeof window.render !== 'function') return false;
