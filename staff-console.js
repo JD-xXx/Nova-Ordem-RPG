@@ -155,7 +155,7 @@
       el.innerHTML = '<section class="no-staff-panel"><h3>Acesso restrito</h3><p class="no-staff-muted">Somente o Administrador Principal pode administrar cargos e permissões.</p></section>';
       return;
     }
-    el.innerHTML = '<section class="no-staff-shell"><p class="no-staff-muted">Carregando equipe, cargos e histórico...</p></section>';
+    el.innerHTML = '<section class="no-staff-shell" data-ark-scene="true"><p class="no-staff-muted">Carregando equipe, cargos e histórico...</p></section>';
     var results = await Promise.all([
       db.rpc('list_staff_management'),
       db.rpc('list_staff_role_catalog'),
@@ -201,7 +201,7 @@
       return '<article class="no-staff-row"><div class="no-staff-row-head"><b>' + esc(entry.action) + '</b><small>' + esc(entry.created_at ? new Date(entry.created_at).toLocaleString('pt-BR') : '') + '</small></div><p class="no-staff-muted">' + esc(entry.actor_name || 'Sistema') + (entry.target_name ? ' → ' + esc(entry.target_name) : '') + (entry.role_label ? ' · ' + esc(entry.role_label) : '') + '</p></article>';
     }).join('') : '<p class="no-staff-muted">Nenhuma alteração registrada ainda.</p>';
 
-    el.innerHTML = '<section class="no-staff-shell">' +
+    el.innerHTML = '<section class="no-staff-shell" data-ark-scene="true">' +
       '<header class="no-staff-head"><div><span class="no-staff-kicker">AGÊNCIA A ORDEM · CONTROLE DE ACESSO</span><h2>Equipe e Permissões</h2><p>Somente você, como Administrador Principal, pode conceder e revogar cargos. Os colaboradores recebem apenas as permissões vinculadas às suas funções.</p></div><button type="button" data-staff-refresh>ATUALIZAR</button></header>' +
       messageHtml() +
       '<section class="no-staff-panel"><h3>Conceder um cargo</h3><div class="no-staff-grid"><div class="no-staff-field"><label>Conta do colaborador</label><select id="no-staff-user"><option value="">Selecione uma conta</option>' + accountOptions + '</select></div><div class="no-staff-field"><label>Cargo</label><select id="no-staff-role"><option value="">Selecione um cargo</option>' + roleOptions + '</select></div></div><div class="no-staff-actions"><button type="button" class="no-staff-primary" data-staff-assign>CONCEDER CARGO</button></div></section>' +
@@ -280,7 +280,7 @@
       el.innerHTML = '<section class="no-staff-panel"><h3>Acesso restrito</h3><p class="no-staff-muted">Sua conta não possui um cargo delegado.</p></section>';
       return;
     }
-    el.innerHTML = '<section class="no-staff-shell"><p class="no-staff-muted">Carregando tarefas autorizadas...</p></section>';
+    el.innerHTML = '<section class="no-staff-shell" data-ark-scene="true"><p class="no-staff-muted">Carregando tarefas autorizadas...</p></section>';
     var result = await db.rpc('get_character_review_queue');
     if (result.error) {
       el.innerHTML = '<section class="no-staff-panel"><h3>Falha ao carregar tarefas</h3><p class="no-staff-muted">' + esc(result.error.message) + '</p><button type="button" data-staff-refresh>ATUALIZAR</button></section>';
@@ -297,7 +297,7 @@
         '<div class="no-staff-actions"><button type="button" class="no-staff-primary" data-review-decision="approved" data-review-character="' + esc(item.character_id) + '" data-review-section="' + esc(item.section_key) + '" data-review-note="' + noteId + '">APROVAR SEÇÃO</button><button type="button" data-review-decision="needs_revision" data-review-character="' + esc(item.character_id) + '" data-review-section="' + esc(item.section_key) + '" data-review-note="' + noteId + '">DEVOLVER PARA REVISÃO</button></div></article>';
     }).join('') : '<div class="no-staff-row"><p class="no-staff-muted">Nenhuma seção está aguardando sua avaliação neste momento.</p></div>';
     var roles = (state.access.roles || []).map(function (role) { return '<span class="no-staff-tag">' + esc(role.label) + '</span>'; }).join('');
-    el.innerHTML = '<section class="no-staff-shell">' +
+    el.innerHTML = '<section class="no-staff-shell" data-ark-scene="true">' +
       '<header class="no-staff-head"><div><span class="no-staff-kicker">AGÊNCIA A ORDEM · ESTAÇÃO DE TRABALHO</span><h2>Área de Trabalho</h2><p>As tarefas exibidas aqui são filtradas pelas permissões da sua conta. Você não recebe acesso à ficha completa quando sua função exige apenas uma seção.</p><div class="no-staff-tags">' + (roles || '<span class="no-staff-tag">Administrador Principal</span>') + '</div></div><button type="button" data-staff-refresh>ATUALIZAR</button></header>' +
       messageHtml() +
       arkIntro(guide.title, guide.message, guide.question) +
