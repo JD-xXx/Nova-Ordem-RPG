@@ -34,6 +34,7 @@
    heading.parentNode.insertBefore(rail,content);
   }
   buildNavigation();
+  var dock=document.getElementById('no-mobile-nav');if(dock)dock.querySelectorAll('button').forEach(function(b){b.classList.toggle('active',b.dataset.id===current)});
   document.body.setAttribute('data-no-route',current);
  }
 
@@ -45,7 +46,7 @@
  }
  function routeFromButton(ev){
   var btn=ev.target.closest('#nav button[data-id], #no-mobile-nav button[data-id]');
-  if(btn){ev.preventDefault();if(typeof window.go==='function')window.go(btn.dataset.id);}
+  if(btn){ev.preventDefault();ev.stopImmediatePropagation();if(typeof window.go==='function')window.go(btn.dataset.id);}
  }
  document.addEventListener('click',routeFromButton,true);
  if(typeof originalGo==='function'){
@@ -54,13 +55,15 @@
  document.addEventListener('DOMContentLoaded',function(){
   var title=document.querySelector('.brand b');
   var sub=document.querySelector('.brand small');
-  installMobileNav();\n  if(title)title.textContent='NOVA ORDEM';
+  installMobileNav();
+  if(title)title.textContent='NOVA ORDEM';
   if(sub)sub.textContent='AGÊNCIA INTERDIMENSIONAL';
   var navtitle=document.querySelector('.navtitle');if(navtitle)navtitle.textContent='ÍNDICE DE ACESSO';
   var foot=document.querySelector('.sidefoot');if(foot)foot.innerHTML='<i></i> SISTEMA OPERACIONAL<br><span style="display:block;margin:8px 0 0 14px">ARQUIVOS PÚBLICOS · V8</span>';
   if(typeof window.go==='function')window.go('overview',true);else decoratePage('overview');
  });
  if(document.readyState!=='loading'){
+  installMobileNav();
   if(typeof window.go==='function')window.go('overview',true);else decoratePage('overview');
  }
 })();
