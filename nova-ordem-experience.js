@@ -44,7 +44,7 @@
   document.body.appendChild(dock);
  }
  function routeFromButton(ev){
-  var btn=ev.target.closest('#nav button[data-id]');
+  var btn=ev.target.closest('#nav button[data-id], #no-mobile-nav button[data-id]');
   if(btn){ev.preventDefault();if(typeof window.go==='function')window.go(btn.dataset.id);}
  }
  document.addEventListener('click',routeFromButton,true);
