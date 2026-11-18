@@ -582,12 +582,26 @@
   }
 
   function loadThree() {
-    return import('https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js').then(function(mod){THREE=mod;buildScene();}).catch(function(err){
-      console.error('Nova Ordem 3D engine:',err);
-      stage.classList.add('no-cinema-webgl-fallback');
-      stage.querySelector('.no-cinema-land-status').textContent='MOTOR 3D INDISPONÍVEL NESTE NAVEGADOR';
-      stage.querySelector('.no-cinema-explorer').classList.add('is-fallback');
-    });
+    return import('https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js')
+      .then(function(mod){
+        THREE=mod;
+        buildScene();
+        stage.classList.add('no-journey-ready');
+        window.dispatchEvent(new Event('nova-ordem-3d-ready'));
+      })
+      .catch(function(err){
+        console.error('Nova Ordem 3D engine failed:',err);
+        if(stage){
+          stage.classList.add('no-cinema-webgl-fallback','no-journey-error-state');
+          var notice=stage.querySelector('.no-journey-error');
+          if(notice){
+            notice.hidden=false;
+            notice.querySelector('b').textContent='AMBIENTE 3D NÃO INICIALIZADO';
+            notice.querySelector('p').textContent='Falha ao iniciar o motor gráfico. '+(err&&err.message?err.message:'Verifique a compatibilidade WebGL deste navegador.');
+          }
+        }
+        return null;
+      });
   }
 
   function wrapNavigation() {
@@ -653,7 +667,8 @@
       '<div class="no-journey-progress"><span>PROGRESSO DA EXPEDIÇÃO</span><div><i></i></div><b>00%</b></div>',
       '<div class="no-journey-scrollhint">ROLE PARA VIAJAR <span>↓</span></div>',
       '<div class="no-journey-planet-labels"></div>',
-      '<div class="no-journey-landing" aria-live="polite"><span>ACESSO PLANETÁRIO</span><b>PREPARANDO APROXIMAÇÃO</b></div>'
+      '<div class="no-journey-landing" aria-live="polite"><span>ACESSO PLANETÁRIO</span><b>PREPARANDO APROXIMAÇÃO</b></div>',
+      '<aside class="no-journey-error" hidden role="status"><b>INICIALIZANDO MOTOR 3D</b><p>A experiência espacial está sendo preparada.</p></aside>'
     ].join('');
     journey.appendChild(stage);
     if(top&&top.nextSibling)main.insertBefore(journey,top.nextSibling);else main.insertBefore(journey,main.firstChild);
