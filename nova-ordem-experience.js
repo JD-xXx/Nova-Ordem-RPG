@@ -707,7 +707,12 @@
       var moon=new THREE.Mesh(new THREE.SphereGeometry(size*.13,32,24),new THREE.MeshStandardMaterial({color:0x858b91,roughness:1}));moon.position.set(size*1.55,size*.24,-size*.32);g.add(moon);
       scene.add(g);journeyPlanets.push({route:r,index:i,group:g,mesh:mesh,clouds:clouds,atmo:atmo,size:size,z:g.position.z});
     });
-    journeyLength=(journeyPlanets.length-1)*spacing+44;
+    var solarGlow=new THREE.Mesh(new THREE.SphereGeometry(10,96,64),new THREE.MeshBasicMaterial({color:0xffd69a}));
+    solarGlow.position.set(0,0,-24-journeyPlanets.length*spacing-28);scene.add(solarGlow);
+    var corona=new THREE.Mesh(new THREE.SphereGeometry(12.2,64,48),new THREE.MeshBasicMaterial({color:0xff9d54,transparent:true,opacity:.12,side:THREE.BackSide,blending:THREE.AdditiveBlending,depthWrite:false}));
+    corona.position.copy(solarGlow.position);scene.add(corona);
+    var sunLight=new THREE.PointLight(0xffc887,8,260);sunLight.position.copy(solarGlow.position);scene.add(sunLight);
+    journeyLength=(journeyPlanets.length-1)*spacing+70;
     raycaster=new THREE.Raycaster();clock=new THREE.Clock();
     window.addEventListener('resize',onResize,{passive:true});
     window.addEventListener('scroll',onJourneyScroll,{passive:true});
