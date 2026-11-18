@@ -972,7 +972,7 @@
     return landscapeAssetCache[assetId];
   }
   function addPhotogrammetryVegetation(group,sceneStyle,segIndex,seed,heightAt,k,s){
-    var modelId=sceneStyle==='clearing'?'island_tree_03':sceneStyle==='meadow'?'jacaranda':'tree_small_02';
+    var modelId=sceneStyle==='clearing'?'island_tree_03':sceneStyle==='meadow'?'jacaranda_tree':'pachira_aquatica_01';
     var plantId=sceneStyle==='jungle-trail'?'fern_02':null;
     var holder=new THREE.Group();holder.name='polyhaven-photogrammetry-vegetation';holder.visible=false;group.add(holder);
     loadPolyHavenModel(modelId).then(function(source){
