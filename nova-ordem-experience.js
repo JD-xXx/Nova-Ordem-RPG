@@ -241,35 +241,126 @@
 
   function buildShip() {
     var group=new THREE.Group();
-    var hullMat=new THREE.MeshStandardMaterial({color:0x8796a5,metalness:.82,roughness:.32});
-    var edgeMat=new THREE.MeshStandardMaterial({color:0x273848,metalness:.72,roughness:.42});
-    var paleMat=new THREE.MeshStandardMaterial({color:0xc2cbd1,metalness:.78,roughness:.3});
-    var glassMat=new THREE.MeshPhysicalMaterial({color:0x4a9ab7,metalness:.45,roughness:.12,clearcoat:1,emissive:0x0b2738,emissiveIntensity:.5});
-    var glowMat=new THREE.MeshBasicMaterial({color:0x65d9ff});
-    function part(geo,mat,x,y,z,rx,ry,rz){var m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);m.rotation.set(rx||0,ry||0,rz||0);group.add(m);return m;}
-    part(new THREE.BoxGeometry(3.2,.58,.82),hullMat,-.05,0,0);
-    part(new THREE.ConeGeometry(.48,1.3,10),paleMat,1.95,0,0,0,0,-Math.PI/2);
-    part(new THREE.BoxGeometry(1.9,.13,2.55),edgeMat,-.35,-.12,0);
-    part(new THREE.BoxGeometry(1.45,.08,2.2),hullMat,-.55,-.02,0);
-    part(new THREE.BoxGeometry(.9,.64,.9),edgeMat,-1.0,.47,0);
-    part(new THREE.BoxGeometry(.72,.5,.82),paleMat,-.2,.4,0);
-    part(new THREE.SphereGeometry(.38,20,12),glassMat,.82,.27,0,0,0,Math.PI/2).scale.set(1.2,.7,1.1);
-    for(var z of [-.28,.28]){
-      part(new THREE.CylinderGeometry(.2,.29,.72,12),edgeMat,-1.75,-.02,z,0,0,Math.PI/2);
-      part(new THREE.CircleGeometry(.17,16),glowMat,-2.12,-.02,z,0,-Math.PI/2,0);
-      part(new THREE.BoxGeometry(.42,.08,.12),paleMat,-1.55,.38,z*1.8);
+    var hullMat=new THREE.MeshPhysicalMaterial({color:0x7d8b96,metalness:.78,roughness:.36,clearcoat:.42,clearcoatRoughness:.38});
+    var armorMat=new THREE.MeshStandardMaterial({color:0x344452,metalness:.82,roughness:.4});
+    var panelMat=new THREE.MeshStandardMaterial({color:0x9ba8af,metalness:.76,roughness:.34});
+    var darkMat=new THREE.MeshStandardMaterial({color:0x111d28,metalness:.72,roughness:.46});
+    var cargoMat=new THREE.MeshStandardMaterial({color:0x596b78,metalness:.62,roughness:.52});
+    var glassMat=new THREE.MeshPhysicalMaterial({color:0x397b91,metalness:.56,roughness:.16,clearcoat:1,clearcoatRoughness:.08,emissive:0x071b27,emissiveIntensity:.32});
+    var glowMat=new THREE.MeshBasicMaterial({color:0x75dfff});
+    var warmGlow=new THREE.MeshBasicMaterial({color:0xffc77e});
+    function add(geo,mat,x,y,z,rx,ry,rz,parent) {
+      var mesh=new THREE.Mesh(geo,mat);
+      mesh.position.set(x||0,y||0,z||0);
+      mesh.rotation.set(rx||0,ry||0,rz||0);
+      (parent||group).add(mesh);
+      return mesh;
     }
-    for(var side of [-1,1]){
-      var fin=part(new THREE.BoxGeometry(1.15,.1,.55),paleMat,-.75,.05,side*1.45,0,0,side*.16);
-      fin.scale.set(1.2,1,1);
-      part(new THREE.BoxGeometry(.55,.08,.24),edgeMat,-1.25,.13,side*1.72,0,0,side*.3);
-      part(new THREE.BoxGeometry(.42,.22,.3),hullMat,-.5,.43,side*.35);
-      for(var w=0;w<3;w++)part(new THREE.BoxGeometry(.08,.035,.13),glassMat,.1+w*.22,.72,side*.28);
+    function beam(a,b,r1,r2,mat) {
+      var delta=new THREE.Vector3(b[0]-a[0],b[1]-a[1],b[2]-a[2]);
+      var mesh=add(new THREE.CylinderGeometry(r2,r1,delta.length(),10),mat,(a[0]+b[0])/2,(a[1]+b[1])/2,(a[2]+b[2])/2);
+      mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),delta.normalize());
+      return mesh;
     }
-    var engineGlow=new THREE.PointLight(0x51cfff,2.4,5);engineGlow.position.set(-2.1,0,0);group.add(engineGlow);
-    group.userData.engineGlow=engineGlow;
+    function panel(x,y,z,w,h,d,mat) { return add(new THREE.BoxGeometry(w,h,d),mat,x,y,z); }
+
+    // Sculpted pressure hull with a tapered bow and broad cargo section.
+    var hull=new THREE.Shape();
+    hull.moveTo(2.55,.02);
+    hull.quadraticCurveTo(2.35,.28,1.72,.36);
+    hull.lineTo(.72,.48);
+    hull.quadraticCurveTo(.1,.52,-.72,.43);
+    hull.lineTo(-1.9,.32);
+    hull.quadraticCurveTo(-2.28,.26,-2.42,.08);
+    hull.lineTo(-2.42,-.1);
+    hull.quadraticCurveTo(-2.24,-.3,-1.82,-.34);
+    hull.lineTo(-.6,-.42);
+    hull.quadraticCurveTo(.3,-.48,.85,-.4);
+    hull.lineTo(1.78,-.28);
+    hull.quadraticCurveTo(2.36,-.2,2.55,.02);
+    var hullGeo=new THREE.ExtrudeGeometry(hull,{depth:.86,steps:1,bevelEnabled:true,bevelSegments:3,bevelSize:.075,bevelThickness:.085,curveSegments:12});
+    hullGeo.translate(0,0,-.43);
+    add(hullGeo,hullMat,0,0,0);
+
+    // Reinforced keel, service spine and layered armor.
+    panel(-.05,-.31,0,3.45,.12,.72,armorMat);
+    panel(-.25,.34,0,2.75,.1,.54,panelMat);
+    panel(-1.45,.02,0,.68,.48,.98,armorMat);
+    panel(-.15,.03,0,1.65,.24,.74,darkMat);
+
+    // Low panoramic command canopy with a metallic frame.
+    var canopy=add(new THREE.SphereGeometry(.43,32,20),glassMat,1.18,.26,0);
+    canopy.scale.set(1.42,.58,.92);
+    var canopyFrame=add(new THREE.TorusGeometry(.405,.035,8,40),panelMat,1.16,.245,0,0,Math.PI/2,0);
+    canopyFrame.scale.set(1.22,.72,1);
+    panel(1.02,.49,0,.72,.055,.62,armorMat);
+
+    // Three armored cargo modules with visible ribs and access panels.
+    [-.92,-.18,.56].forEach(function(x,i){
+      var z=i===1?0:(i===0?-.015:.015);
+      panel(x,.56,z,.57,.42,.57,cargoMat);
+      panel(x,.79,z,.55,.055,.55,armorMat);
+      panel(x,.34,z,.59,.06,.59,darkMat);
+      for(var rib=-2;rib<=2;rib++){
+        panel(x+rib*.085,.57,z+.292,.025,.32,.018,panelMat);
+        panel(x+rib*.085,.57,z-.292,.025,.32,.018,armorMat);
+      }
+      panel(x,.57,z+.302,.3,.12,.018,darkMat);
+      panel(x,.57,z-.302,.3,.12,.018,darkMat);
+      add(new THREE.BoxGeometry(.09,.09,.025),warmGlow,x-.18,.57,z+.318);
+    });
+
+    // Swept structural wings with reinforced leading edges.
+    [-1,1].forEach(function(side){
+      var wing=new THREE.Shape();
+      wing.moveTo(.42,-.18);
+      wing.lineTo(-.55,1.62);
+      wing.quadraticCurveTo(-.7,1.78,-.92,1.72);
+      wing.lineTo(-1.62,1.42);
+      wing.lineTo(-1.05,.2);
+      wing.lineTo(-.78,-.18);
+      wing.closePath();
+      var wingGeo=new THREE.ExtrudeGeometry(wing,{depth:.12,bevelEnabled:true,bevelSegments:2,bevelSize:.045,bevelThickness:.035});
+      wingGeo.rotateX(Math.PI/2);
+      wingGeo.scale(1,1,side);
+      add(wingGeo,panelMat,-.35,-.16,side*.28);
+      beam([-.98,-.17,side*1.78],[-1.56,-.17,side*1.58],.045,.035,armorMat);
+      add(new THREE.SphereGeometry(.055,12,8),side>0?glowMat:warmGlow,-1.5,-.12,side*1.58);
+      panel(-.72,-.08,side*.98,.55,.055,.22,armorMat);
+    });
+
+    // Three recessed engine bells with concentric rims and blue drive glow.
+    var engineLights=[];
+    [-.29,0,.29].forEach(function(z,i){
+      add(new THREE.CylinderGeometry(.19,.27,.72,24,1,true),armorMat,-2.25,-.02,z,0,0,Math.PI/2);
+      add(new THREE.CylinderGeometry(.205,.205,.08,24),darkMat,-2.64,-.02,z,0,0,Math.PI/2);
+      add(new THREE.TorusGeometry(.205,.035,8,28),panelMat,-2.69,-.02,z,0,Math.PI/2,0);
+      add(new THREE.CircleGeometry(.155,24),glowMat,-2.695,-.02,z,0,-Math.PI/2,0);
+      var glow=new THREE.PointLight(0x4bc8f4,i===1?2.2:1.5,4);
+      glow.position.set(-2.72,-.02,z);group.add(glow);engineLights.push(glow);
+      panel(-1.95,.19,z,.38,.07,.24,panelMat);
+    });
+
+    // Folded landing struts, hatches, service rails and navigation lights.
+    [-.72,.82].forEach(function(x){
+      [-.28,.28].forEach(function(z){
+        beam([x,-.25,z],[x-.12,-.62,z*1.45],.055,.035,armorMat);
+        add(new THREE.CylinderGeometry(.09,.09,.055,12),darkMat,x-.12,-.63,z*1.45,0,0,Math.PI/2);
+      });
+    });
+    for(var i=0;i<5;i++){
+      panel(-1.45+i*.48,.405,.445,.22,.018,.018,darkMat);
+      panel(-1.45+i*.48,.405,-.445,.22,.018,.018,darkMat);
+    }
+    panel(-1.88,.36,0,.18,.08,.16,panelMat);
+    beam([-1.88,.4,0],[-2.02,.72,0],.018,.012,armorMat);
+    add(new THREE.SphereGeometry(.035,10,8),glowMat,-2.02,.72,0);
+    [-.39,.39].forEach(function(z){add(new THREE.SphereGeometry(.045,12,8),warmGlow,1.82,.08,z);});
+
+    group.userData.engineLights=engineLights;
     group.scale.setScalar(.74);
     group.position.set(-4.2,-1.55,2.5);
+    group.rotation.set(.035,-.08,-.025);
     return group;
   }
 
