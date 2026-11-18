@@ -1190,8 +1190,18 @@
         }
       }
       if(base.wet||k==='coast'||k==='frozen-coast'){
-        var waterMat=new THREE.MeshPhysicalMaterial({color:base.water||0x285d69,roughness:.13,metalness:.08,transparent:true,opacity:.94,clearcoat:1,clearcoatRoughness:.045,ior:1.333});
-        var water=new THREE.Mesh(new THREE.PlaneGeometry(190,92),waterMat);water.rotation.x=-Math.PI/2;water.position.set(0,-7.2,-38);group.add(water);
+        var waterMat=new THREE.MeshPhysicalMaterial({color:base.water||0x285d69,roughness:.105,metalness:.06,transparent:true,opacity:.96,clearcoat:1,clearcoatRoughness:.025,ior:1.333,envMapIntensity:1.15});
+        var water=new THREE.Mesh(new THREE.PlaneGeometry(72,34),waterMat);water.rotation.x=-Math.PI/2;water.position.set(0,-7.25,-38);group.add(water);
+        var riverPoints=[];
+        for(var rp=0;rp<=30;rp++){
+          var rz=-84+rp*5.2,rx=Math.sin(rp*.24+s*.01)*17+Math.sin(rp*.071+s)*8;
+          riverPoints.push(new THREE.Vector3(rx,heightAt(rx,rz,k,s)-7.35,rz));
+        }
+        var riverCurve=new THREE.CatmullRomCurve3(riverPoints);
+        var river=new THREE.Mesh(new THREE.TubeGeometry(riverCurve,180,.92,9,false),waterMat);
+        river.castShadow=false;river.receiveShadow=true;group.add(river);
+        var riverShimmer=new THREE.Mesh(new THREE.TubeGeometry(riverCurve,180,.11,5,false),new THREE.MeshBasicMaterial({color:base.floraLight||base.accent,transparent:true,opacity:.16,blending:THREE.AdditiveBlending,depthWrite:false}));
+        riverShimmer.position.y=.16;group.add(riverShimmer);
       }
       var cloudTexture=makeNebulaTexture(base.cloud||'rgba(226,239,246,.22)');
       for(var cl=0;cl<4;cl++){
