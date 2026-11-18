@@ -5,6 +5,7 @@
   'use strict';
   if (window.__NO_CINEMATIC_3D__) return;
   window.__NO_CINEMATIC_3D__ = true;
+  if(!document.querySelector('script[type="importmap"][data-no-three-map]')){var threeMap=document.createElement('script');threeMap.type='importmap';threeMap.dataset.noThreeMap='1';threeMap.textContent=JSON.stringify({imports:{three:'https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js'}});document.head.appendChild(threeMap);}
 
   var ROUTES = [
     {id:'overview',name:'Galáxia',kicker:'CENTRAL DE NAVEGAÇÃO',description:'O ponto de partida da Agência. Escolha um destino e inicie a travessia.',palette:['#102d50','#2f7091','#8cbbba','#d6d9c8']},
@@ -747,7 +748,6 @@
     buildStage();
     wrapNavigation();
     buildNavigation();
-    if(!document.querySelector('script[type="importmap"][data-no-three-map]')){var threeMap=document.createElement('script');threeMap.type='importmap';threeMap.dataset.noThreeMap='1';threeMap.textContent=JSON.stringify({imports:{three:'https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js'}});document.head.appendChild(threeMap);}
     loadThree().then(function(){playIntro();});
     var assetCredit=document.createElement('div');assetCredit.textContent='3D ASSETS · POLY HAVEN';assetCredit.setAttribute('aria-label','Modelos 3D CC0 da Poly Haven');assetCredit.style.cssText='position:fixed;right:14px;bottom:10px;z-index:40;padding:5px 8px;border:1px solid rgba(173,205,220,.16);border-radius:3px;background:rgba(4,12,20,.48);color:rgba(207,224,231,.55);font:9px/1.2 system-ui,sans-serif;letter-spacing:.14em;pointer-events:none';document.body.appendChild(assetCredit);
     var search=document.getElementById('search');
@@ -973,7 +973,7 @@
   }
   function addPhotogrammetryVegetation(group,sceneStyle,segIndex,seed,heightAt,k,s){
     var modelId=sceneStyle==='clearing'?'island_tree_03':sceneStyle==='meadow'?'jacaranda':'tree_small_02';
-    var plantId=sceneStyle==='meadow'?'grass_medium_01':sceneStyle==='jungle-trail'?'fern_02':null;
+    var plantId=sceneStyle==='jungle-trail'?'fern_02':null;
     var holder=new THREE.Group();holder.name='polyhaven-photogrammetry-vegetation';holder.visible=false;group.add(holder);
     loadPolyHavenModel(modelId).then(function(source){
       if(!group.parent)return;
