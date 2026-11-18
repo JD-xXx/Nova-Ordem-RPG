@@ -820,3 +820,141 @@ body[data-no-planet-theme="equipment"]{--no-ecology-glow:#9eabb1}
 body[data-no-planet-theme="crafting"]{--no-ecology-glow:#b9a06a}
 body[data-no-planet-theme="economy"]{--no-ecology-glow:#b4a25a}
 body[data-no-planet-theme="ranks"]{--no-ecology-glow:#b29bc6}
+
+
+/* PREMIUM PANEL COMPOSITION — cinematic surfaces, layered depth and editorial hierarchy */
+#content .panel,
+#content .card,
+#content .no87-section,
+#content .no87-card,
+#content .v6-item,
+#content .v6-tile,
+#content .cc-card,
+#content .home-band,
+#content .feature{
+  position:relative!important;
+  isolation:isolate;
+  overflow:hidden;
+  border:1px solid rgba(142,190,204,.22)!important;
+  border-radius:5px!important;
+  background:
+    radial-gradient(ellipse at 84% 0%,rgba(81,171,190,.19),transparent 43%),
+    radial-gradient(ellipse at 0% 100%,rgba(183,145,91,.10),transparent 48%),
+    linear-gradient(132deg,rgba(17,37,49,.97) 0%,rgba(8,19,29,.985) 54%,rgba(5,13,21,.99) 100%)!important;
+  box-shadow:
+    0 18px 48px rgba(0,0,0,.30),
+    inset 0 1px rgba(236,249,252,.075),
+    inset 0 0 42px rgba(67,135,154,.045)!important;
+  transition:transform .28s ease,border-color .28s ease,box-shadow .28s ease!important;
+}
+#content .panel:before,
+#content .card:before,
+#content .no87-section:before,
+#content .no87-card:before,
+#content .v6-item:before,
+#content .v6-tile:before,
+#content .cc-card:before,
+#content .home-band:before,
+#content .feature:before{
+  content:"";
+  position:absolute!important;
+  z-index:-1;
+  inset:0!important;
+  width:auto!important;
+  height:auto!important;
+  opacity:.72;
+  pointer-events:none;
+  background:
+    linear-gradient(115deg,transparent 0 48%,rgba(157,219,230,.035) 48.2%,transparent 48.6%),
+    repeating-linear-gradient(0deg,transparent 0 35px,rgba(180,218,226,.025) 36px,transparent 37px),
+    linear-gradient(135deg,rgba(119,198,213,.075),transparent 34%);
+}
+#content .panel:after,
+#content .card:after,
+#content .no87-card:after,
+#content .v6-item:after,
+#content .v6-tile:after,
+#content .cc-card:after,
+#content .home-band:after,
+#content .feature:after{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  top:0;right:0;
+  width:76px;height:76px;
+  pointer-events:none;
+  background:linear-gradient(135deg,transparent 49%,rgba(137,211,224,.12) 50%,transparent 51%);
+  opacity:.65;
+}
+#content .panel:hover,
+#content .card:hover,
+#content .no87-card:hover,
+#content .v6-item:hover,
+#content .v6-tile:hover,
+#content .cc-card:hover{
+  transform:translateY(-4px);
+  border-color:rgba(139,220,233,.48)!important;
+  box-shadow:0 24px 58px rgba(0,0,0,.38),inset 0 1px rgba(236,249,252,.10),0 0 26px rgba(78,171,192,.08)!important;
+}
+#content .panel h3,
+#content .card h3,
+#content .no87-section h3,
+#content .no87-card h4,
+#content .v6-item h3,
+#content .v6-tile h3,
+#content .home-band h3,
+#content .feature h3{
+  position:relative;
+  color:#f0f6f5!important;
+  text-shadow:0 2px 18px rgba(121,195,210,.13);
+}
+#content .panel p,
+#content .card p,
+#content .no87-card p,
+#content .v6-item p,
+#content .home-band p,
+#content .feature p{
+  position:relative;
+  color:#b4c5c9!important;
+}
+#content .panel .code,
+#content .card .code,
+#content .no87-card .code,
+#content .v6-item .code{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:5px 8px;
+  border:1px solid rgba(139,211,224,.19);
+  background:rgba(79,155,173,.09);
+  color:#9ed9e5!important;
+}
+#content .stats,
+#content .cards,
+#content .special-grid,
+#content .feature-grid{gap:14px!important}
+#content .stat{
+  min-height:116px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  border-left:2px solid rgba(126,201,216,.52)!important;
+  background:
+    radial-gradient(ellipse at 100% 0%,rgba(103,186,203,.18),transparent 60%),
+    linear-gradient(145deg,#122b38,#091722)!important;
+}
+#content .stat strong{font-size:clamp(28px,3vw,38px)!important;color:#f3f7f3!important}
+#content .v6-tile{min-height:150px;padding:22px!important}
+#content .v6-tile .symbol{width:46px;height:46px;display:grid;place-items:center;box-shadow:0 0 24px rgba(103,193,210,.12)}
+#content .tablebox{overflow:hidden;border:1px solid rgba(142,190,204,.24)!important;box-shadow:0 18px 45px rgba(0,0,0,.25)}
+#content th{background:linear-gradient(100deg,#183544,#102430)!important}
+#content tr:nth-child(even) td{background:rgba(123,176,190,.035)}
+#content .callout{position:relative;box-shadow:inset 0 0 32px rgba(183,145,91,.045),0 10px 30px rgba(0,0,0,.13)}
+@media(max-width:760px){
+ #content .panel,#content .card,#content .no87-card,#content .v6-item,#content .v6-tile{border-radius:4px!important}
+ #content .stats,#content .cards{gap:9px!important}
+ #content .stat{min-height:100px}
+}
+@media(prefers-reduced-motion:reduce){
+ #content .panel,#content .card,#content .no87-card,#content .v6-item,#content .v6-tile{transition:none!important}
+}
