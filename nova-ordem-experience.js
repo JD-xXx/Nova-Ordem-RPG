@@ -698,7 +698,7 @@
     var spacing=23;
     ROUTES.filter(function(r){return r.id!=='overview';}).forEach(function(r,i){
       var idx=ROUTES.indexOf(r),g=new THREE.Group(),size=(i%4===0?4.25:(i%3===0?3.1:2.65));
-      g.position.set((i%2===0?1:-1)*(3.8+(i%3)*1.4),Math.sin(i*1.7)*1.7,-24-i*spacing);
+      g.position.set((i%2===0?1:-1)*(3.8+(i%3)*1.4),Math.sin(i*1.7)*1.7,-58-i*spacing);
       var material=new THREE.MeshPhysicalMaterial({map:makeSurfaceTexture(r,idx),bumpMap:makeSurfaceTexture(r,idx),bumpScale:.085,roughness:.94,metalness:.015});
       var mesh=new THREE.Mesh(new THREE.SphereGeometry(size,112,80),material);mesh.castShadow=true;mesh.receiveShadow=true;g.add(mesh);
       var clouds=new THREE.Mesh(new THREE.SphereGeometry(size*1.012,96,64),new THREE.MeshStandardMaterial({map:makeCloudTexture(r,idx),transparent:true,opacity:.42,depthWrite:false,roughness:1}));g.add(clouds);
@@ -708,11 +708,11 @@
       scene.add(g);journeyPlanets.push({route:r,index:i,group:g,mesh:mesh,clouds:clouds,atmo:atmo,size:size,z:g.position.z});
     });
     var solarGlow=new THREE.Mesh(new THREE.SphereGeometry(10,96,64),new THREE.MeshBasicMaterial({color:0xffd69a}));
-    solarGlow.position.set(0,0,-24-journeyPlanets.length*spacing-28);scene.add(solarGlow);
+    solarGlow.position.set(0,0,-58-journeyPlanets.length*spacing-28);scene.add(solarGlow);
     var corona=new THREE.Mesh(new THREE.SphereGeometry(12.2,64,48),new THREE.MeshBasicMaterial({color:0xff9d54,transparent:true,opacity:.12,side:THREE.BackSide,blending:THREE.AdditiveBlending,depthWrite:false}));
     corona.position.copy(solarGlow.position);scene.add(corona);
     var sunLight=new THREE.PointLight(0xffc887,8,260);sunLight.position.copy(solarGlow.position);scene.add(sunLight);
-    journeyLength=(journeyPlanets.length-1)*spacing+70;
+    journeyLength=58+(journeyPlanets.length-1)*spacing+70;
     raycaster=new THREE.Raycaster();clock=new THREE.Clock();
     window.addEventListener('resize',onResize,{passive:true});
     window.addEventListener('scroll',onJourneyScroll,{passive:true});
