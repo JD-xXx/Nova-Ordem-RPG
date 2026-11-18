@@ -1205,7 +1205,7 @@
         var grass=new THREE.InstancedMesh(grassGeo,grassMat,grassCount*4);
         for(var gi=0;gi<grassCount;gi++){
           var gx=(hash(gi,131,s)-.5)*204,gz=-84+hash(gi,132,s)*160;
-          if(Math.abs(gx)<9)continue;
+          if(Math.abs(gx)<9)gx+=gx<0?-10:10;
           var gy=heightAt(gx,gz,k,s)-7.94,tuft=.55+hash(gi,133,s)*1.25;
           for(var blade=0;blade<4;blade++){
             var ga=blade*Math.PI*.5+hash(gi,blade+140,s)*.7;
@@ -1266,7 +1266,7 @@
         }
       }
       if(base.wet||k==='coast'||k==='frozen-coast'){
-        var waterMat=new THREE.MeshPhysicalMaterial({color:base.water||0x285d69,roughness:.19,metalness:.025,clearcoat:1,clearcoatRoughness:.08,ior:1.333,envMapIntensity:1.2});
+        var waterMat=new THREE.MeshPhysicalMaterial({color:base.water||0x285d69,roughness:.19,metalness:.025,clearcoat:1,clearcoatRoughness:.08,ior:1.333,envMapIntensity:1.2,side:THREE.DoubleSide});
         // Rio como lâmina larga de água sobre o leito, com margens irregulares — nunca um tubo.
         var riverVertices=[],riverUvs=[],riverIndices=[],riverRows=220;
         for(var rp=0;rp<=riverRows;rp++){
@@ -1308,7 +1308,7 @@
           if(pr<pathRows){var pi2=pr*2;pathIndices.push(pi2,pi2+1,pi2+2,pi2+1,pi2+3,pi2+2);}
         }
         var pathGeo=new THREE.BufferGeometry();pathGeo.setAttribute('position',new THREE.Float32BufferAttribute(pathVertices,3));pathGeo.setAttribute('uv',new THREE.Float32BufferAttribute(pathUvs,2));pathGeo.setIndex(pathIndices);pathGeo.computeVertexNormals();
-        var pathMat=new THREE.MeshStandardMaterial({color:k==='glacier'||k==='frozen-coast'?0x9caeb1:0x77634d,map:maps.map,bumpMap:maps.bump,bumpScale:.18,roughness:1});
+        var pathMat=new THREE.MeshStandardMaterial({color:k==='glacier'||k==='frozen-coast'?0x9caeb1:0x77634d,map:maps.map,bumpMap:maps.bump,bumpScale:.18,roughness:1,side:THREE.DoubleSide});
         var trailMesh=new THREE.Mesh(pathGeo,pathMat);trailMesh.receiveShadow=true;group.add(trailMesh);
         // Pedras pequenas nas bordas da trilha dão escala e quebram a repetição do terreno.
         var pathStoneGeo=irregularRockGeometry(s+301),pathStoneMat=new THREE.MeshStandardMaterial({color:base.rockTint||0x887b6d,roughness:1});
