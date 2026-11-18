@@ -652,3 +652,9 @@ footer{border-top-color:rgba(132,179,202,.16)!important;color:#668092!important;
  .no-journey-scrollhint{bottom:8%;font-size:6px}
 }
 @media(prefers-reduced-motion:reduce){.no-journey-scrollhint span{animation:none}}
+
+
+.wrap.no-planet-exploration{background:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.wrap.no-planet-exploration:before{background:linear-gradient(180deg,rgba(2,7,13,.08),rgba(2,7,13,.54))!important}
+.wrap.no-planet-exploration .heading{background:rgba(3,10,17,.42);padding:20px;border:1px solid rgba(139,193,216,.18)}
+.wrap.no-planet-exploration #content .home-band,.wrap.no-planet-exploration #content .stat,.wrap.no-planet-exploration #content .card,.wrap.no-planet-exploration #content .panel,.wrap.no-planet-exploration #content .v6-item,.wrap.no-planet-exploration #content .no87-section,.wrap.no-planet-exploration #content .no87-card{background:rgba(5,15,24,.78)!important}
