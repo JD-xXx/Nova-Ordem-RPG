@@ -748,6 +748,7 @@
     wrapNavigation();
     buildNavigation();
     loadThree().then(function(){playIntro();});
+    var assetCredit=document.createElement('div');assetCredit.textContent='3D ASSETS · POLY HAVEN';assetCredit.setAttribute('aria-label','Modelos 3D CC0 da Poly Haven');assetCredit.style.cssText='position:fixed;right:14px;bottom:10px;z-index:40;padding:5px 8px;border:1px solid rgba(173,205,220,.16);border-radius:3px;background:rgba(4,12,20,.48);color:rgba(207,224,231,.55);font:9px/1.2 system-ui,sans-serif;letter-spacing:.14em;pointer-events:none';document.body.appendChild(assetCredit);
     var search=document.getElementById('search');
     if(search)search.addEventListener('input',function(){
       var q=search.value.trim().toLowerCase();
@@ -935,6 +936,79 @@
   }
 
   var landscapePhotoCache={};
+  var landscapeAssetCache={};
+  var landscapeAssetLoaderPromise=null;
+  function loadPolyHavenModel(assetId){
+    if(landscapeAssetCache[assetId])return landscapeAssetCache[assetId];
+    landscapeAssetCache[assetId]=fetch('https://api.polyhaven.com/files/'+encodeURIComponent(assetId),{headers:{'Accept':'application/json'}})
+      .then(function(response){if(!response.ok)throw new Error('Poly Haven asset unavailable: '+assetId);return response.json();})
+      .then(function(files){
+        var entry=(files.gltf&&files.gltf['1k']&&files.gltf['1k'].gltf)||
+          (files.modelFiles&&files.modelFiles.gltf&&files.modelFiles.gltf['1k']&&files.modelFiles.gltf['1k'].gltf)||
+          (files.gltf&&files.gltf['2k']&&files.gltf['2k'].gltf)||
+          (files.modelFiles&&files.modelFiles.gltf&&files.modelFiles.gltf['2k']&&files.modelFiles.gltf['2k'].gltf);
+        if(!entry||!entry.url)throw new Error('No optimized glTF variant for '+assetId);
+        if(!landscapeAssetLoaderPromise){
+          landscapeAssetLoaderPromise=import('https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/loaders/GLTFLoader.js').then(function(mod){return mod.GLTFLoader;});
+        }
+        return landscapeAssetLoaderPromise.then(function(GLTFLoader){
+          var includes=entry.include||{},manager=new THREE.LoadingManager();
+          manager.setURLModifier(function(url){
+            var clean;
+            try{clean=decodeURIComponent(url.split(/[?#]/)[0].split('/').pop());}catch(e){clean=url.split('/').pop();}
+            var keys=Object.keys(includes);
+            for(var i=0;i<keys.length;i++){
+              var path=keys[i],base=path.split('/').pop();
+              if(base===clean||path===clean)return includes[path].url;
+            }
+            return url;
+          });
+          return new Promise(function(resolve,reject){
+            new GLTFLoader(manager).load(entry.url,function(gltf){resolve(gltf.scene);},undefined,reject);
+          });
+        });
+      }).catch(function(error){delete landscapeAssetCache[assetId];throw error;});
+    return landscapeAssetCache[assetId];
+  }
+  function addPhotogrammetryVegetation(group,sceneStyle,segIndex,seed,heightAt,k,s){
+    var modelId=sceneStyle==='clearing'?'island_tree_03':sceneStyle==='meadow'?'jacaranda':'tree_small_02';
+    var plantId=sceneStyle==='meadow'?'grass_medium_01':sceneStyle==='jungle-trail'?'fern_02':null;
+    var holder=new THREE.Group();holder.name='polyhaven-photogrammetry-vegetation';holder.visible=false;group.add(holder);
+    loadPolyHavenModel(modelId).then(function(source){
+      if(!group.parent)return;
+      var bounds=new THREE.Box3().setFromObject(source),size=bounds.getSize(new THREE.Vector3());
+      var sourceHeight=Math.max(.001,size.y),targetHeight=sceneStyle==='jungle-trail'?19:sceneStyle==='clearing'?15:13;
+      var scale=targetHeight/sourceHeight,side=segIndex%2?1:-1;
+      var clone=source.clone(true);
+      clone.scale.setScalar(scale);
+      clone.position.set(side*(sceneStyle==='jungle-trail'?22:sceneStyle==='clearing'?48:42),heightAt(side*(sceneStyle==='jungle-trail'?22:sceneStyle==='clearing'?48:42),-26,k,s)-8-bounds.min.y*scale,-26);
+      clone.rotation.y=hash(segIndex,711,s)*Math.PI*2;
+      clone.traverse(function(node){if(node.isMesh){node.castShadow=false;node.receiveShadow=true;node.frustumCulled=true;}});
+      holder.add(clone);
+      holder.visible=true;
+      group.traverse(function(node){
+        if(node.name==='no-procedural-tree-trunks'||node.name==='no-procedural-tree-broad'||node.name==='no-procedural-tree-pines'||node.name==='no-procedural-tree-jungle')node.visible=false;
+      });
+    }).catch(function(error){console.warn('Nova Ordem: mantendo vegetação de contingência para '+sceneStyle,error);});
+    if(plantId){
+      loadPolyHavenModel(plantId).then(function(source){
+        if(!group.parent)return;
+        var bounds=new THREE.Box3().setFromObject(source),size=bounds.getSize(new THREE.Vector3());
+        var target=sceneStyle==='meadow'?2.2:3.8,scale=target/Math.max(.001,size.y);
+        var count=sceneStyle==='meadow'?5:8;
+        for(var i=0;i<count;i++){
+          var plant=source.clone(true),x=(hash(i,721,s)-.5)*(sceneStyle==='meadow'?150:88),z=-76+hash(i,722,s)*148;
+          if(sceneStyle==='jungle-trail'&&Math.abs(x)<13)x+=x<0?-15:15;
+          plant.scale.setScalar(scale*(.72+hash(i,723,s)*.72));
+          plant.position.set(x,heightAt(x,z,k,s)-8-bounds.min.y*scale,z);
+          plant.rotation.y=hash(i,724,s)*Math.PI*2;
+          plant.traverse(function(node){if(node.isMesh){node.castShadow=false;node.receiveShadow=true;node.frustumCulled=true;}});
+          holder.add(plant);
+        }
+        holder.visible=true;
+      }).catch(function(error){console.warn('Nova Ordem: planta 3D opcional indisponível',error);});
+    }
+  }
   function applyLandscapePhotoMaps(kind,material){
     var asset=(kind==='jungle'||kind==='temperate')?'brown_mud_leaves_01':
       (kind==='coast'||kind==='frozen-coast'||kind==='glacier')?'coast_sand_rocks_02':
@@ -1155,15 +1229,19 @@
         var trunkGeo=new THREE.CylinderGeometry(.12,.38,7.8,12,2);
         var trunkMat=new THREE.MeshStandardMaterial({color:base.trunk||0x514637,roughness:.94});
         var trunkMesh=new THREE.InstancedMesh(trunkGeo,trunkMat,treeCount);
+        trunkMesh.name='no-procedural-tree-trunks';
         var broadGeo=makeFoliageGeometry(s+51);
         var broadMat=new THREE.MeshStandardMaterial({color:base.flora||0x55734b,roughness:.92});
         var broadCanopy=new THREE.InstancedMesh(broadGeo,broadMat,treeCount*4);
+        broadCanopy.name='no-procedural-tree-broad';
         var pineGeo=new THREE.ConeGeometry(2.15,5.4,9,2);
         var pineMat=new THREE.MeshStandardMaterial({color:base.floraLight||0x78945a,roughness:.94});
         var pineCanopy=new THREE.InstancedMesh(pineGeo,pineMat,Math.max(1,Math.floor(treeCount*.22))*3);
+        pineCanopy.name='no-procedural-tree-pines';
         var jungleGeo=new THREE.SphereGeometry(1,18,14);
         var jungleMat=new THREE.MeshStandardMaterial({color:base.flora||0x55734b,roughness:.95});
         var jungleCanopy=new THREE.InstancedMesh(jungleGeo,jungleMat,treeCount*5);
+        jungleCanopy.name='no-procedural-tree-jungle';
         var meadowTree=sceneStyle==='meadow';
         for(var ti=0;ti<treeCount;ti++){
           var side=ti%2?1:-1;
@@ -1266,6 +1344,7 @@
         }
         group.add(trunks);group.add(crowns);
       }
+      if(sceneStyle!=='standard')addPhotogrammetryVegetation(group,sceneStyle,segIndex,seed,heightAt,k,s);
       if(k==='crystal'){
         var crystalMat=new THREE.MeshPhysicalMaterial({color:base.floraLight||base.accent,metalness:.12,roughness:.16,transmission:.34,thickness:1.35,clearcoat:1,emissive:base.flora||0x4c6c8c,emissiveIntensity:.08});
         for(var ci=0;ci<20;ci++){
