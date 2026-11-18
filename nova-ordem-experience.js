@@ -747,6 +747,7 @@
     buildStage();
     wrapNavigation();
     buildNavigation();
+    if(!document.querySelector('script[type="importmap"][data-no-three-map]')){var threeMap=document.createElement('script');threeMap.type='importmap';threeMap.dataset.noThreeMap='1';threeMap.textContent=JSON.stringify({imports:{three:'https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js'}});document.head.appendChild(threeMap);}
     loadThree().then(function(){playIntro();});
     var assetCredit=document.createElement('div');assetCredit.textContent='3D ASSETS · POLY HAVEN';assetCredit.setAttribute('aria-label','Modelos 3D CC0 da Poly Haven');assetCredit.style.cssText='position:fixed;right:14px;bottom:10px;z-index:40;padding:5px 8px;border:1px solid rgba(173,205,220,.16);border-radius:3px;background:rgba(4,12,20,.48);color:rgba(207,224,231,.55);font:9px/1.2 system-ui,sans-serif;letter-spacing:.14em;pointer-events:none';document.body.appendChild(assetCredit);
     var search=document.getElementById('search');
