@@ -31,7 +31,7 @@
   var ALIASES = {chi:'power',talents:'power',missions:'progression',honor:'progression',karma:'progression'};
   var current = 'overview';
   var originalGo = window.go;
-  var stage, canvas, renderer, scene, camera, planetGroup, planetMesh, cloudMesh, atmosphereMesh, ship, starField, routeNav, topicList;
+  var stage, canvas, renderer, scene, camera, planetGroup, planetMesh, cloudMesh, atmosphereMesh, ship, starField, dustField, routeNav, topicList;
   var THREE = null, clock, transition = null, landed = false, reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var raycaster, pointer = {x:0,y:0}, pointerTarget = {x:0,y:0}, laserTimer = 0, lasers = [], introTimer = 0;
   var palettes = {};
@@ -321,12 +321,12 @@
 
   function buildShip() {
     var group=new THREE.Group();
-    var hullMat=new THREE.MeshPhysicalMaterial({color:0x7d8b96,metalness:.78,roughness:.36,clearcoat:.42,clearcoatRoughness:.38});
-    var armorMat=new THREE.MeshStandardMaterial({color:0x344452,metalness:.82,roughness:.4});
-    var panelMat=new THREE.MeshStandardMaterial({color:0x9ba8af,metalness:.76,roughness:.34});
-    var darkMat=new THREE.MeshStandardMaterial({color:0x111d28,metalness:.72,roughness:.46});
-    var cargoMat=new THREE.MeshStandardMaterial({color:0x596b78,metalness:.62,roughness:.52});
-    var glassMat=new THREE.MeshPhysicalMaterial({color:0x397b91,metalness:.56,roughness:.16,clearcoat:1,clearcoatRoughness:.08,emissive:0x071b27,emissiveIntensity:.32});
+    var hullMat=new THREE.MeshPhysicalMaterial({color:0x7d8b96,metalness:.72,roughness:.29,clearcoat:.68,envMapIntensity:1.35,clearcoatRoughness:.38});
+    var armorMat=new THREE.MeshStandardMaterial({color:0x344452,metalness:.72,roughness:.32,envMapIntensity:1.15});
+    var panelMat=new THREE.MeshStandardMaterial({color:0x9ba8af,metalness:.7,roughness:.28,envMapIntensity:1.25});
+    var darkMat=new THREE.MeshStandardMaterial({color:0x111d28,metalness:.62,roughness:.34,envMapIntensity:.9});
+    var cargoMat=new THREE.MeshStandardMaterial({color:0x596b78,metalness:.55,roughness:.4,envMapIntensity:1.05});
+    var glassMat=new THREE.MeshPhysicalMaterial({color:0x397b91,metalness:.46,roughness:.12,clearcoat:1,envMapIntensity:1.35,clearcoatRoughness:.08,emissive:0x071b27,emissiveIntensity:.32});
     var glowMat=new THREE.MeshBasicMaterial({color:0x75dfff});
     var warmGlow=new THREE.MeshBasicMaterial({color:0xffc77e});
     function add(geo,mat,x,y,z,rx,ry,rz,parent) {
@@ -829,8 +829,20 @@
     root.scale.setScalar(.92);root.userData={body:body,halo:halo};return root;
   }
 
+  function buildEnvironmentMap(){
+    var c=document.createElement('canvas');c.width=512;c.height=256;
+    var ctx=c.getContext('2d'),g=ctx.createLinearGradient(0,0,0,256);
+    g.addColorStop(0,'#14263c');g.addColorStop(.38,'#26394a');g.addColorStop(.56,'#111c2c');g.addColorStop(1,'#030810');
+    ctx.fillStyle=g;ctx.fillRect(0,0,512,256);
+    var nebulae=[[-80,110,190,'rgba(111,75,163,.52)','rgba(111,75,163,.12)'],[230,80,170,'rgba(37,110,156,.46)','rgba(37,110,156,.12)'],[430,160,145,'rgba(160,82,91,.32)','rgba(160,82,91,.10)']];
+    nebulae.forEach(function(n){var r=ctx.createRadialGradient(n[0],n[1],4,n[0],n[1],n[2]);r.addColorStop(0,n[3]);r.addColorStop(.4,n[4]);r.addColorStop(1,'rgba(0,0,0,0)');ctx.fillStyle=r;ctx.fillRect(0,0,512,256);});
+    for(var i=0;i<480;i++){var x=hash(i,11,83)*512,y=hash(i,17,97)*256,rad=.25+hash(i,19,101)*1.1;ctx.fillStyle='rgba(218,235,255,'+(.12+hash(i,23,109)*.55)+')';ctx.beginPath();ctx.arc(x,y,rad,0,Math.PI*2);ctx.fill();}
+    var tex=new THREE.CanvasTexture(c);tex.mapping=THREE.EquirectangularReflectionMapping;tex.colorSpace=THREE.SRGBColorSpace;tex.needsUpdate=true;return tex;
+  }
+
   function buildScene(){
     scene=new THREE.Scene();scene.background=new THREE.Color(0x01040a);scene.fog=new THREE.FogExp2(0x01040a,.0018);
+    scene.environment=buildEnvironmentMap();
     camera=new THREE.PerspectiveCamera(48,window.innerWidth/window.innerHeight,.1,900);
     camera.position.set(0,1.1,17);camera.lookAt(0,0,-24);
     renderer=new THREE.WebGLRenderer({canvas:canvas,alpha:false,antialias:true,powerPreference:'high-performance'});
@@ -843,6 +855,16 @@
     for(var i=0;i<11000;i++){var rr=90+Math.random()*380,th=Math.random()*Math.PI*2,ph=Math.acos(2*Math.random()-1);pos[i*3]=rr*Math.sin(ph)*Math.cos(th);pos[i*3+1]=rr*Math.cos(ph);pos[i*3+2]=rr*Math.sin(ph)*Math.sin(th);var k=Math.random()>.91?[.65,.82,1]:[.78,.84,.92];col.set(k,i*3);}
     starGeo.setAttribute('position',new THREE.BufferAttribute(pos,3));starGeo.setAttribute('color',new THREE.BufferAttribute(col,3));
     starField=new THREE.Points(starGeo,new THREE.PointsMaterial({size:.19,sizeAttenuation:true,vertexColors:true,transparent:true,opacity:.92,depthWrite:false}));scene.add(starField);
+    var dustGeo=new THREE.BufferGeometry(),dustPos=new Float32Array(3200*3),dustCol=new Float32Array(3200*3);
+    for(var di=0;di<3200;di++){
+      var dr=35+Math.random()*320,da=Math.random()*Math.PI*2;
+      dustPos[di*3]=Math.cos(da)*dr;
+      dustPos[di*3+1]=(Math.random()-.5)*Math.min(85,dr*.22);
+      dustPos[di*3+2]=Math.sin(da)*dr;
+      var warm=Math.random()>.72;dustCol.set(warm?[1,.62,.43]:[.48,.72,.9],di*3);
+    }
+    dustGeo.setAttribute('position',new THREE.BufferAttribute(dustPos,3));dustGeo.setAttribute('color',new THREE.BufferAttribute(dustCol,3));
+    dustField=new THREE.Points(dustGeo,new THREE.PointsMaterial({size:.42,sizeAttenuation:true,vertexColors:true,transparent:true,opacity:.24,depthWrite:false,blending:THREE.AdditiveBlending}));scene.add(dustField);
     var nebulae=[[-28,18,-80,55,'rgba(101,75,167,.26)'],[34,-12,-155,72,'rgba(35,111,161,.25)'],[-12,22,-250,90,'rgba(141,77,113,.2)']];
     nebulae.forEach(function(n){var sp=new THREE.Sprite(new THREE.SpriteMaterial({map:makeNebulaTexture(n[4]),transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,opacity:.8}));sp.position.set(n[0],n[1],n[2]);sp.scale.set(n[3],n[3]*.7,1);scene.add(sp);});
     ship=buildShip();ship.scale.setScalar(.58);ship.position.set(0,-1.45,10.5);ship.rotation.set(0,Math.PI/2,0);scene.add(ship);
@@ -906,6 +928,7 @@
         if(ark.userData&&ark.userData.body){ark.userData.body.rotation.y=Math.sin(elapsed*1.3)*.12;ark.userData.halo.rotation.z+=dt*.8;}
       }
       if(starField)starField.rotation.y+=dt*.00045;
+      if(dustField){dustField.rotation.y+=dt*.00013;dustField.rotation.z+=dt*.000025;}
       if(landscape){landscape.rotation.y=Math.sin(elapsed*.05)*.006;landscapeClouds.forEach(function(c,i){c.position.x+=dt*(.12+i*.035);if(c.position.x>70)c.position.x=-70;});}
     }
     renderer.render(scene,camera);
@@ -1218,6 +1241,7 @@
   }
   function start(){
     try{
+      applyRouteAtmosphere(current);
       buildStage();
       if(!stage)throw new Error('A estrutura da jornada não foi criada.');
       wrapNavigation();buildNavigation();
