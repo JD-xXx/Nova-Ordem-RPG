@@ -367,10 +367,12 @@
       planetMesh.rotation.y+=dt*.025;
       cloudMesh.rotation.y+=dt*.038;
       planetGroup.rotation.z+=dt*.003;
-      ship.position.y=-1.55+Math.sin(elapsed*.65)*.11;
-      ship.rotation.z=-.035+Math.sin(elapsed*.35)*.018;
-      ship.rotation.y=Math.sin(elapsed*.25)*.035;
-      ship.position.x=-4.2+Math.sin(elapsed*.16)*.16;
+      if(!landed&&!transition){
+        ship.position.y=-1.55+Math.sin(elapsed*.65)*.11;
+        ship.rotation.z=-.035+Math.sin(elapsed*.35)*.018;
+        ship.rotation.y=Math.sin(elapsed*.25)*.035;
+        ship.position.x=-4.2+Math.sin(elapsed*.16)*.16;
+      }
       starField.rotation.y+=dt*.0018;
       starField.rotation.x+=dt*.0005;
       camera.position.x=pointer.x*.42;
@@ -401,10 +403,12 @@
     var m=metaFor(id),r=m.route;
     var now=performance.now();
     var fromPos=camera.position.clone();
-    var fromLook=new THREE.Vector3(0,0,0);
-    var toPos=new THREE.Vector3(0,.1,12.6);
-    if(landed)toPos.set(-1.1,.5,15.8);
-    transition={start:now,duration:3200,from:fromPos,to:toPos,route:r,meta:m,swapped:false};
+    var warpPos=new THREE.Vector3(.35,1.1,18.2);
+    var toPos=new THREE.Vector3(0,.1,10.8);
+    var shipFrom=ship.position.clone();
+    var shipWarp=new THREE.Vector3(-8.2,-2.6,4.4);
+    var shipTo=new THREE.Vector3(-4.2,-1.55,2.5);
+    transition={start:now,duration:3600,from:fromPos,warp:warpPos,to:toPos,shipFrom:shipFrom,shipWarp:shipWarp,shipTo:shipTo,route:r,meta:m,swapped:false};
     stage.classList.add('is-travelling');
     stage.querySelector('.no-cinema-vessel-state').textContent='SAÍDA DE ÓRBITA · MANOBRA DE TRANSFERÊNCIA';
     landed=false;
@@ -413,8 +417,14 @@
   function updateTransition(now) {
     var tr=transition;if(!tr)return;
     var t=Math.max(0,Math.min(1,(now-tr.start)/tr.duration));
-    var ease=t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
-    camera.position.lerpVectors(tr.from,tr.to,ease);
+    var phase=t<.5?t*2:(t-.5)*2;
+    var ease=phase*phase*(3-2*phase);
+    if(t<.5)camera.position.lerpVectors(tr.from,tr.warp,ease);
+    else camera.position.lerpVectors(tr.warp,tr.to,ease);
+    if(ship){
+      if(t<.5)ship.position.lerpVectors(tr.shipFrom,tr.shipWarp,ease);
+      else ship.position.lerpVectors(tr.shipWarp,tr.shipTo,ease);
+    }
     camera.position.x+=Math.sin(t*Math.PI)*.75;
     camera.position.y+=Math.sin(t*Math.PI*2)*.24;
     camera.lookAt(0,0,0);
@@ -431,6 +441,7 @@
     }
     if(t>=1){
       camera.position.copy(tr.to);camera.lookAt(0,0,0);
+      if(ship)ship.position.copy(tr.shipTo);
       stage.classList.remove('is-travelling','is-arriving');
       stage.querySelector('.no-cinema-vessel-state').textContent='EM ÓRBITA · PROPULSÃO NOMINAL';
       stage.querySelector('.no-cinema-land-status').textContent='POUSO DISPONÍVEL · ARQUIVOS AGUARDANDO EXPLORAÇÃO';
