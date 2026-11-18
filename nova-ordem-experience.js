@@ -854,16 +854,19 @@
   }
 
   function createLandscape(index){
-    if(landscape){
-      scene.remove(landscape);
-      landscape.traverse(function(o){
-        if(o.geometry)o.geometry.dispose();
-        if(o.material){
-          if(Array.isArray(o.material))o.material.forEach(function(m){m.dispose();});
-          else o.material.dispose();
-        }
+    if(landscapeSegments&&landscapeSegments.length){
+      landscapeSegments.forEach(function(part){
+        scene.remove(part);
+        part.traverse(function(o){
+          if(o.geometry)o.geometry.dispose();
+          if(o.material){
+            if(Array.isArray(o.material))o.material.forEach(function(m){m.dispose();});
+            else o.material.dispose();
+          }
+        });
       });
-    }
+      landscapeSegments=[];
+    }else if(landscape){scene.remove(landscape);}
     var route=ROUTES.find(function(x){return x.id===selectedPlanet;})||ROUTES[1];
     var biomes={
       lore:{type:'crystal',sky:0x9aabb9,ground:[.19,.23,.28],rock:[.43,.49,.55],wet:false},
@@ -1054,7 +1057,12 @@
       group.add(new THREE.HemisphereLight(0xc9dce7,0x292722,.82));
       group.position.set(0,0,-22-segIndex*86);
       scene.add(group);landscapeSegments.push(group);
-      skyColors.push(new THREE.Color(base.sky));
+      var skyHex=k==='glacier'||k==='frozen-coast'?0xa8c5d1:
+        k==='desert'||k==='badlands'||k==='canyon'||k==='salt'?0xc2a17e:
+        k==='volcanic'||k==='geothermal'||k==='ash'?0x756b68:
+        k==='jungle'||k==='temperate'?0x91ad9b:
+        k==='coast'?0x91b4c0:base.sky;
+      skyColors.push(new THREE.Color(skyHex));
     }
     var variants=sequence.slice();
     for(var si=0;si<4;si++)makeSegment(variants[si]||kind,si);
@@ -1135,7 +1143,19 @@
   function returnToJourney(){
     selectedPlanet=null;current='overview';
     var wrap=document.querySelector('.wrap');if(wrap){wrap.classList.remove('no-planet-exploration');delete wrap.dataset.planet;}
-    if(landscape){scene.remove(landscape);landscape=null;landscapeClouds=[];}
+    if(landscapeSegments&&landscapeSegments.length){
+      landscapeSegments.forEach(function(part){
+        scene.remove(part);
+        part.traverse(function(o){
+          if(o.geometry)o.geometry.dispose();
+          if(o.material){
+            if(Array.isArray(o.material))o.material.forEach(function(m){m.dispose();});
+            else o.material.dispose();
+          }
+        });
+      });
+    }
+    landscapeSegments=[];landscape=null;landscapeClouds=[];landscapeSkyColors=[];
     scene.background=new THREE.Color(0x01040a);scene.fog=new THREE.FogExp2(0x01040a,.0018);
     journeyPlanets.forEach(function(p){if(!p.group.parent)scene.add(p.group);});journeyCelestials.forEach(function(o){if(!o.parent)scene.add(o);});if(starField)starField.visible=true;
     stage.classList.remove('is-planet-landing');
