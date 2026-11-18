@@ -636,6 +636,169 @@
     });
   }
 
+
+  /* NOVA ORDEM — continuous scroll journey, all destinations in one spatial route */
+  buildStage = function () {
+    if (stage || !document.querySelector('.main')) return;
+    var main=document.querySelector('.main'),top=main.querySelector('.top');
+    canvas=document.createElement('canvas');canvas.id='no-cinema-canvas';canvas.setAttribute('aria-hidden','true');document.body.appendChild(canvas);
+    var journey=document.createElement('div');journey.id='no-cinema-journey';
+    stage=document.createElement('section');stage.id='no-cinema-stage';stage.className='no-cinema-stage no-journey-stage';
+    stage.setAttribute('aria-label','Viagem espacial contínua pela Nova Ordem');
+    stage.innerHTML=[
+      '<div class="no-cinema-vignette"></div><div class="no-cinema-grain"></div>',
+      '<header class="no-cinema-header"><div class="no-cinema-overline"><span class="no-cinema-live"></span> AGÊNCIA INTERDIMENSIONAL <i>/</i> ROTA DE EXPLORAÇÃO</div><div class="no-cinema-sector">NO–07 <b>· CARGUEIRO</b></div></header>',
+      '<div class="no-journey-welcome"><span>TRANSMISSÃO DE LONGO ALCANCE · SINAL ESTÁVEL</span><h1>BEM-VINDO À <em>NOVA ORDEM</em></h1><p>Uma jornada pelos registros, mundos e sistemas conhecidos pela Agência.</p><small>CONTINUE DESCENDO PARA INICIAR A TRAVESSIA</small></div>',
+      '<div class="no-journey-destination"><span class="no-journey-kicker">DESTINO EM OBSERVAÇÃO</span><h2>ESPAÇO PROFUNDO</h2><p>A nave ainda está cruzando o vazio.</p><button type="button" class="no-journey-explore" hidden>EXPLORAR ESTE MUNDO ↗</button></div>',
+      '<div class="no-journey-progress"><span>PROGRESSO DA EXPEDIÇÃO</span><div><i></i></div><b>00%</b></div>',
+      '<div class="no-journey-scrollhint">ROLE PARA VIAJAR <span>↓</span></div>',
+      '<div class="no-journey-planet-labels"></div>',
+      '<div class="no-journey-landing" aria-live="polite"><span>ACESSO PLANETÁRIO</span><b>PREPARANDO APROXIMAÇÃO</b></div>'
+    ].join('');
+    journey.appendChild(stage);
+    if(top&&top.nextSibling)main.insertBefore(journey,top.nextSibling);else main.insertBefore(journey,main.firstChild);
+    journey.style.height=(ROUTES.length*105+180)+'vh';
+    routeNav=stage.querySelector('.no-journey-planet-labels');
+    routeNav.innerHTML=ROUTES.filter(function(r){return r.id!=='overview';}).map(function(r,i){
+      return '<button type="button" data-space-id="'+r.id+'"><span>'+String(i+1).padStart(2,'0')+'</span>'+esc(r.name)+'</button>';
+    }).join('');
+    routeNav.addEventListener('click',function(ev){var b=ev.target.closest('button[data-space-id]');if(b)openPlanetDestination(b.dataset.spaceId);});
+    stage.addEventListener('pointermove',onPointer,{passive:true});
+    stage.addEventListener('pointerdown',onJourneyPointer);
+    document.querySelectorAll('.hero').forEach(function(el){el.classList.add('no-cinema-old-hero');});
+    buildNavigation();
+  };
+
+  var journeyPlanets=[],journeyProgress=0,selectedPlanet=null,landscape=null,landscapeClouds=[],journeyLength=0;
+  function onJourneyPointer(ev){
+    if(!raycaster||!camera||!journeyPlanets.length||ev.target.closest('button'))return;
+    var rect=canvas.getBoundingClientRect(),mouse=new THREE.Vector2((ev.clientX-rect.left)/rect.width*2-1,-((ev.clientY-rect.top)/rect.height*2-1));
+    raycaster.setFromCamera(mouse,camera);
+    var hits=raycaster.intersectObjects(journeyPlanets.map(function(p){return p.mesh;}),false);
+    if(hits.length){var found=journeyPlanets.find(function(p){return p.mesh===hits[0].object;});if(found)openPlanetDestination(found.route.id);}
+  }
+  function buildScene(){
+    scene=new THREE.Scene();scene.background=new THREE.Color(0x01040a);scene.fog=new THREE.FogExp2(0x01040a,.0018);
+    camera=new THREE.PerspectiveCamera(48,window.innerWidth/window.innerHeight,.1,900);
+    camera.position.set(0,1.1,17);camera.lookAt(0,0,-24);
+    renderer=new THREE.WebGLRenderer({canvas:canvas,alpha:false,antialias:true,powerPreference:'high-performance'});
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.65));renderer.setSize(window.innerWidth,window.innerHeight,false);
+    renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.22;
+    scene.add(new THREE.HemisphereLight(0xb5d1e8,0x111722,1.05));
+    var sun=new THREE.DirectionalLight(0xffe5c2,3.4);sun.position.set(-18,22,20);scene.add(sun);
+    var fill=new THREE.DirectionalLight(0x6ba9df,1.5);fill.position.set(16,-5,-30);scene.add(fill);
+    var starGeo=new THREE.BufferGeometry(),pos=new Float32Array(11000*3),col=new Float32Array(11000*3);
+    for(var i=0;i<11000;i++){var rr=90+Math.random()*380,th=Math.random()*Math.PI*2,ph=Math.acos(2*Math.random()-1);pos[i*3]=rr*Math.sin(ph)*Math.cos(th);pos[i*3+1]=rr*Math.cos(ph);pos[i*3+2]=rr*Math.sin(ph)*Math.sin(th);var k=Math.random()>.91?[.65,.82,1]:[.78,.84,.92];col.set(k,i*3);}
+    starGeo.setAttribute('position',new THREE.BufferAttribute(pos,3));starGeo.setAttribute('color',new THREE.BufferAttribute(col,3));
+    starField=new THREE.Points(starGeo,new THREE.PointsMaterial({size:.19,sizeAttenuation:true,vertexColors:true,transparent:true,opacity:.92,depthWrite:false}));scene.add(starField);
+    var nebulae=[[-28,18,-80,55,'rgba(101,75,167,.26)'],[34,-12,-155,72,'rgba(35,111,161,.25)'],[-12,22,-250,90,'rgba(141,77,113,.2)']];
+    nebulae.forEach(function(n){var sp=new THREE.Sprite(new THREE.SpriteMaterial({map:makeNebulaTexture(n[4]),transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,opacity:.8}));sp.position.set(n[0],n[1],n[2]);sp.scale.set(n[3],n[3]*.7,1);scene.add(sp);});
+    ship=buildShip();ship.scale.setScalar(.58);ship.position.set(0,-1.45,10.5);ship.rotation.set(0,Math.PI/2,0);scene.add(ship);
+    journeyPlanets=[];
+    var spacing=23;
+    ROUTES.filter(function(r){return r.id!=='overview';}).forEach(function(r,i){
+      var idx=ROUTES.indexOf(r),g=new THREE.Group(),size=(i%4===0?4.25:(i%3===0?3.1:2.65));
+      g.position.set((i%2===0?1:-1)*(3.8+(i%3)*1.4),Math.sin(i*1.7)*1.7,-24-i*spacing);
+      var material=new THREE.MeshPhysicalMaterial({map:makeSurfaceTexture(r,idx),bumpMap:makeSurfaceTexture(r,idx),bumpScale:.085,roughness:.94,metalness:.015});
+      var mesh=new THREE.Mesh(new THREE.SphereGeometry(size,112,80),material);mesh.castShadow=true;mesh.receiveShadow=true;g.add(mesh);
+      var clouds=new THREE.Mesh(new THREE.SphereGeometry(size*1.012,96,64),new THREE.MeshStandardMaterial({map:makeCloudTexture(r,idx),transparent:true,opacity:.42,depthWrite:false,roughness:1}));g.add(clouds);
+      var atmo=new THREE.Mesh(new THREE.SphereGeometry(size*1.045,96,64),new THREE.ShaderMaterial({uniforms:{glowColor:{value:new THREE.Color(r.palette[2])},glowStrength:{value:.7}},vertexShader:'varying vec3 n;varying vec3 v;void main(){n=normalize(normalMatrix*normal);vec4 mv=modelViewMatrix*vec4(position,1.);v=-mv.xyz;gl_Position=projectionMatrix*mv;}',fragmentShader:'uniform vec3 glowColor;uniform float glowStrength;varying vec3 n;varying vec3 v;void main(){float f=pow(1.-max(dot(normalize(n),normalize(v)),0.),3.);gl_FragColor=vec4(glowColor,f*glowStrength);}',side:THREE.BackSide,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false}));g.add(atmo);
+      if(i===3||i===8||i===12){var ring=new THREE.Mesh(new THREE.TorusGeometry(size*1.38,.09,8,180),new THREE.MeshStandardMaterial({color:0xb9b4a6,roughness:.78,metalness:.12,transparent:true,opacity:.52}));ring.rotation.set(1.15,.22,.18);g.add(ring);}
+      var moon=new THREE.Mesh(new THREE.SphereGeometry(size*.13,32,24),new THREE.MeshStandardMaterial({color:0x858b91,roughness:1}));moon.position.set(size*1.55,size*.24,-size*.32);g.add(moon);
+      scene.add(g);journeyPlanets.push({route:r,index:i,group:g,mesh:mesh,clouds:clouds,atmo:atmo,size:size,z:g.position.z});
+    });
+    journeyLength=(journeyPlanets.length-1)*spacing+44;
+    raycaster=new THREE.Raycaster();clock=new THREE.Clock();
+    window.addEventListener('resize',onResize,{passive:true});
+    window.addEventListener('scroll',onJourneyScroll,{passive:true});
+    onJourneyScroll();animate();
+  }
+  function onJourneyScroll(){
+    if(!stage||!renderer||selectedPlanet)return;
+    var journey=document.getElementById('no-cinema-journey');if(!journey)return;
+    var rect=journey.getBoundingClientRect(),travel=Math.max(1,journey.offsetHeight-window.innerHeight);
+    journeyProgress=Math.max(0,Math.min(1,-rect.top/travel));
+    var pct=Math.round(journeyProgress*100),bar=stage.querySelector('.no-journey-progress i');
+    if(bar)bar.style.width=pct+'%';var label=stage.querySelector('.no-journey-progress b');if(label)label.textContent=String(pct).padStart(2,'0')+'%';
+    var z=12-journeyProgress*journeyLength,x=Math.sin(journeyProgress*Math.PI*journeyPlanets.length)*1.35;
+    camera.position.set(x,1.15+Math.sin(journeyProgress*18)*.12,z+4.8);
+    camera.lookAt(x*.7,.1,z-24);
+    ship.position.set(x*.58,-1.5+Math.sin(performance.now()*.0007)*.07,z-1.6);
+    var nearest=null,dist=1e9;
+    journeyPlanets.forEach(function(p){var d=Math.abs(p.z-z);if(d<dist){dist=d;nearest=p;}});
+    var panel=stage.querySelector('.no-journey-destination'),button=stage.querySelector('.no-journey-explore');
+    if(dist<18&&nearest){
+      panel.classList.add('is-visible');panel.querySelector('h2').textContent=nearest.route.name.toUpperCase();
+      panel.querySelector('p').textContent=nearest.route.description;
+      panel.querySelector('.no-journey-kicker').textContent='DESTINO '+String(nearest.index+1).padStart(2,'0')+' · APROXIMAÇÃO';
+      button.hidden=false;button.onclick=function(){openPlanetDestination(nearest.route.id);};
+    }else if(journeyProgress<.045){panel.classList.remove('is-visible');panel.querySelector('h2').textContent='ESPAÇO PROFUNDO';panel.querySelector('p').textContent='A nave ainda está cruzando o vazio.';button.hidden=true;}
+    else if(nearest){panel.classList.add('is-visible');panel.querySelector('h2').textContent='PRÓXIMO DESTINO · '+nearest.route.name.toUpperCase();panel.querySelector('p').textContent='A travessia continua. Role para avançar pela rota.';button.hidden=true;}
+    var welcome=stage.querySelector('.no-journey-welcome');welcome.classList.toggle('is-hidden',journeyProgress>.14);
+  }
+  function animate(){
+    requestAnimationFrame(animate);if(!renderer||!scene)return;
+    var dt=Math.min(clock.getDelta(),.05),elapsed=clock.elapsedTime;
+    if(!reduced){
+      journeyPlanets.forEach(function(p,i){p.mesh.rotation.y+=dt*(.018+i*.0005);p.clouds.rotation.y+=dt*(.026+i*.0007);p.group.rotation.z=Math.sin(elapsed*.08+i)*.012;});
+      if(ship&&!selectedPlanet){ship.rotation.z=Math.sin(elapsed*.34)*.012;ship.rotation.x=Math.sin(elapsed*.22)*.009;}
+      if(starField)starField.rotation.y+=dt*.00045;
+      if(landscape){landscape.rotation.y=Math.sin(elapsed*.05)*.012;landscapeClouds.forEach(function(c,i){c.position.x+=dt*(.12+i*.035);if(c.position.x>70)c.position.x=-70;});}
+    }
+    renderer.render(scene,camera);
+  }
+  function createLandscape(index){
+    if(landscape){scene.remove(landscape);landscape.traverse(function(o){if(o.geometry)o.geometry.dispose();if(o.material&&o.material.dispose)o.material.dispose();});}
+    landscape=new THREE.Group();landscapeClouds=[];
+    var r=ROUTES.find(function(x){return x.id===selectedPlanet;})||ROUTES[1],pal=r.palette;
+    scene.background=new THREE.Color(index%3===0?0x9aaeb6:(index%3===1?0x9a8f83:0x728b9a));
+    scene.fog=new THREE.Fog(new THREE.Color(index%3===0?0xa6b7bd:0x8d9ba0),22,150);
+    var groundColor=new THREE.Color(pal[1]),rockColor=new THREE.Color(pal[2]);
+    var geo=new THREE.PlaneGeometry(190,190,150,150);geo.rotateX(-Math.PI/2);
+    var p=geo.attributes.position;
+    for(var i=0;i<p.count;i++){var x=p.getX(i),z=p.getZ(i),h=Math.sin(x*.055+index)*1.7+Math.cos(z*.072-index)*2.2+Math.sin((x+z)*.021)*4.2+Math.pow(Math.max(0,Math.sin(x*.018)*Math.cos(z*.024)),2)*16;p.setY(i,h);}
+    geo.computeVertexNormals();var terrain=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color:groundColor,roughness:1,metalness:.015}));terrain.position.y=-7;terrain.receiveShadow=true;landscape.add(terrain);
+    for(var m=0;m<8;m++){var mountain=new THREE.Mesh(new THREE.ConeGeometry(9+Math.random()*12,20+Math.random()*22,7),new THREE.MeshStandardMaterial({color:rockColor,roughness:1,flatShading:true}));mountain.position.set((m-3.5)*23,-1,-55-Math.random()*28);mountain.rotation.y=Math.random()*Math.PI;landscape.add(mountain);}
+    var water=new THREE.Mesh(new THREE.PlaneGeometry(260,180),new THREE.MeshPhysicalMaterial({color:index%2?0x426c78:0x496e79,roughness:.22,metalness:.08,transparent:true,opacity:.76,clearcoat:.6}));water.rotation.x=-Math.PI/2;water.position.set(0,-5,-38);landscape.add(water);
+    for(var c=0;c<7;c++){var cloud=new THREE.Sprite(new THREE.SpriteMaterial({map:makeNebulaTexture('rgba(235,244,248,.38)'),transparent:true,depthWrite:false,opacity:.45}));cloud.position.set(-65+c*21,18+(c%3)*5,-25-c*12);cloud.scale.set(34,15,1);landscape.add(cloud);landscapeClouds.push(cloud);}
+    var sun=new THREE.DirectionalLight(0xffe3c1,2.6);sun.position.set(-25,40,25);landscape.add(sun);
+    landscape.position.set(0,-1,-20);scene.add(landscape);
+  }
+  function openPlanetDestination(id){
+    if(selectedPlanet||!camera)return;
+    var entry=journeyPlanets.find(function(p){return p.route.id===id;});if(!entry)return;
+    selectedPlanet=id;current=id;
+    if(typeof originalGo==='function')originalGo.call(window,id);
+    stage.classList.add('is-planet-landing');
+    stage.querySelector('.no-journey-landing').classList.add('is-active');
+    stage.querySelector('.no-journey-landing b').textContent='NAVE EM APROXIMAÇÃO · '+entry.route.name.toUpperCase();
+    var from=camera.position.clone(),target=new THREE.Vector3(entry.group.position.x,entry.group.position.y+entry.size*.22,entry.group.position.z+entry.size*3.6);
+    var start=performance.now(),duration=3900;
+    function approach(now){var t=Math.min(1,(now-start)/duration),e=t*t*(3-2*t);camera.position.lerpVectors(from,target,e);camera.lookAt(entry.group.position);ship.position.lerpVectors(ship.position,new THREE.Vector3(target.x-1,target.y-1,target.z+entry.size*1.5),.055);if(t<1)requestAnimationFrame(approach);else{
+      scene.remove(entry.group);createLandscape(entry.index);camera.position.set(0,7,34);camera.lookAt(0,0,-25);
+      stage.querySelector('.no-journey-landing b').textContent='POUSO CONCLUÍDO · '+entry.route.name.toUpperCase();
+      var wrap=document.querySelector('.wrap');if(wrap){wrap.classList.add('no-planet-exploration');wrap.dataset.planet=id;window.setTimeout(function(){wrap.scrollIntoView({behavior:reduced?'auto':'smooth',block:'start'});},500);}
+    }}
+    requestAnimationFrame(approach);
+  }
+  function landOnPlanet(){var p=journeyPlanets.find(function(x){return x.route.id===current;});if(p)openPlanetDestination(p.route.id);}
+  function beginTravel(id){var p=journeyPlanets.find(function(x){return x.route.id===routeId(id);});if(p)openPlanetDestination(p.route.id);}
+  function updateTransition(){}
+  function wrapNavigation(){
+    if(typeof originalGo!=='function')return;
+    window.go=function(id,fromHistory){
+      var next=routeId(id);
+      if(next==='overview'){current='overview';if(typeof originalGo==='function')return originalGo.apply(this,arguments);return;}
+      openPlanetDestination(next);
+    };
+    document.addEventListener('click',function(ev){var b=ev.target.closest('#nav button[data-id],#no-mobile-nav button[data-id]');if(!b)return;ev.preventDefault();ev.stopImmediatePropagation();window.go(b.dataset.id);},true);
+    var content=document.getElementById('content');if(content&&window.MutationObserver){var observer=new MutationObserver(function(){syncTopics();});observer.observe(content,{childList:true,subtree:true,characterData:true});}
+  }
+  function start(){
+    buildStage();wrapNavigation();buildNavigation();loadThree();
+    var search=document.getElementById('search');if(search)search.addEventListener('input',function(){var q=search.value.trim().toLowerCase();if(!q)return;var root=document.getElementById('content');var match=root&&Array.prototype.find.call(root.querySelectorAll('h2,h3,h4,p,.row'),function(el){return(el.textContent||'').toLowerCase().indexOf(q)>=0;});if(match)match.scrollIntoView({behavior:'smooth',block:'center'});});
+  }
+
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});
   else start();
 })();
