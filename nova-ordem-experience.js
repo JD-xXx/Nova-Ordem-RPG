@@ -1055,7 +1055,7 @@
       var key=new THREE.DirectionalLight(k==='volcanic'||k==='geothermal'?0xffb18a:0xffe8d2,2.45);
       key.position.set(-32,58,28);key.castShadow=true;group.add(key);
       group.add(new THREE.HemisphereLight(0xc9dce7,0x292722,.82));
-      group.position.set(0,0,-22-segIndex*86);
+      group.position.set(0,0,-22-segIndex*168);
       scene.add(group);landscapeSegments.push(group);
       var skyHex=k==='glacier'||k==='frozen-coast'?0xa8c5d1:
         k==='desert'||k==='badlands'||k==='canyon'||k==='salt'?0xc2a17e:
@@ -1128,7 +1128,7 @@
     var wrap=document.querySelector('.wrap');if(!wrap)return;
     var rect=wrap.getBoundingClientRect(),span=Math.max(1,wrap.offsetHeight-window.innerHeight);
     var p=Math.max(0,Math.min(1,-rect.top/span));
-    var travel=330,segmentFloat=p*3,segment=Math.min(2,Math.floor(segmentFloat)),blend=segmentFloat-segment;
+    var travel=520,segmentFloat=p*3,segment=Math.min(2,Math.floor(segmentFloat)),blend=segmentFloat-segment;
     var z=28-p*travel,x=Math.sin(p*Math.PI*3)*8;
     camera.position.set(x,8+Math.sin(p*Math.PI*4)*1.4,z);
     camera.lookAt(x*.38,0,z-43);
