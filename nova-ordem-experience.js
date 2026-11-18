@@ -470,7 +470,7 @@
     var moon=new THREE.Mesh(new THREE.SphereGeometry(.43,32,24),new THREE.MeshStandardMaterial({color:0x89939c,roughness:1,metalness:.05}));
     moon.position.set(3.65,.7,-1.4);planetGroup.add(moon);
     var moonLight=new THREE.PointLight(0x9bc8e5,.28,4);moonLight.position.copy(moon.position);planetGroup.add(moonLight);
-    ship=buildShip();scene.add(ship);
+    ship=buildShip();scene.add(ship);ark=buildArk();scene.add(ark);
     raycaster=new THREE.Raycaster();
     clock=new THREE.Clock();
     window.addEventListener('resize',onResize,{passive:true});
@@ -736,7 +736,7 @@
   };
 
   function styleBumpScale(index){return index%7===5?.035:(index%7===2?.105:.075);}
-  var journeyPlanets=[],journeyProgress=0,selectedPlanet=null,landscape=null,landscapeClouds=[],journeyLength=0;
+  var journeyPlanets=[],journeyProgress=0,selectedPlanet=null,landscape=null,landscapeClouds=[],journeyLength=0,ark=null,journeyCelestials=[];
   function onJourneyPointer(ev){
     if(!raycaster||!camera||!journeyPlanets.length||ev.target.closest('button'))return;
     var rect=canvas.getBoundingClientRect(),mouse=new THREE.Vector2((ev.clientX-rect.left)/rect.width*2-1,-((ev.clientY-rect.top)/rect.height*2-1));
@@ -744,6 +744,33 @@
     var hits=raycaster.intersectObjects(journeyPlanets.map(function(p){return p.mesh;}),false);
     if(hits.length){var found=journeyPlanets.find(function(p){return p.mesh===hits[0].object;});if(found)openPlanetDestination(found.route.id);}
   }
+  function buildArk(){
+    var root=new THREE.Group(),body=new THREE.Group();root.add(body);
+    var shell=new THREE.MeshPhysicalMaterial({color:0xc8d6df,metalness:.62,roughness:.26,clearcoat:.85});
+    var dark=new THREE.MeshStandardMaterial({color:0x172b3a,metalness:.8,roughness:.3});
+    var joint=new THREE.MeshStandardMaterial({color:0x597181,metalness:.82,roughness:.24});
+    var cyan=new THREE.MeshStandardMaterial({color:0x64e6f5,emissive:0x1689ad,emissiveIntensity:2.2,metalness:.2,roughness:.18});
+    var visor=new THREE.MeshPhysicalMaterial({color:0x061725,metalness:.75,roughness:.1,clearcoat:1,emissive:0x08283a,emissiveIntensity:.65});
+    function part(g,m,x,y,z,rx,ry,rz){var o=new THREE.Mesh(g,m);o.position.set(x,y,z);o.rotation.set(rx||0,ry||0,rz||0);body.add(o);return o;}
+    part(new THREE.CylinderGeometry(.13,.2,.42,14),shell,0,.02,0);
+    part(new THREE.BoxGeometry(.37,.24,.24),dark,0,.09,.02);
+    part(new THREE.SphereGeometry(.22,24,18),shell,0,.39,0).scale.set(.88,1.05,.82);
+    part(new THREE.SphereGeometry(.17,24,16),visor,0,.405,.105).scale.set(1,.72,.38);
+    part(new THREE.BoxGeometry(.19,.025,.018),cyan,0,.405,.17);
+    part(new THREE.CylinderGeometry(.035,.045,.24,10),joint,-.235,.04,0,0,0,-.12);
+    part(new THREE.CylinderGeometry(.035,.045,.24,10),joint,.235,.04,0,0,0,.12);
+    part(new THREE.SphereGeometry(.075,14,10),shell,-.29,-.105,0);
+    part(new THREE.SphereGeometry(.075,14,10),shell,.29,-.105,0);
+    part(new THREE.CylinderGeometry(.045,.055,.25,10),dark,-.09,-.27,0,0,0,-.08);
+    part(new THREE.CylinderGeometry(.045,.055,.25,10),dark,.09,-.27,0,0,0,.08);
+    part(new THREE.BoxGeometry(.13,.07,.2),shell,-.1,-.405,.015);
+    part(new THREE.BoxGeometry(.13,.07,.2),shell,.1,-.405,.015);
+    part(new THREE.ConeGeometry(.095,.34,5),dark,-.2,.22,-.12,0,0,.42);
+    part(new THREE.ConeGeometry(.095,.34,5),dark,.2,.22,-.12,0,0,-.42);
+    var halo=part(new THREE.TorusGeometry(.31,.025,8,40),cyan,0,.02,-.18,Math.PI/2);
+    root.scale.setScalar(.92);root.userData={body:body,halo:halo};return root;
+  }
+
   function buildScene(){
     scene=new THREE.Scene();scene.background=new THREE.Color(0x01040a);scene.fog=new THREE.FogExp2(0x01040a,.0018);
     camera=new THREE.PerspectiveCamera(48,window.innerWidth/window.innerHeight,.1,900);
@@ -775,10 +802,10 @@
       scene.add(g);journeyPlanets.push({route:r,index:i,group:g,mesh:mesh,clouds:clouds,atmo:atmo,size:size,z:g.position.z});
     });
     var solarGlow=new THREE.Mesh(new THREE.SphereGeometry(10,96,64),new THREE.MeshBasicMaterial({color:0xffd69a}));
-    solarGlow.position.set(0,0,-58-journeyPlanets.length*spacing-28);scene.add(solarGlow);
+    solarGlow.position.set(0,0,-58-journeyPlanets.length*spacing-28);scene.add(solarGlow);journeyCelestials.push(solarGlow);
     var corona=new THREE.Mesh(new THREE.SphereGeometry(12.2,64,48),new THREE.MeshBasicMaterial({color:0xff9d54,transparent:true,opacity:.12,side:THREE.BackSide,blending:THREE.AdditiveBlending,depthWrite:false}));
-    corona.position.copy(solarGlow.position);scene.add(corona);
-    var sunLight=new THREE.PointLight(0xffc887,8,260);sunLight.position.copy(solarGlow.position);scene.add(sunLight);
+    corona.position.copy(solarGlow.position);scene.add(corona);journeyCelestials.push(corona);
+    var sunLight=new THREE.PointLight(0xffc887,8,260);sunLight.position.copy(solarGlow.position);scene.add(sunLight);journeyCelestials.push(sunLight);
     journeyLength=58+(journeyPlanets.length-1)*spacing+70;
     raycaster=new THREE.Raycaster();clock=new THREE.Clock();
     window.addEventListener('resize',onResize,{passive:true});
@@ -814,52 +841,79 @@
     if(!reduced){
       journeyPlanets.forEach(function(p,i){p.mesh.rotation.y+=dt*(.018+i*.0005);p.clouds.rotation.y+=dt*(.026+i*.0007);p.group.rotation.z=Math.sin(elapsed*.08+i)*.012;});
       if(ship&&!selectedPlanet){ship.rotation.z=Math.sin(elapsed*.34)*.012;ship.rotation.x=Math.sin(elapsed*.22)*.009;}
+      if(ark&&ship){
+        var a=elapsed*.82,rad=selectedPlanet?1.2:2.25;
+        ark.position.set(ship.position.x+Math.cos(a)*rad,ship.position.y+.5+Math.sin(a*1.7)*.62,ship.position.z+Math.sin(a)*1.7);
+        ark.rotation.y=a+Math.PI*.5;ark.rotation.z=Math.sin(a*1.7)*.13;
+        if(ark.userData&&ark.userData.body){ark.userData.body.rotation.y=Math.sin(elapsed*1.3)*.12;ark.userData.halo.rotation.z+=dt*.8;}
+      }
       if(starField)starField.rotation.y+=dt*.00045;
-      if(landscape){landscape.rotation.y=Math.sin(elapsed*.05)*.012;landscapeClouds.forEach(function(c,i){c.position.x+=dt*(.12+i*.035);if(c.position.x>70)c.position.x=-70;});}
+      if(landscape){landscape.rotation.y=Math.sin(elapsed*.05)*.006;landscapeClouds.forEach(function(c,i){c.position.x+=dt*(.12+i*.035);if(c.position.x>70)c.position.x=-70;});}
     }
     renderer.render(scene,camera);
   }
+
   function createLandscape(index){
-    if(landscape){scene.remove(landscape);landscape.traverse(function(o){if(o.geometry)o.geometry.dispose();if(o.material&&o.material.dispose)o.material.dispose();});}
-    landscape=new THREE.Group();landscapeClouds=[];
-    var r=ROUTES.find(function(x){return x.id===selectedPlanet;})||ROUTES[1],pal=r.palette;
-    scene.background=new THREE.Color(index%3===0?0x9aaeb6:(index%3===1?0x9a8f83:0x728b9a));
-    scene.fog=new THREE.Fog(new THREE.Color(index%3===0?0xa6b7bd:0x8d9ba0),22,150);
-    var groundColor=new THREE.Color(pal[1]),rockColor=new THREE.Color(pal[2]);
-    var geo=new THREE.PlaneGeometry(220,220,190,190);geo.rotateX(-Math.PI/2);
-    var p=geo.attributes.position,vertexColors=[];
-    for(var i=0;i<p.count;i++){
-      var x=p.getX(i),z=p.getZ(i),continental=Math.sin(x*.024+index*.7)*Math.cos(z*.031-index*.4);
-      var ridged=Math.abs(Math.sin(x*.047+index)*Math.cos(z*.052-index));
-      var micro=Math.sin(x*.19+z*.11+index)*.28+Math.cos(z*.17-x*.13)*.22;
-      var h=continental*4.4+ridged*5.5+micro+Math.pow(Math.max(0,continental),2)*17;
-      if(index%4===1)h+=Math.sin(x*.035+z*.018)*2.8;
-      if(index%4===2)h+=Math.abs(Math.sin(x*.027)*Math.cos(z*.031))*7;
-      p.setY(i,h);
-      var shade=Math.max(0,Math.min(1,(h+5)/25)),vc=new THREE.Color();
-      if(index%4===0){vc.setRGB(.075+shade*.11,.12+shade*.18,.095+shade*.10);}
-      else if(index%4===1){vc.setRGB(.24+shade*.23,.19+shade*.19,.13+shade*.12);}
-      else if(index%4===2){vc.setRGB(.22+shade*.32,.29+shade*.32,.31+shade*.34);}
-      else{vc.setRGB(.16+shade*.22,.22+shade*.24,.25+shade*.27);}
-      vertexColors.push(vc.r,vc.g,vc.b);
+    if(landscape){scene.remove(landscape);landscape.traverse(function(o){if(o.geometry)o.geometry.dispose();if(o.material){if(Array.isArray(o.material))o.material.forEach(function(m){m.dispose();});else o.material.dispose();}});}
+    var route=ROUTES.find(function(x){return x.id===selectedPlanet;})||ROUTES[1];
+    var biomes={
+      lore:{type:'crystal',sky:0x9aabb9,ground:[.20,.25,.31],rock:[.43,.53,.61],wet:false},
+      agency:{type:'coast',sky:0x91aeb9,ground:[.16,.25,.23],rock:[.36,.43,.43],wet:true},
+      organizations:{type:'badlands',sky:0xb39a7e,ground:[.39,.25,.16],rock:[.57,.39,.25],wet:false},
+      characters:{type:'temperate',sky:0x9eb8a6,ground:[.12,.24,.13],rock:[.34,.39,.28],wet:true},
+      protocol:{type:'glacier',sky:0xa8c1cf,ground:[.55,.65,.69],rock:[.72,.79,.81],wet:true},
+      systems:{type:'volcanic',sky:0x786d6a,ground:[.12,.10,.10],rock:[.27,.23,.22],wet:false},
+      power:{type:'desert',sky:0xc0a17d,ground:[.53,.35,.18],rock:[.69,.49,.29],wet:false},
+      combat:{type:'ash',sky:0x898582,ground:[.20,.19,.18],rock:[.37,.34,.31],wet:false},
+      progression:{type:'alpine',sky:0x9eb3b2,ground:[.22,.31,.23],rock:[.48,.53,.49],wet:true},
+      races:{type:'jungle',sky:0x8ca99b,ground:[.08,.19,.11],rock:[.25,.34,.25],wet:true},
+      equipment:{type:'rocky',sky:0x9aa1a6,ground:[.29,.30,.29],rock:[.49,.51,.51],wet:false},
+      crafting:{type:'geothermal',sky:0x9b8a78,ground:[.29,.19,.12],rock:[.48,.32,.20],wet:false},
+      economy:{type:'salt',sky:0xb7b4a8,ground:[.57,.55,.48],rock:[.67,.63,.54],wet:true},
+      ranks:{type:'highland',sky:0x9daeb9,ground:[.30,.34,.34],rock:[.55,.58,.58],wet:false}
+    };
+    var b=biomes[route.id]||biomes.alpine,seed=index+19,kind=b.type;
+    landscape=new THREE.Group();landscapeClouds=[];scene.background=new THREE.Color(b.sky);scene.fog=new THREE.Fog(new THREE.Color(b.sky),28,175);
+    var geo=new THREE.PlaneGeometry(260,260,190,190);geo.rotateX(-Math.PI/2);
+    var pos=geo.attributes.position,colors=[];
+    function wave(x,z,scale,offset){return Math.sin(x*scale+seed*offset)*Math.cos(z*scale*1.17-seed*offset*.73);}
+    for(var i=0;i<pos.count;i++){
+      var x=pos.getX(i),z=pos.getZ(i),broad=wave(x,z,.022,.8),ridge=1-Math.abs(wave(x,z,.047,1.7)),detail=wave(x,z,.13,2.4)*.45+wave(x,z,.29,3.1)*.16;
+      var h=broad*3.2+ridge*3.8+detail;
+      if(kind==='badlands'||kind==='desert'||kind==='salt')h+=Math.sin(x*.034+z*.012)*2.6;
+      if(kind==='glacier'||kind==='alpine'||kind==='highland')h+=Math.pow(Math.max(0,ridge-.48),2)*28;
+      if(kind==='volcanic'||kind==='ash'||kind==='geothermal')h+=Math.pow(Math.max(0,ridge-.58),2)*19;
+      if(kind==='coast'||kind==='temperate'||kind==='jungle')h+=Math.sin(x*.018+z*.013)*1.5;
+      pos.setY(i,h);
+      var elevation=Math.max(0,Math.min(1,(h+5)/29)),slope=Math.abs(broad-ridge);
+      var vc=new THREE.Color().setRGB(b.ground[0],b.ground[1],b.ground[2]);
+      vc.lerp(new THREE.Color().setRGB(b.rock[0],b.rock[1],b.rock[2]),Math.max(0,Math.min(1,elevation*.72+slope*.34)));
+      if((kind==='glacier'||kind==='alpine'||kind==='highland')&&elevation>.65)vc.lerp(new THREE.Color(0xdce8ec),Math.min(.9,(elevation-.65)*2.8));
+      if((kind==='volcanic'||kind==='geothermal')&&detail>.35)vc.lerp(new THREE.Color(0x8e3820),Math.min(.65,(detail-.35)*1.4));
+      if(kind==='jungle'||kind==='temperate'||kind==='coast')vc.multiplyScalar(.82+Math.max(0,detail)*.24);
+      colors.push(vc.r,vc.g,vc.b);
     }
-    geo.setAttribute('color',new THREE.Float32BufferAttribute(vertexColors,3));
-    geo.computeVertexNormals();
-    var terrain=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({vertexColors:true,roughness:.96,metalness:.015}));terrain.position.y=-7;terrain.receiveShadow=true;landscape.add(terrain);
-    for(var m=0;m<8;m++){var mountain=new THREE.Mesh(new THREE.ConeGeometry(9+Math.random()*12,20+Math.random()*22,7),new THREE.MeshStandardMaterial({color:rockColor,roughness:1,flatShading:true}));mountain.position.set((m-3.5)*23,-1,-55-Math.random()*28);mountain.rotation.y=Math.random()*Math.PI;landscape.add(mountain);}
-    if(index%4===0||index%4===3){
-      for(var ti=0;ti<54;ti++){
-        var tx=(Math.sin(ti*91.7+index)*.5+.5)*170-85,tz=-10-(Math.cos(ti*47.3+index)*.5+.5)*95;
-        var trunk=new THREE.Mesh(new THREE.CylinderGeometry(.16,.25,3.8,7),new THREE.MeshStandardMaterial({color:0x40372d,roughness:1}));
-        trunk.position.set(tx,-4.8,tz);landscape.add(trunk);
-        for(var layer=0;layer<3;layer++){var crown=new THREE.Mesh(new THREE.ConeGeometry(1.6-layer*.22,3.6,8),new THREE.MeshStandardMaterial({color:index%4===0?0x29463d:0x53665a,roughness:1,flatShading:true}));crown.position.set(tx,-2.4+layer*1.45,tz);landscape.add(crown);}
-      }
+    geo.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));geo.computeVertexNormals();
+    var terrain=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({vertexColors:true,roughness:.98,metalness:.01}));terrain.position.y=-8;terrain.receiveShadow=true;landscape.add(terrain);
+    var rockGeo=new THREE.DodecahedronGeometry(1,1),rockMat=new THREE.MeshStandardMaterial({color:new THREE.Color(b.rock[0],b.rock[1],b.rock[2]),roughness:1,flatShading:true});
+    var rockCount=(kind==='glacier'||kind==='highland')?34:52,rocks=new THREE.InstancedMesh(rockGeo,rockMat,rockCount),dummy=new THREE.Object3D();
+    for(var ri=0;ri<rockCount;ri++){var side=ri%2?1:-1,rx=side*(24+(ri*17%57)),rz=-20-(ri*29%105),height=5+(ri*13%17);dummy.position.set(rx,-5+height*.25,rz);dummy.rotation.set((ri%7)*.12,(ri*1.7)%6.28,(ri%5)*.08);dummy.scale.set(3+(ri%4)*1.7,height,3+(ri%3)*1.4);dummy.updateMatrix();rocks.setMatrixAt(ri,dummy.matrix);}
+    landscape.add(rocks);
+    if(kind==='temperate'||kind==='jungle'||kind==='coast'||kind==='alpine'){
+      var count=kind==='jungle'?150:(kind==='temperate'?112:kind==='coast'?62:46),trunkGeo=new THREE.CylinderGeometry(.12,.24,3.7,7),crownGeo=kind==='jungle'?new THREE.SphereGeometry(1.45,9,7):new THREE.ConeGeometry(1.55,4.1,8);
+      var trunks=new THREE.InstancedMesh(trunkGeo,new THREE.MeshStandardMaterial({color:0x514333,roughness:1}),count),crowns=new THREE.InstancedMesh(crownGeo,new THREE.MeshStandardMaterial({color:kind==='jungle'?0x214c35:0x31513a,roughness:1}),count);
+      for(var ti=0;ti<count;ti++){var tx=((ti*47+seed*31)%190)-95,tz=-8-((ti*71+seed*17)%145),sc=.65+((ti*13)%8)*.13;dummy.position.set(tx,-5.2,tz);dummy.scale.set(sc,sc,sc);dummy.rotation.set(0,(ti*1.31)%6.28,0);dummy.updateMatrix();trunks.setMatrixAt(ti,dummy.matrix);dummy.position.set(tx,-2.8+sc*.45,tz);dummy.updateMatrix();crowns.setMatrixAt(ti,dummy.matrix);}
+      landscape.add(trunks);landscape.add(crowns);
     }
-    var water=new THREE.Mesh(new THREE.PlaneGeometry(260,180),new THREE.MeshPhysicalMaterial({color:index%2?0x426c78:0x496e79,roughness:.22,metalness:.08,transparent:true,opacity:.76,clearcoat:.6}));water.rotation.x=-Math.PI/2;water.position.set(0,-5,-38);landscape.add(water);
-    for(var c=0;c<7;c++){var cloud=new THREE.Sprite(new THREE.SpriteMaterial({map:makeNebulaTexture('rgba(235,244,248,.38)'),transparent:true,depthWrite:false,opacity:.45}));cloud.position.set(-65+c*21,18+(c%3)*5,-25-c*12);cloud.scale.set(34,15,1);landscape.add(cloud);landscapeClouds.push(cloud);}
-    var sun=new THREE.DirectionalLight(0xffe3c1,2.6);sun.position.set(-25,40,25);landscape.add(sun);
+    if(kind==='desert'||kind==='badlands'||kind==='salt'){for(var di=0;di<12;di++){var dune=new THREE.Mesh(new THREE.SphereGeometry(1,24,14),new THREE.MeshStandardMaterial({color:kind==='salt'?0xc7c2b2:0xb18a5b,roughness:1}));dune.scale.set(15+(di%4)*5,2.4+(di%3),9+(di%3)*3);dune.position.set((di%2?1:-1)*(18+(di*11%48)),-5,-18-(di*17%100));landscape.add(dune);}}
+    if(kind==='crystal'){var crystalMat=new THREE.MeshPhysicalMaterial({color:0x80c9d8,metalness:.22,roughness:.18,transmission:.18,thickness:.8,emissive:0x12394a,emissiveIntensity:.25});for(var ci=0;ci<28;ci++){var crystal=new THREE.Mesh(new THREE.ConeGeometry(.7+(ci%4)*.25,4+(ci%5)*2,6),crystalMat);crystal.position.set((ci*31%150)-75,-4,-12-(ci*23%105));crystal.rotation.z=(ci%5-2)*.12;landscape.add(crystal);}}
+    if(kind==='volcanic'||kind==='geothermal'){var lavaMat=new THREE.MeshBasicMaterial({color:kind==='volcanic'?0xff5a20:0xff9b43});for(var li=0;li<13;li++){var fissure=new THREE.Mesh(new THREE.BoxGeometry(.18+(li%3)*.16,.035,8+(li%4)*3),lavaMat);fissure.position.set((li*19%130)-65,-3.5,-12-(li*21%115));fissure.rotation.y=(li%6)*.16;landscape.add(fissure);}}
+    if(b.wet){var waterMat=new THREE.MeshPhysicalMaterial({color:kind==='glacier'?0x8fb8c7:0x315d68,roughness:.17,metalness:.08,transparent:true,opacity:.88,clearcoat:1});var water=new THREE.Mesh(new THREE.PlaneGeometry(180,100),waterMat);water.rotation.x=-Math.PI/2;water.position.set(0,-5.25,-48);landscape.add(water);}
+    for(var cl=0;cl<6;cl++){var cloud=new THREE.Sprite(new THREE.SpriteMaterial({map:makeNebulaTexture('rgba(238,246,250,.34)'),transparent:true,depthWrite:false,opacity:.42}));cloud.position.set(-75+cl*29,19+(cl%3)*6,-35-cl*19);cloud.scale.set(48,20,1);landscape.add(cloud);landscapeClouds.push(cloud);}
+    var keyLight=new THREE.DirectionalLight(kind==='volcanic'?0xffb18a:0xffe8cc,kind==='volcanic'?2.2:2.7);keyLight.position.set(-28,42,24);landscape.add(keyLight);landscape.add(new THREE.HemisphereLight(0xc3d8e5,0x34302b,.72));
     landscape.position.set(0,-1,-20);scene.add(landscape);
   }
+
   function openPlanetDestination(id){
     if(selectedPlanet||!camera)return;
     var entry=journeyPlanets.find(function(p){return p.route.id===id;});if(!entry)return;
@@ -871,7 +925,7 @@
     var from=camera.position.clone(),target=new THREE.Vector3(entry.group.position.x,entry.group.position.y+entry.size*.22,entry.group.position.z+entry.size*3.6);
     var start=performance.now(),duration=3900;
     function approach(now){var t=Math.min(1,(now-start)/duration),e=t*t*(3-2*t);camera.position.lerpVectors(from,target,e);camera.lookAt(entry.group.position);ship.position.lerpVectors(ship.position,new THREE.Vector3(target.x-1,target.y-1,target.z+entry.size*1.5),.055);if(t<1)requestAnimationFrame(approach);else{
-      scene.remove(entry.group);createLandscape(entry.index);ship.position.set(-8,-2.1,5);ship.rotation.set(.015,Math.PI/2,-.025);camera.position.set(0,7,34);camera.lookAt(0,0,-25);
+      journeyPlanets.forEach(function(p){scene.remove(p.group);});journeyCelestials.forEach(function(o){scene.remove(o);});if(starField)starField.visible=false;createLandscape(entry.index);ship.position.set(-8,-2.1,5);ship.rotation.set(.015,Math.PI/2,-.025);camera.position.set(0,7,34);camera.lookAt(0,0,-25);
       stage.querySelector('.no-journey-landing b').textContent='POUSO CONCLUÍDO · '+entry.route.name.toUpperCase();
       var wrap=document.querySelector('.wrap');if(wrap){wrap.classList.add('no-planet-exploration');wrap.dataset.planet=id;window.setTimeout(function(){wrap.scrollIntoView({behavior:reduced?'auto':'smooth',block:'start'});},500);}
     }}
@@ -925,7 +979,7 @@
     var wrap=document.querySelector('.wrap');if(wrap){wrap.classList.remove('no-planet-exploration');delete wrap.dataset.planet;}
     if(landscape){scene.remove(landscape);landscape=null;landscapeClouds=[];}
     scene.background=new THREE.Color(0x01040a);scene.fog=new THREE.FogExp2(0x01040a,.0018);
-    journeyPlanets.forEach(function(p){if(!p.group.parent)scene.add(p.group);});
+    journeyPlanets.forEach(function(p){if(!p.group.parent)scene.add(p.group);});journeyCelestials.forEach(function(o){if(!o.parent)scene.add(o);});if(starField)starField.visible=true;
     stage.classList.remove('is-planet-landing');
     stage.querySelector('.no-journey-landing').classList.remove('is-active');
     var journey=document.getElementById('no-cinema-journey');if(journey)window.scrollTo({top:journey.offsetTop,behavior:reduced?'auto':'smooth'});
