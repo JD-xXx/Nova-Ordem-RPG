@@ -860,8 +860,9 @@
       (kind==='desert'||kind==='badlands'||kind==='canyon'||kind==='salt')?'aerial_sand':'aerial_rocks_02';
     var cached=landscapePhotoCache[asset];
     if(cached){
+      cached.materials.push(material);
       if(cached.map)material.map=cached.map;
-      if(cached.normal)material.normalMap=cached.normal;
+      if(cached.normal){material.normalMap=cached.normal;material.normalScale.set(.72,.72);}
       material.needsUpdate=true;
       return;
     }
