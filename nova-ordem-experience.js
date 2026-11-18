@@ -799,6 +799,49 @@
     var search=document.getElementById('search');if(search)search.addEventListener('input',function(){var q=search.value.trim().toLowerCase();if(!q)return;var root=document.getElementById('content');var match=root&&Array.prototype.find.call(root.querySelectorAll('h2,h3,h4,p,.row'),function(el){return(el.textContent||'').toLowerCase().indexOf(q)>=0;});if(match)match.scrollIntoView({behavior:'smooth',block:'center'});});
   }
 
+
+  function onLandscapeScroll(){
+    if(!landscape||!selectedPlanet)return;
+    var wrap=document.querySelector('.wrap');if(!wrap)return;
+    var rect=wrap.getBoundingClientRect(),span=Math.max(1,wrap.offsetHeight-window.innerHeight);
+    var p=Math.max(0,Math.min(1,-rect.top/span));
+    camera.position.set(Math.sin(p*Math.PI*2)*13,7+Math.sin(p*Math.PI*3)*3,34-p*23);
+    camera.lookAt(Math.sin(p*Math.PI*2)*4,0,-26-p*38);
+    landscape.rotation.y=p*.22;
+    landscape.position.z=-20-p*12;
+  }
+  function returnToJourney(){
+    selectedPlanet=null;current='overview';
+    var wrap=document.querySelector('.wrap');if(wrap){wrap.classList.remove('no-planet-exploration');delete wrap.dataset.planet;}
+    if(landscape){scene.remove(landscape);landscape=null;landscapeClouds=[];}
+    scene.background=new THREE.Color(0x01040a);scene.fog=new THREE.FogExp2(0x01040a,.0018);
+    journeyPlanets.forEach(function(p){if(!p.group.parent)scene.add(p.group);});
+    stage.classList.remove('is-planet-landing');
+    stage.querySelector('.no-journey-landing').classList.remove('is-active');
+    var journey=document.getElementById('no-cinema-journey');if(journey)window.scrollTo({top:journey.offsetTop,behavior:reduced?'auto':'smooth'});
+    onJourneyScroll();
+  }
+  var oldOpenPlanetDestination=openPlanetDestination;
+  openPlanetDestination=function(id){
+    oldOpenPlanetDestination(id);
+    window.addEventListener('scroll',onLandscapeScroll,{passive:true});
+  };
+  var oldWrapNavigation=wrapNavigation;
+  wrapNavigation=function(){
+    if(typeof originalGo!=='function')return;
+    window.go=function(id,fromHistory){
+      var next=routeId(id);
+      if(next==='overview'){returnToJourney();return originalGo.apply(this,arguments);}
+      if(selectedPlanet===next){return originalGo.apply(this,arguments);}
+      if(selectedPlanet&&selectedPlanet!==next)returnToJourney();
+      openPlanetDestination(next);
+    };
+    document.addEventListener('click',function(ev){
+      var b=ev.target.closest('#nav button[data-id],#no-mobile-nav button[data-id]');
+      if(!b)return;ev.preventDefault();ev.stopImmediatePropagation();window.go(b.dataset.id);
+    },true);
+  };
+
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});
   else start();
 })();
