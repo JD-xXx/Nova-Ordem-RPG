@@ -37,20 +37,20 @@
   var palettes = {};
 
   var ECOLOGIES = {
-    lore:{type:'crystal',sky:0x87739f,ground:[.13,.075,.20],rock:[.39,.27,.51],flora:0x8650a5,floraLight:0xc08bd6,trunk:0x33243e,water:0x586eaa,accent:0xb78cdb,sun:0xffd7f2,fill:0x7768ad,terrainTint:0xcfc0dc,rockTint:0x8e77a2,cloud:'rgba(190,155,225,.30)',cloudRGB:[186,150,220],surface:['#19152c','#53366b','#a77ab9','#e5d8ee'],wet:true},
-    agency:{type:'coast',sky:0x91b7bd,ground:[.075,.18,.16],rock:[.30,.43,.41],flora:0x4b9b8b,floraLight:0x91c9b5,trunk:0x34483e,water:0x317f91,accent:0x70c9d0,sun:0xffe4c1,fill:0x72a9b5,terrainTint:0xc5d9d0,rockTint:0x708e88,cloud:'rgba(165,218,218,.28)',cloudRGB:[160,212,214],surface:['#102c38','#286d70','#76b9a4','#d7e9d9'],wet:true},
-    organizations:{type:'badlands',sky:0xa77a70,ground:[.29,.085,.075],rock:[.59,.25,.20],flora:0x9d3542,floraLight:0xe06b58,trunk:0x4a2828,water:0x713d4a,accent:0xd75d58,sun:0xffd0aa,fill:0xa35a55,terrainTint:0xe0b5a2,rockTint:0x98605a,cloud:'rgba(224,145,120,.22)',cloudRGB:[214,132,112],surface:['#351b25','#8c343d','#c66a58','#edc0a0'],wet:false},
-    characters:{type:'temperate',sky:0x92b29a,ground:[.065,.17,.085],rock:[.28,.39,.26],flora:0x43834b,floraLight:0x9fbd62,trunk:0x493b2c,water:0x397d70,accent:0x86b875,sun:0xffe6bd,fill:0x76a88a,terrainTint:0xc8d6b4,rockTint:0x6c8260,cloud:'rgba(181,218,182,.24)',cloudRGB:[174,212,176],surface:['#102b29','#2e6d4d','#82a96d','#d9e2bb'],wet:true},
-    protocol:{type:'glacier',sky:0x9bbdce,ground:[.27,.40,.49],rock:[.70,.80,.86],flora:0x5c9caf,floraLight:0xb4e6ed,trunk:0x405b69,water:0x4c91b5,accent:0x9de5f1,sun:0xe7f6ff,fill:0x7dbbd4,terrainTint:0xd5e7ed,rockTint:0x9bbac8,cloud:'rgba(211,239,250,.32)',cloudRGB:[202,230,244],surface:['#203d54','#608da8','#a9d5e1','#edf8fb'],wet:true},
-    systems:{type:'volcanic',sky:0x77666b,ground:[.075,.045,.05],rock:[.29,.13,.15],flora:0x792b3c,floraLight:0xd04a45,trunk:0x282329,water:0x5a2635,accent:0xff6845,sun:0xffa477,fill:0x824451,terrainTint:0xb98c83,rockTint:0x68444a,cloud:'rgba(218,115,92,.20)',cloudRGB:[210,104,82],surface:['#17151d','#57252f','#a84439','#d38b6c'],wet:false},
-    power:{type:'desert',sky:0xb99a6d,ground:[.39,.25,.10],rock:[.70,.49,.24],flora:0xa77b28,floraLight:0xe3c16a,trunk:0x57432a,water:0x5c7e83,accent:0xe6b75d,sun:0xffe0a0,fill:0xc28b4e,terrainTint:0xe2c69a,rockTint:0xa78956,cloud:'rgba(241,207,150,.20)',cloudRGB:[230,194,135],surface:['#3c2c1b','#94703b','#c5a05a','#efdbac'],wet:false},
-    combat:{type:'ash',sky:0x82706e,ground:[.13,.065,.075],rock:[.37,.18,.19],flora:0x8c2736,floraLight:0xd45b53,trunk:0x302329,water:0x49323d,accent:0xe65a48,sun:0xffb18b,fill:0x98585b,terrainTint:0xc49a91,rockTint:0x76565a,cloud:'rgba(190,123,113,.20)',cloudRGB:[185,115,105],surface:['#20191f','#632d38','#a84c48','#d89a82'],wet:false},
-    progression:{type:'alpine',sky:0x91b6bd,ground:[.10,.22,.22],rock:[.38,.54,.55],flora:0x3c8b83,floraLight:0x9ed4b7,trunk:0x3c4b43,water:0x3b8eaa,accent:0x8bd4d0,sun:0xffedcf,fill:0x78aeb9,terrainTint:0xc5ded6,rockTint:0x6b9694,cloud:'rgba(180,226,224,.24)',cloudRGB:[170,218,220],surface:['#163442','#347b79','#82bcb1','#e1eee0'],wet:true},
-    races:{type:'jungle',sky:0x7f9e83,ground:[.045,.13,.075],rock:[.22,.34,.23],flora:0x6b9b38,floraLight:0xc0d76b,trunk:0x3d3826,water:0x286f59,accent:0xa7ce5d,sun:0xffe3b4,fill:0x6b9c76,terrainTint:0xbdd0a1,rockTint:0x627d50,cloud:'rgba(175,213,150,.23)',cloudRGB:[166,208,143],surface:['#12291e','#416e36','#8eae51','#d8e2b1'],wet:true},
-    equipment:{type:'rocky',sky:0x9da5ad,ground:[.19,.21,.23],rock:[.49,.53,.57],flora:0x778b91,floraLight:0xb9c8c5,trunk:0x41494c,water:0x477987,accent:0x9fb9c0,sun:0xffe6ce,fill:0x829eaa,terrainTint:0xd0d8d9,rockTint:0x7c898f,cloud:'rgba(197,215,220,.22)',cloudRGB:[190,210,218],surface:['#222e39','#596c78','#9baeb0','#e1e6df'],wet:false},
-    crafting:{type:'geothermal',sky:0xa17e68,ground:[.23,.105,.055],rock:[.53,.29,.16],flora:0x9b4f2b,floraLight:0xe69b4e,trunk:0x3f2b24,water:0x76513a,accent:0xf18b42,sun:0xffc08a,fill:0xb76c4a,terrainTint:0xd2a17d,rockTint:0x895c47,cloud:'rgba(235,165,115,.20)',cloudRGB:[220,145,98],surface:['#2c1d19','#70402b','#b86b3d','#e2ad79'],wet:false},
-    economy:{type:'salt',sky:0xb6b6a9,ground:[.40,.39,.32],rock:[.69,.66,.55],flora:0x879c75,floraLight:0xd0d7a0,trunk:0x69634b,water:0x4e8c9c,accent:0xc9c58b,sun:0xffefcc,fill:0x8eb5b6,terrainTint:0xe4dfc9,rockTint:0xaaa58b,cloud:'rgba(230,231,211,.24)',cloudRGB:[222,223,203],surface:['#3c3a2e','#888365','#c2b98b','#f1e9c9'],wet:true},
-    ranks:{type:'highland',sky:0x8d83ad,ground:[.16,.13,.27],rock:[.43,.39,.62],flora:0x594d9b,floraLight:0xa89be0,trunk:0x302b45,water:0x4b5b9b,accent:0xafa1ed,sun:0xffe0d0,fill:0x7775b6,terrainTint:0xc7c0e0,rockTint:0x716b9c,cloud:'rgba(192,182,235,.25)',cloudRGB:[185,175,226],surface:['#1b1b3b','#48467e','#8886ba','#ded9f1'],wet:false}
+    lore:{type:'crystal',floraForm:'crystal',sky:0x87739f,ground:[.13,.075,.20],rock:[.39,.27,.51],flora:0x8650a5,floraLight:0xc08bd6,trunk:0x33243e,water:0x586eaa,accent:0xb78cdb,sun:0xffd7f2,fill:0x7768ad,terrainTint:0xcfc0dc,rockTint:0x8e77a2,cloud:'rgba(190,155,225,.30)',cloudRGB:[186,150,220],surface:['#19152c','#53366b','#a77ab9','#e5d8ee'],wet:true},
+    agency:{type:'coast',floraForm:'broadleaf',sky:0x91b7bd,ground:[.075,.18,.16],rock:[.30,.43,.41],flora:0x4b9b8b,floraLight:0x91c9b5,trunk:0x34483e,water:0x317f91,accent:0x70c9d0,sun:0xffe4c1,fill:0x72a9b5,terrainTint:0xc5d9d0,rockTint:0x708e88,cloud:'rgba(165,218,218,.28)',cloudRGB:[160,212,214],surface:['#102c38','#286d70','#76b9a4','#d7e9d9'],wet:true},
+    organizations:{type:'badlands',floraForm:'fern',sky:0xa77a70,ground:[.29,.085,.075],rock:[.59,.25,.20],flora:0x9d3542,floraLight:0xe06b58,trunk:0x4a2828,water:0x713d4a,accent:0xd75d58,sun:0xffd0aa,fill:0xa35a55,terrainTint:0xe0b5a2,rockTint:0x98605a,cloud:'rgba(224,145,120,.22)',cloudRGB:[214,132,112],surface:['#351b25','#8c343d','#c66a58','#edc0a0'],wet:false},
+    characters:{type:'temperate',floraForm:'broadleaf',sky:0x92b29a,ground:[.065,.17,.085],rock:[.28,.39,.26],flora:0x43834b,floraLight:0x9fbd62,trunk:0x493b2c,water:0x397d70,accent:0x86b875,sun:0xffe6bd,fill:0x76a88a,terrainTint:0xc8d6b4,rockTint:0x6c8260,cloud:'rgba(181,218,182,.24)',cloudRGB:[174,212,176],surface:['#102b29','#2e6d4d','#82a96d','#d9e2bb'],wet:true},
+    protocol:{type:'glacier',floraForm:'needle',sky:0x9bbdce,ground:[.27,.40,.49],rock:[.70,.80,.86],flora:0x5c9caf,floraLight:0xb4e6ed,trunk:0x405b69,water:0x4c91b5,accent:0x9de5f1,sun:0xe7f6ff,fill:0x7dbbd4,terrainTint:0xd5e7ed,rockTint:0x9bbac8,cloud:'rgba(211,239,250,.32)',cloudRGB:[202,230,244],surface:['#203d54','#608da8','#a9d5e1','#edf8fb'],wet:true},
+    systems:{type:'volcanic',floraForm:'fern',sky:0x77666b,ground:[.075,.045,.05],rock:[.29,.13,.15],flora:0x792b3c,floraLight:0xd04a45,trunk:0x282329,water:0x5a2635,accent:0xff6845,sun:0xffa477,fill:0x824451,terrainTint:0xb98c83,rockTint:0x68444a,cloud:'rgba(218,115,92,.20)',cloudRGB:[210,104,82],surface:['#17151d','#57252f','#a84439','#d38b6c'],wet:false},
+    power:{type:'desert',floraForm:'succulent',sky:0xb99a6d,ground:[.39,.25,.10],rock:[.70,.49,.24],flora:0xa77b28,floraLight:0xe3c16a,trunk:0x57432a,water:0x5c7e83,accent:0xe6b75d,sun:0xffe0a0,fill:0xc28b4e,terrainTint:0xe2c69a,rockTint:0xa78956,cloud:'rgba(241,207,150,.20)',cloudRGB:[230,194,135],surface:['#3c2c1b','#94703b','#c5a05a','#efdbac'],wet:false},
+    combat:{type:'ash',floraForm:'fern',sky:0x82706e,ground:[.13,.065,.075],rock:[.37,.18,.19],flora:0x8c2736,floraLight:0xd45b53,trunk:0x302329,water:0x49323d,accent:0xe65a48,sun:0xffb18b,fill:0x98585b,terrainTint:0xc49a91,rockTint:0x76565a,cloud:'rgba(190,123,113,.20)',cloudRGB:[185,115,105],surface:['#20191f','#632d38','#a84c48','#d89a82'],wet:false},
+    progression:{type:'alpine',floraForm:'needle',sky:0x91b6bd,ground:[.10,.22,.22],rock:[.38,.54,.55],flora:0x3c8b83,floraLight:0x9ed4b7,trunk:0x3c4b43,water:0x3b8eaa,accent:0x8bd4d0,sun:0xffedcf,fill:0x78aeb9,terrainTint:0xc5ded6,rockTint:0x6b9694,cloud:'rgba(180,226,224,.24)',cloudRGB:[170,218,220],surface:['#163442','#347b79','#82bcb1','#e1eee0'],wet:true},
+    races:{type:'jungle',floraForm:'broadleaf',sky:0x7f9e83,ground:[.045,.13,.075],rock:[.22,.34,.23],flora:0x6b9b38,floraLight:0xc0d76b,trunk:0x3d3826,water:0x286f59,accent:0xa7ce5d,sun:0xffe3b4,fill:0x6b9c76,terrainTint:0xbdd0a1,rockTint:0x627d50,cloud:'rgba(175,213,150,.23)',cloudRGB:[166,208,143],surface:['#12291e','#416e36','#8eae51','#d8e2b1'],wet:true},
+    equipment:{type:'rocky',floraForm:'moss',sky:0x9da5ad,ground:[.19,.21,.23],rock:[.49,.53,.57],flora:0x778b91,floraLight:0xb9c8c5,trunk:0x41494c,water:0x477987,accent:0x9fb9c0,sun:0xffe6ce,fill:0x829eaa,terrainTint:0xd0d8d9,rockTint:0x7c898f,cloud:'rgba(197,215,220,.22)',cloudRGB:[190,210,218],surface:['#222e39','#596c78','#9baeb0','#e1e6df'],wet:false},
+    crafting:{type:'geothermal',floraForm:'succulent',sky:0xa17e68,ground:[.23,.105,.055],rock:[.53,.29,.16],flora:0x9b4f2b,floraLight:0xe69b4e,trunk:0x3f2b24,water:0x76513a,accent:0xf18b42,sun:0xffc08a,fill:0xb76c4a,terrainTint:0xd2a17d,rockTint:0x895c47,cloud:'rgba(235,165,115,.20)',cloudRGB:[220,145,98],surface:['#2c1d19','#70402b','#b86b3d','#e2ad79'],wet:false},
+    economy:{type:'salt',floraForm:'grass',sky:0xb6b6a9,ground:[.40,.39,.32],rock:[.69,.66,.55],flora:0x879c75,floraLight:0xd0d7a0,trunk:0x69634b,water:0x4e8c9c,accent:0xc9c58b,sun:0xffefcc,fill:0x8eb5b6,terrainTint:0xe4dfc9,rockTint:0xaaa58b,cloud:'rgba(230,231,211,.24)',cloudRGB:[222,223,203],surface:['#3c3a2e','#888365','#c2b98b','#f1e9c9'],wet:true},
+    ranks:{type:'highland',floraForm:'needle',sky:0x8d83ad,ground:[.16,.13,.27],rock:[.43,.39,.62],flora:0x594d9b,floraLight:0xa89be0,trunk:0x302b45,water:0x4b5b9b,accent:0xafa1ed,sun:0xffe0d0,fill:0x7775b6,terrainTint:0xc7c0e0,rockTint:0x716b9c,cloud:'rgba(192,182,235,.25)',cloudRGB:[185,175,226],surface:['#1b1b3b','#48467e','#8886ba','#ded9f1'],wet:false}
   };
 
 
@@ -1068,14 +1068,21 @@
       }
       g.computeVertexNormals();return g;
     }
-    function makeLeafGeometry(){
+    function makeLeafGeometry(form){
       var shape=new THREE.Shape();
-      shape.moveTo(0,0);
-      shape.quadraticCurveTo(-.22,.24,-.19,.48);
-      shape.quadraticCurveTo(-.13,.82,0,1.12);
-      shape.quadraticCurveTo(.17,.78,.2,.47);
-      shape.quadraticCurveTo(.22,.2,0,0);
-      var g=new THREE.ShapeGeometry(shape,10);g.computeVertexNormals();return g;
+      if(form==='needle'||form==='grass'||form==='crystal'){
+        var w=form==='crystal'?.16:form==='grass'?.105:.065,h=form==='crystal'?1.22:1.42;
+        shape.moveTo(0,0);shape.quadraticCurveTo(-w*.45,h*.42,0,h);shape.quadraticCurveTo(w*.45,h*.42,0,0);
+      }else if(form==='succulent'){
+        shape.moveTo(0,0);shape.quadraticCurveTo(-.38,.22,-.31,.58);shape.quadraticCurveTo(-.22,.94,0,1.02);shape.quadraticCurveTo(.3,.83,.34,.49);shape.quadraticCurveTo(.35,.18,0,0);
+      }else if(form==='fern'){
+        shape.moveTo(0,0);shape.quadraticCurveTo(-.26,.3,-.17,.62);shape.lineTo(-.08,.75);shape.quadraticCurveTo(-.18,.98,0,1.2);shape.quadraticCurveTo(.2,.92,.09,.73);shape.lineTo(.19,.58);shape.quadraticCurveTo(.26,.25,0,0);
+      }else if(form==='moss'){
+        shape.moveTo(0,0);shape.quadraticCurveTo(-.38,.25,-.27,.62);shape.quadraticCurveTo(-.14,.91,0,.96);shape.quadraticCurveTo(.34,.83,.31,.5);shape.quadraticCurveTo(.27,.18,0,0);
+      }else{
+        shape.moveTo(0,0);shape.quadraticCurveTo(-.22,.24,-.19,.48);shape.quadraticCurveTo(-.13,.82,0,1.12);shape.quadraticCurveTo(.17,.78,.2,.47);shape.quadraticCurveTo(.22,.2,0,0);
+      }
+      var g=new THREE.ShapeGeometry(shape,12);g.computeVertexNormals();return g;
     }
     function makeSegment(seg,segIndex){
       var s=seed+segIndex*29,k=seg,group=new THREE.Group(),maps=makeGroundMaps(k,s);
@@ -1131,7 +1138,7 @@
       // Flora alienígena presente em todos os mundos: forma, densidade e pigmento variam por ecologia.
       var plantCounts={jungle:86,temperate:64,coast:52,alpine:48,highland:42,glacier:34,'frozen-coast':30,desert:30,badlands:26,canyon:24,volcanic:24,geothermal:25,ash:22,rocky:22,crystal:30,salt:18};
       var plantCount=plantCounts[k]||28;
-      var leafGeo=makeLeafGeometry();
+      var leafGeo=makeLeafGeometry(base.floraForm);
       var leafMat=new THREE.MeshStandardMaterial({color:base.flora||0x638c5a,emissive:base.accent||0x000000,emissiveIntensity:.075,roughness:.82,side:THREE.DoubleSide});
       var stemMat=new THREE.MeshStandardMaterial({color:base.trunk||0x4b4639,roughness:.94});
       var budMat=new THREE.MeshStandardMaterial({color:base.floraLight||base.accent||0xa4c18a,emissive:base.accent||0x000000,emissiveIntensity:.24,roughness:.55});
