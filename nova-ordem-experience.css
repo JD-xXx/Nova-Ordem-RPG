@@ -688,3 +688,38 @@ footer{border-top-color:rgba(132,179,202,.16)!important;color:#668092!important;
 #no-journey-startup-error strong{font:10px var(--no-mono);letter-spacing:1px;color:#a8d9ee}
 #no-journey-startup-error p{font:12px/1.7 var(--no-body);color:#b7c9d2}
 .no-journey-ready .no-journey-fallback-scene{display:none!important}
+
+
+/* Photoreal landscape exploration: extended walk-through and natural atmosphere */
+.wrap.no-planet-exploration{
+  min-height:480vh!important;
+  padding-bottom:38vh!important;
+  background:linear-gradient(180deg,rgba(3,9,15,.08),rgba(3,9,15,.18) 38%,rgba(3,9,15,.48))!important;
+}
+.wrap.no-planet-exploration:before{
+  background:linear-gradient(180deg,rgba(4,10,16,.02),rgba(4,10,16,.08) 32%,rgba(4,10,16,.24))!important;
+}
+.wrap.no-planet-exploration .heading{
+  background:rgba(3,10,17,.36)!important;
+  backdrop-filter:blur(8px);
+}
+.wrap.no-planet-exploration #content .home-band,
+.wrap.no-planet-exploration #content .stat,
+.wrap.no-planet-exploration #content .card,
+.wrap.no-planet-exploration #content .panel,
+.wrap.no-planet-exploration #content .v6-item,
+.wrap.no-planet-exploration #content .no87-section,
+.wrap.no-planet-exploration #content .no87-card{
+  background:rgba(5,13,21,.68)!important;
+  backdrop-filter:blur(9px);
+}
+#no-cinema-canvas{
+  image-rendering:auto;
+  transform:translateZ(0);
+}
+@media(max-width:760px){
+  .wrap.no-planet-exploration{
+    min-height:440vh!important;
+    padding:24px 14px 34vh!important;
+  }
+}
