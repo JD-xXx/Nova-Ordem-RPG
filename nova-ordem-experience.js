@@ -1034,6 +1034,26 @@
       }
       g.computeVertexNormals();return g;
     }
+    function makeFoliageGeometry(s){
+      var g=new THREE.SphereGeometry(1,20,14),a=g.attributes.position;
+      for(var q=0;q<a.count;q++){
+        var x=a.getX(q),y=a.getY(q),z=a.getZ(q);
+        var wave=Math.sin(x*7+s)*Math.cos(z*8-s*.4)*.055;
+        var n=(hash(Math.round((x+1)*90),Math.round((y+1)*90)+Math.round((z+1)*50),s)-.5)*.11;
+        var f=1+wave+n;
+        a.setXYZ(q,x*f,y*(1+wave*.7+n),z*f);
+      }
+      g.computeVertexNormals();return g;
+    }
+    function makeLeafGeometry(){
+      var shape=new THREE.Shape();
+      shape.moveTo(0,0);
+      shape.quadraticCurveTo(-.22,.24,-.19,.48);
+      shape.quadraticCurveTo(-.13,.82,0,1.12);
+      shape.quadraticCurveTo(.17,.78,.2,.47);
+      shape.quadraticCurveTo(.22,.2,0,0);
+      var g=new THREE.ShapeGeometry(shape,10);g.computeVertexNormals();return g;
+    }
     function makeSegment(seg,segIndex){
       var s=seed+segIndex*29,k=seg,group=new THREE.Group(),maps=makeGroundMaps(k,s);
       var geo=new THREE.PlaneGeometry(230,180,128,112);geo.rotateX(-Math.PI/2);
@@ -1066,7 +1086,7 @@
       rocks.castShadow=true;rocks.receiveShadow=true;group.add(rocks);
       if(k==='temperate'||k==='jungle'||k==='coast'||k==='alpine'){
         var treeCount=k==='jungle'?92:(k==='temperate'?68:46);
-        var trunkGeo=new THREE.CylinderGeometry(.12,.28,4.8,9),crownGeo=irregularRockGeometry(s+51);
+        var trunkGeo=new THREE.CylinderGeometry(.12,.28,4.8,9),crownGeo=makeFoliageGeometry(s+51);
         var trunkMat=new THREE.MeshStandardMaterial({color:base.trunk||0x514637,roughness:.96});
         var crownMat=new THREE.MeshStandardMaterial({color:base.flora||0x55734b,emissive:base.floraGlow||0x000000,emissiveIntensity:base.floraGlow?.16:0,roughness:.88});
         var trunks=new THREE.InstancedMesh(trunkGeo,trunkMat,treeCount),crowns=new THREE.InstancedMesh(crownGeo,crownMat,treeCount*3);
@@ -1085,6 +1105,31 @@
         }
         trunks.castShadow=true;crowns.castShadow=true;group.add(trunks);group.add(crowns);
       }
+      // Flora alienígena presente em todos os mundos: forma, densidade e pigmento variam por ecologia.
+      var plantCounts={jungle:86,temperate:64,coast:52,alpine:48,highland:42,glacier:34,'frozen-coast':30,desert:30,badlands:26,canyon:24,volcanic:24,geothermal:25,ash:22,rocky:22,crystal:30,salt:18};
+      var plantCount=plantCounts[k]||28;
+      var leafGeo=makeLeafGeometry();
+      var leafMat=new THREE.MeshStandardMaterial({color:base.flora||0x638c5a,emissive:base.accent||0x000000,emissiveIntensity:.075,roughness:.82,side:THREE.DoubleSide});
+      var stemMat=new THREE.MeshStandardMaterial({color:base.trunk||0x4b4639,roughness:.94});
+      var budMat=new THREE.MeshStandardMaterial({color:base.floraLight||base.accent||0xa4c18a,emissive:base.accent||0x000000,emissiveIntensity:.24,roughness:.55});
+      var leaves=new THREE.InstancedMesh(leafGeo,leafMat,plantCount*5),stems=new THREE.InstancedMesh(new THREE.CylinderGeometry(.035,.075,1,7),stemMat,plantCount),buds=new THREE.InstancedMesh(new THREE.SphereGeometry(.105,10,8),budMat,plantCount);
+      for(var pi=0;pi<plantCount;pi++){
+        var px=(hash(pi,71,s)-.5)*194,pz=-82+hash(pi,72,s)*154;
+        if(Math.abs(px)<20)px+=px<0?-24:24;
+        var py=heightAt(px,pz,k,s)-8;
+        var tall=(k==='jungle'?4.8:k==='temperate'?3.8:k==='coast'?3.2:k==='alpine'||k==='highland'?2.7:k==='glacier'||k==='frozen-coast'?2.2:k==='desert'||k==='salt'||k==='badlands'||k==='canyon'?1.65:2.1)*(0.65+hash(pi,73,s)*.85);
+        dummy.position.set(px,py+tall*.48,pz);dummy.rotation.set(0,hash(pi,74,s)*6.28,0);dummy.scale.set(.8,tall,.8);dummy.updateMatrix();stems.setMatrixAt(pi,dummy.matrix);
+        for(var lf=0;lf<5;lf++){
+          var angle=lf*1.256+hash(pi,lf+80,s)*.65;
+          var height=tall*(.24+lf*.115);
+          dummy.position.set(px+Math.cos(angle)*.14,py+height,pz+Math.sin(angle)*.14);
+          dummy.rotation.set(.18+hash(pi,lf+90,s)*.45,angle,(hash(pi,lf+100,s)-.5)*.55);
+          var leafScale=tall*(.34+hash(pi,lf+110,s)*.18);
+          dummy.scale.set(leafScale*.56,leafScale,leafScale*.12);dummy.updateMatrix();leaves.setMatrixAt(pi*5+lf,dummy.matrix);
+        }
+        dummy.position.set(px,py+tall*.98,pz);dummy.rotation.set(0,hash(pi,121,s)*6.28,0);dummy.scale.setScalar(.72+hash(pi,122,s)*.48);dummy.updateMatrix();buds.setMatrixAt(pi,dummy.matrix);
+      }
+      stems.castShadow=true;leaves.castShadow=true;group.add(stems);group.add(leaves);group.add(buds);
       if(k==='crystal'){
         var crystalMat=new THREE.MeshPhysicalMaterial({color:base.floraLight||base.accent,metalness:.12,roughness:.16,transmission:.34,thickness:1.35,clearcoat:1,emissive:base.flora||0x4c6c8c,emissiveIntensity:.08});
         for(var ci=0;ci<20;ci++){
