@@ -1171,7 +1171,6 @@
           var tz=-86+hash(ti,12,s)*164;
           // Clareira ampla no primeiro planeta; campo aberto no segundo; corredor central na selva.
           if(sceneStyle==='clearing'&&Math.abs(tx)<25)tx=side*26;
-          if(sceneStyle==='meadow'&&hash(ti,17,s)>.62)continue;
           if(sceneStyle==='jungle-trail'&&Math.abs(tx)<15)tx=side*(16+hash(ti,18,s)*8);
           var ground=heightAt(tx,tz,k,s)-8,scale=(sceneStyle==='jungle-trail'?1.15:sceneStyle==='meadow'?.72:.9)+hash(ti,13,s)*.95;
           dummy.position.set(tx,ground+3.9*scale,tz);dummy.rotation.set(0,hash(ti,14,s)*6.28,0);dummy.scale.set(scale,scale,scale);dummy.updateMatrix();trunkMesh.setMatrixAt(ti,dummy.matrix);
@@ -1209,7 +1208,6 @@
         for(var bu=0;bu<bushCount;bu++){
           var bx=(hash(bu,191,s)-.5)*188,bz=-86+hash(bu,192,s)*164;
           if(sceneStyle==='clearing'&&Math.abs(bx)<22)continue;
-          if(sceneStyle==='meadow'&&hash(bu,193,s)>.55)continue;
           if(sceneStyle==='jungle-trail'&&Math.abs(bx)<12)bx+=bx<0?-9:9;
           var by=heightAt(bx,bz,k,s)-7.82,bs=(sceneStyle==='jungle-trail'?1.15:.72)+hash(bu,194,s)*1.65;
           for(var bc=0;bc<3;bc++){
@@ -1227,9 +1225,8 @@
           var grass=new THREE.InstancedMesh(grassGeo,grassMat,grassCount*7);
           for(var gi=0;gi<grassCount;gi++){
             var gx=(hash(gi,131,s)-.5)*202,gz=-86+hash(gi,132,s)*164;
-            if(sceneStyle==='clearing'&&Math.abs(gx)<23)continue;
             if(sceneStyle==='jungle-trail'&&Math.abs(gx)<10)gx+=gx<0?-12:12;
-            var gy=heightAt(gx,gz,k,s)-7.94,tuft=(sceneStyle==='meadow'?.42:.58)+hash(gi,133,s)*.72;
+            var gy=heightAt(gx,gz,k,s)-7.94,bareClearing=sceneStyle==='clearing'&&Math.abs(gx)<23,tuft=bareClearing?0:(sceneStyle==='meadow'?.42:.58)+hash(gi,133,s)*.72;
             for(var blade=0;blade<7;blade++){
               var ga=blade*.897+hash(gi,blade+140,s)*.55;
               dummy.position.set(gx+Math.cos(ga)*.12,gy+tuft*.48,gz+Math.sin(ga)*.12);
