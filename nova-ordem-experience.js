@@ -175,7 +175,7 @@
     if(cache&&cache.surface)return cache.surface;
     // Textura procedural determinística: continentes, faixas atmosféricas e micro-relevo.
     // Resolução moderada para preservar o tempo de inicialização em celulares.
-    var width=448,height=224,style=index%7,seed=index*31+17;
+    var width=384,height=192,style=index%7,seed=index*31+17;
     var c=document.createElement('canvas');c.width=width;c.height=height;
     var ctx=c.getContext('2d'),img=ctx.createImageData(width,height),data=img.data;
     var hc=document.createElement('canvas');hc.width=width;hc.height=height;
@@ -185,12 +185,11 @@
       var v=y/height,latitude=Math.abs(v-.5)*2,polar=Math.pow(latitude,2.2);
       for(var x=0;x<width;x++){
         var u=x/width;
-        var warp=fbm(u*5+seed*.11,v*4+seed*.07,seed+3)-.5;
-        var continent=fbm(u*8+seed*.13+warp*.7,v*5+seed*.07+warp*.5,seed)-.515;
+        var continent=fbm(u*8+seed*.13,v*5+seed*.07,seed)-.515;
         var detail=fbm(u*34+seed,v*19+seed*.2,seed+7);
         var fine=fbm(u*92+seed*.3,v*54+seed*.17,seed+21);
-        var ridge=1-Math.abs(fbm(u*48+seed*.2,v*29+seed*.4,seed+29)*2-1);
-        var band=Math.sin(v*42+Math.sin(u*9+seed)*.8+warp*3)*.5+.5;
+        var ridge=1-Math.abs(detail*2-1);
+        var band=Math.sin(v*42+Math.sin(u*9+seed)*.8+detail*1.4)*.5+.5;
         var rgb,relief=0;
         if(style===5){
           // Gigante gasoso: bandas largas, turbulência e faixas de tempestade.
@@ -260,15 +259,14 @@
   function makeCloudTexture(route,index) {
     var cache=palettes[route.id];
     if(cache&&cache.clouds)return cache.clouds;
-    var width=384,height=192,style=index%7,seed=index*19+3;
+    var width=320,height=160,style=index%7,seed=index*19+3;
     var c=document.createElement('canvas');c.width=width;c.height=height;
     var ctx=c.getContext('2d'),img=ctx.createImageData(width,height),data=img.data;
     for(var y=0;y<height;y++)for(var x=0;x<width;x++){
       var u=x/width,v=y/height;
       var n=fbm(u*13+index*2,v*8+index,seed);
-      var detail=fbm(u*39+index,v*23+index*.3,seed+11);
       var bands=Math.sin(v*(style===5?95:28)+Math.sin(u*12+index)*1.7)*.5+.5;
-      var density=style===5?(bands*.68+n*.25+detail*.07):(n*.72+detail*.28);
+      var density=style===5?(bands*.76+n*.24):(n*.78+bands*.22);
       if(style===1||style===6)density*=.58;
       var alpha=Math.max(0,Math.min(style===5?190:158,(density-(style===5?.43:.57))*(style===5?340:390)));
       var i=(y*width+x)*4;
