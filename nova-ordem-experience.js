@@ -173,60 +173,109 @@
   function makeSurfaceTexture(route,index) {
     var cache=palettes[route.id];
     if(cache&&cache.surface)return cache.surface;
-    var c=document.createElement('canvas');c.width=384;c.height=192;
-    var ctx=c.getContext('2d'),img=ctx.createImageData(c.width,c.height),data=img.data;
+    // Textura procedural determinística: continentes, faixas atmosféricas e micro-relevo.
+    // Resolução moderada para preservar o tempo de inicialização em celulares.
+    var width=448,height=224,style=index%7,seed=index*31+17;
+    var c=document.createElement('canvas');c.width=width;c.height=height;
+    var ctx=c.getContext('2d'),img=ctx.createImageData(width,height),data=img.data;
+    var hc=document.createElement('canvas');hc.width=width;hc.height=height;
+    var hctx=hc.getContext('2d'),himg=hctx.createImageData(width,height),hd=himg.data;
     var sea=color(route.palette[0]),land=color(route.palette[1]),high=color(route.palette[2]),ice=color(route.palette[3]);
-    var seed=index*31+17;
-    for(var y=0;y<c.height;y++){
-      var lat=Math.cos((y/c.height-.5)*Math.PI);
-      for(var x=0;x<c.width;x++){
-        var u=x/c.width,v=y/c.height;
-        var n=fbm(u*7+seed*.13,v*5+seed*.07,seed);
-        var detail=fbm(u*31+seed,v*17+seed*.2,seed+7);
-        var ridge=fbm(u*70,v*35,seed+21);
-        var continent=n+(Math.sin(u*18+Math.sin(v*11)*2)*.035)-.52;
-        var rgb;
-        if(continent>0.025){
-          var h=Math.max(0,Math.min(1,(continent+.12)*2.8+detail*.24));
-          rgb=mix(land,high,h);
-          if(h>.77)rgb=mix(rgb,ice,Math.min(.7,(h-.77)*3));
+    for(var y=0;y<height;y++){
+      var v=y/height,latitude=Math.abs(v-.5)*2,polar=Math.pow(latitude,2.2);
+      for(var x=0;x<width;x++){
+        var u=x/width;
+        var warp=fbm(u*5+seed*.11,v*4+seed*.07,seed+3)-.5;
+        var continent=fbm(u*8+seed*.13+warp*.7,v*5+seed*.07+warp*.5,seed)-.515;
+        var detail=fbm(u*34+seed,v*19+seed*.2,seed+7);
+        var fine=fbm(u*92+seed*.3,v*54+seed*.17,seed+21);
+        var ridge=1-Math.abs(fbm(u*48+seed*.2,v*29+seed*.4,seed+29)*2-1);
+        var band=Math.sin(v*42+Math.sin(u*9+seed)*.8+warp*3)*.5+.5;
+        var rgb,relief=0;
+        if(style===5){
+          // Gigante gasoso: bandas largas, turbulência e faixas de tempestade.
+          var gas=band*.62+detail*.27+fine*.11;
+          rgb=mix(sea,land,Math.max(0,Math.min(1,gas)));
+          if(gas>.78)rgb=mix(rgb,high,(gas-.78)*2.8);
+          if(Math.abs(gas-.57)<.035)rgb=mix(rgb,ice,.34);
+          relief=.42+gas*.24+fine*.08;
         }else{
-          var depth=Math.max(0,Math.min(1,(-continent+.02)*3+detail*.15));
-          rgb=mix(sea,land,depth*.2);
+          var landMask=continent+(Math.sin(u*21+Math.sin(v*13)*1.7)*.025);
+          var elevation=Math.max(0,Math.min(1,(landMask+.105)*3.5+detail*.26+ridge*.12));
+          var oceanDepth=Math.max(0,Math.min(1,(-landMask+.035)*3.1+detail*.16));
+          if(style===1){ // árido: desertos, dunas e planaltos
+            rgb=mix(land,high,Math.max(0,Math.min(1,elevation*.7+band*.16)));
+            rgb=mix(sea,rgb,Math.max(.18,Math.min(1,landMask*4+detail*.25)));
+          }else if(style===2){ // mundo glacial
+            rgb=mix(sea,ice,Math.max(0,Math.min(1,polar*.72+elevation*.48)));
+            rgb=mix(rgb,high,Math.max(0,(ridge-.72)*.65));
+          }else if(style===3){ // mundo vulcânico
+            rgb=mix(sea,land,Math.max(0,Math.min(1,elevation*.85)));
+            if(fine>.68&&ridge>.58)rgb=mix(rgb,[235,91,37],Math.min(.82,(fine-.68)*3.5));
+          }else if(style===4){ // mundo oceânico/vegetado
+            rgb=mix(sea,land,Math.max(0,Math.min(1,elevation*.9+detail*.1)));
+            rgb=mix(rgb,high,Math.max(0,(ridge-.72)*.45));
+          }else if(style===6){ // superfície rochosa e árida, com pouca água
+            rgb=mix(land,high,Math.max(0,Math.min(1,elevation*.76+fine*.18)));
+            rgb=mix(sea,rgb,Math.max(.38,Math.min(1,landMask*3.4+detail*.2)));
+          }else{
+            rgb=mix(sea,land,Math.max(0,Math.min(1,oceanDepth*.13+elevation*.86)));
+            if(elevation>.72)rgb=mix(rgb,ice,Math.min(.78,(elevation-.72)*2.8+polar*.18));
+          }
+          relief=landMask>0?(.28+elevation*.58+ridge*.1):(.12+oceanDepth*.1);
         }
-        var variation=(ridge-.5)*17+(detail-.5)*11;
-        var i=(y*c.width+x)*4;
-        data[i]=Math.max(0,Math.min(255,rgb[0]+variation));
-        data[i+1]=Math.max(0,Math.min(255,rgb[1]+variation));
-        data[i+2]=Math.max(0,Math.min(255,rgb[2]+variation));
-        data[i+3]=255;
+        var shade=(detail-.5)*19+(fine-.5)*13+(ridge-.5)*9;
+        var idx=(y*width+x)*4;
+        data[idx]=Math.max(0,Math.min(255,rgb[0]+shade));
+        data[idx+1]=Math.max(0,Math.min(255,rgb[1]+shade));
+        data[idx+2]=Math.max(0,Math.min(255,rgb[2]+shade));
+        data[idx+3]=255;
+        var hval=Math.max(0,Math.min(255,relief*210+(fine-.5)*34));
+        hd[idx]=hd[idx+1]=hd[idx+2]=hval;hd[idx+3]=255;
       }
     }
-    ctx.putImageData(img,0,0);
-    ctx.globalAlpha=.13;
-    for(var j=0;j<220;j++){
-      ctx.fillStyle=j%3===0?'#ffffff':'#07101a';
-      ctx.beginPath();ctx.ellipse(Math.random()*c.width,Math.random()*c.height,Math.random()*18+3,Math.random()*4+1,Math.random()*Math.PI,0,Math.PI*2);ctx.fill();
+    ctx.putImageData(img,0,0);hctx.putImageData(himg,0,0);
+    // Crateras com borda iluminada e bacia sombreada em mundos rochosos.
+    if(style===1||style===2||style===6){
+      var count=style===2?34:52;
+      for(var k=0;k<count;k++){
+        var cx=hash(k,seed,4)*width,cy=hash(k,seed,8)*height,rad=2+hash(k,seed,12)*(style===6?13:9);
+        var grad=ctx.createRadialGradient(cx-rad*.18,cy-rad*.2,rad*.12,cx,cy,rad);
+        grad.addColorStop(0,'rgba(8,12,18,.18)');grad.addColorStop(.68,'rgba(12,17,22,.08)');
+        grad.addColorStop(.84,'rgba(225,220,202,.17)');grad.addColorStop(1,'rgba(5,9,14,0)');
+        ctx.fillStyle=grad;ctx.beginPath();ctx.arc(cx,cy,rad,0,Math.PI*2);ctx.fill();
+      }
     }
-    ctx.globalAlpha=1;
-    var tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;tex.anisotropy=4;tex.needsUpdate=true;
+    var tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;tex.anisotropy=4;tex.wrapS=THREE.RepeatWrapping;tex.needsUpdate=true;
+    var heightTex=new THREE.CanvasTexture(hc);heightTex.anisotropy=4;heightTex.wrapS=THREE.RepeatWrapping;heightTex.needsUpdate=true;
     if(!palettes[route.id])palettes[route.id]={};
-    palettes[route.id].surface=tex;
+    palettes[route.id].surface=tex;palettes[route.id].height=heightTex;
     return tex;
+  }
+  function makeHeightTexture(route,index) {
+    var cache=palettes[route.id];
+    if(!cache||!cache.height){makeSurfaceTexture(route,index);cache=palettes[route.id];}
+    return cache.height;
   }
   function makeCloudTexture(route,index) {
     var cache=palettes[route.id];
     if(cache&&cache.clouds)return cache.clouds;
-    var c=document.createElement('canvas');c.width=256;c.height=128;
-    var ctx=c.getContext('2d'),img=ctx.createImageData(c.width,c.height),data=img.data;
-    for(var y=0;y<c.height;y++)for(var x=0;x<c.width;x++){
-      var n=fbm(x/76+index*2,y/44+index, index*19+3);
-      var bands=Math.sin(y*.095+Math.sin(x*.025)*2)*.12;
-      var a=Math.max(0,Math.min(105,(n-.53+bands)*440));
-      var i=(y*c.width+x)*4;data[i]=220;data[i+1]=235;data[i+2]=245;data[i+3]=a;
+    var width=384,height=192,style=index%7,seed=index*19+3;
+    var c=document.createElement('canvas');c.width=width;c.height=height;
+    var ctx=c.getContext('2d'),img=ctx.createImageData(width,height),data=img.data;
+    for(var y=0;y<height;y++)for(var x=0;x<width;x++){
+      var u=x/width,v=y/height;
+      var n=fbm(u*13+index*2,v*8+index,seed);
+      var detail=fbm(u*39+index,v*23+index*.3,seed+11);
+      var bands=Math.sin(v*(style===5?95:28)+Math.sin(u*12+index)*1.7)*.5+.5;
+      var density=style===5?(bands*.68+n*.25+detail*.07):(n*.72+detail*.28);
+      if(style===1||style===6)density*=.58;
+      var alpha=Math.max(0,Math.min(style===5?190:158,(density-(style===5?.43:.57))*(style===5?340:390)));
+      var i=(y*width+x)*4;
+      data[i]=style===3?238:220;data[i+1]=style===3?205:235;data[i+2]=style===3?190:245;data[i+3]=alpha;
     }
     ctx.putImageData(img,0,0);
-    var tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;tex.anisotropy=2;tex.needsUpdate=true;
+    var tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;tex.anisotropy=3;tex.wrapS=THREE.RepeatWrapping;tex.needsUpdate=true;
     if(!palettes[route.id])palettes[route.id]={};
     palettes[route.id].clouds=tex;
     return tex;
@@ -688,6 +737,7 @@
     buildNavigation();
   };
 
+  function styleBumpScale(index){return index%7===5?.035:(index%7===2?.105:.075);}
   var journeyPlanets=[],journeyProgress=0,selectedPlanet=null,landscape=null,landscapeClouds=[],journeyLength=0;
   function onJourneyPointer(ev){
     if(!raycaster||!camera||!journeyPlanets.length||ev.target.closest('button'))return;
@@ -718,7 +768,7 @@
     ROUTES.filter(function(r){return r.id!=='overview';}).forEach(function(r,i){
       var idx=ROUTES.indexOf(r),g=new THREE.Group(),size=(i%4===0?4.25:(i%3===0?3.1:2.65));
       g.position.set((i%2===0?1:-1)*(3.8+(i%3)*1.4),Math.sin(i*1.7)*1.7,-58-i*spacing);
-      var material=new THREE.MeshPhysicalMaterial({map:makeSurfaceTexture(r,idx),bumpMap:makeSurfaceTexture(r,idx),bumpScale:.085,roughness:.94,metalness:.015});
+      var material=new THREE.MeshPhysicalMaterial({map:makeSurfaceTexture(r,idx),bumpMap:makeHeightTexture(r,idx),bumpScale:styleBumpScale(idx),roughness:.96,metalness:.012});
       var mesh=new THREE.Mesh(new THREE.SphereGeometry(size,112,80),material);mesh.castShadow=true;mesh.receiveShadow=true;g.add(mesh);
       var clouds=new THREE.Mesh(new THREE.SphereGeometry(size*1.012,96,64),new THREE.MeshStandardMaterial({map:makeCloudTexture(r,idx),transparent:true,opacity:.42,depthWrite:false,roughness:1}));g.add(clouds);
       var atmo=new THREE.Mesh(new THREE.SphereGeometry(size*1.045,96,64),new THREE.ShaderMaterial({uniforms:{glowColor:{value:new THREE.Color(r.palette[2])},glowStrength:{value:.7}},vertexShader:'varying vec3 n;varying vec3 v;void main(){n=normalize(normalMatrix*normal);vec4 mv=modelViewMatrix*vec4(position,1.);v=-mv.xyz;gl_Position=projectionMatrix*mv;}',fragmentShader:'uniform vec3 glowColor;uniform float glowStrength;varying vec3 n;varying vec3 v;void main(){float f=pow(1.-max(dot(normalize(n),normalize(v)),0.),3.);gl_FragColor=vec4(glowColor,f*glowStrength);}',side:THREE.BackSide,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false}));g.add(atmo);
