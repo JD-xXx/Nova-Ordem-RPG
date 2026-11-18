@@ -977,21 +977,23 @@
     var route=ROUTES.find(function(x){return x.id===selectedPlanet;})||ROUTES[1];
     var biomes=ECOLOGIES;
     var base=biomes[route.id]||biomes.alpine,kind=base.type,seed=index*37+91;
+    // Cada destino mantém uma assinatura geológica própria ao longo da travessia.
+    // Não inserir alpine/highland como "preenchimento" em planetas que não são montanhosos.
     var sequences={
-      crystal:['crystal','rocky','highland','crystal'],
-      coast:['coast','temperate','coast','alpine'],
-      badlands:['badlands','canyon','desert','highland'],
-      temperate:['temperate','alpine','coast','temperate'],
-      glacier:['glacier','alpine','frozen-coast','glacier'],
+      crystal:['crystal','crystal','rocky','crystal'],
+      coast:['coast','coast','temperate','coast'],
+      badlands:['badlands','canyon','badlands','canyon'],
+      temperate:['temperate','temperate','coast','temperate'],
+      glacier:['glacier','frozen-coast','glacier','glacier'],
       volcanic:['volcanic','ash','geothermal','volcanic'],
-      desert:['desert','badlands','canyon','salt'],
-      ash:['ash','volcanic','rocky','highland'],
-      alpine:['alpine','temperate','highland','glacier'],
-      jungle:['jungle','temperate','coast','jungle'],
-      rocky:['rocky','highland','canyon','rocky'],
-      geothermal:['geothermal','volcanic','badlands','geothermal'],
-      salt:['salt','desert','coast','salt'],
-      highland:['highland','alpine','rocky','highland']
+      desert:['desert','desert','salt','desert'],
+      ash:['ash','volcanic','ash','rocky'],
+      alpine:['alpine','highland','alpine','glacier'],
+      jungle:['jungle','jungle','temperate','jungle'],
+      rocky:['rocky','rocky','canyon','rocky'],
+      geothermal:['geothermal','volcanic','geothermal','badlands'],
+      salt:['salt','salt','desert','salt'],
+      highland:['highland','alpine','highland','rocky']
     };
     var sequence=sequences[kind]||[kind,kind,kind,kind];
     landscape=new THREE.Group();
@@ -1004,20 +1006,47 @@
         fbm(x*.19+s*.04,z*.19-s*.03,s+31)*.16;
     }
     function heightAt(x,z,k,s){
-      var wx=x+(fbm(x*.018,z*.018,s+2)-.5)*24;
-      var wz=z+(fbm(x*.018+21,z*.018-13,s+8)-.5)*24;
-      var broad=fractal(wx,wz,s),ridge=1-Math.abs(fractal(wx*1.55,wz*1.55,s+11)*2-1);
-      var detail=fractal(wx*2.8,wz*2.8,s+23)-.5;
-      var h=(broad-.48)*13+detail*2.8;
-      if(k==='glacier'||k==='alpine'||k==='highland')h+=Math.pow(Math.max(0,ridge-.48),2)*118;
-      else if(k==='volcanic'||k==='geothermal')h+=Math.pow(Math.max(0,ridge-.53),2)*92;
-      else if(k==='badlands'||k==='canyon')h+=Math.pow(Math.max(0,ridge-.54),2)*72;
-      else if(k==='desert'||k==='salt')h+=Math.sin(wx*.035+Math.sin(wz*.018)*1.8)*4.4+Math.sin(wz*.022)*2.2;
-      else if(k==='coast'||k==='temperate'||k==='jungle')h+=Math.sin(wx*.016+wz*.012)*3.2;
-      if(k==='canyon')h-=Math.pow(Math.max(0,1-Math.abs(x-Math.sin(z*.018)*23)/19),2)*20;
-      if(k==='coast'||k==='frozen-coast')h-=Math.max(0,1-Math.abs(x+Math.sin(z*.014)*22)/38)*9;
-      if(k==='crystal')h+=Math.pow(Math.max(0,ridge-.57),2)*54;
-      return h;
+      // Domain warp discreto: evita o padrão de "cordilheira de ruído" repetido em todos os mundos.
+      var wx=x+(fbm(x*.012,z*.012,s+2)-.5)*10;
+      var wz=z+(fbm(x*.012+21,z*.012-13,s+8)-.5)*10;
+      var broad=fractal(wx,wz,s),ridge=1-Math.abs(fractal(wx*.92,wz*.92,s+11)*2-1);
+      var detail=fractal(wx*3.4,wz*3.4,s+23)-.5;
+      var h=0;
+      // Relevo baixo e amplo por padrão. Só mundos alpinos recebem picos altos.
+      if(k==='coast'||k==='frozen-coast'){
+        h=(broad-.5)*4.2+detail*.65+Math.sin(wx*.025+wz*.014)*1.15;
+        h-=Math.max(0,1-Math.abs(x+Math.sin(z*.014)*24)/34)*3.8;
+      }else if(k==='temperate'){
+        h=(broad-.5)*7.2+detail*1.05+Math.sin(wx*.018+wz*.012)*1.7;
+      }else if(k==='jungle'){
+        h=(broad-.5)*6.2+detail*.9+Math.sin(wx*.021)*1.25;
+      }else if(k==='glacier'){
+        h=(broad-.5)*8.5+detail*.8+Math.pow(Math.max(0,ridge-.66),2)*34;
+      }else if(k==='alpine'||k==='highland'){
+        h=(broad-.5)*11+detail*1.25+Math.pow(Math.max(0,ridge-.57),2)*58;
+      }else if(k==='volcanic'||k==='geothermal'){
+        var caldera=Math.max(0,1-Math.abs(Math.hypot(wx+28,wz-8)-29)/12);
+        h=(broad-.5)*6+detail*.8+caldera*13+Math.pow(Math.max(0,ridge-.7),2)*24;
+      }else if(k==='badlands'){
+        var mesa=(broad-.46)*15;
+        h=Math.round(mesa/3.8)*3.8+detail*.55;
+      }else if(k==='canyon'){
+        h=(broad-.5)*8+detail*.75;
+        h-=Math.pow(Math.max(0,1-Math.abs(x-Math.sin(z*.018)*25)/17),2)*15;
+      }else if(k==='desert'){
+        h=(broad-.5)*3.5+Math.sin(wx*.035+Math.sin(wz*.018)*1.8)*4.1+Math.sin(wz*.022)*1.6;
+      }else if(k==='salt'){
+        h=(broad-.5)*1.8+detail*.25+Math.sin(wx*.018)*.35;
+      }else if(k==='ash'){
+        h=(broad-.5)*5.2+detail*.75+Math.sin(wx*.04+wz*.025)*1.1;
+      }else if(k==='rocky'){
+        h=(broad-.5)*7.5+detail*1.4+Math.pow(Math.max(0,ridge-.76),2)*12;
+      }else if(k==='crystal'){
+        h=(broad-.5)*4.5+detail*.7+Math.pow(Math.max(0,ridge-.72),2)*15;
+      }else{
+        h=(broad-.5)*5+detail*.8;
+      }
+      return Math.max(-12,Math.min(30,h));
     }
     function makeGroundMaps(k,s){
       var w=384,h=384,c=document.createElement('canvas'),b=document.createElement('canvas');
@@ -1203,10 +1232,11 @@
         var riverShimmer=new THREE.Mesh(new THREE.TubeGeometry(riverCurve,180,.11,5,false),new THREE.MeshBasicMaterial({color:base.floraLight||base.accent,transparent:true,opacity:.16,blending:THREE.AdditiveBlending,depthWrite:false}));
         riverShimmer.position.y=.16;group.add(riverShimmer);
       }
+      // Nuvens ficam claramente acima do relevo e muito suaves; não podem se confundir com montanhas.
       var cloudTexture=makeNebulaTexture(base.cloud||'rgba(226,239,246,.22)');
-      for(var cl=0;cl<4;cl++){
-        var cloud=new THREE.Sprite(new THREE.SpriteMaterial({map:cloudTexture,transparent:true,depthWrite:false,opacity:.24}));
-        cloud.position.set(-78+cl*48,34+(cl%2)*8,-45-cl*15);cloud.scale.set(65,22,1);group.add(cloud);landscapeClouds.push(cloud);
+      for(var cl=0;cl<3;cl++){
+        var cloud=new THREE.Sprite(new THREE.SpriteMaterial({map:cloudTexture,transparent:true,depthWrite:false,opacity:.105}));
+        cloud.position.set(-82+cl*78,53+(cl%2)*5,-62-cl*18);cloud.scale.set(88,13,1);group.add(cloud);landscapeClouds.push(cloud);
       }
       var key=new THREE.DirectionalLight(base.sun||0xffe8d2,3.05);
       key.position.set(-32,58,28);key.castShadow=true;key.shadow.mapSize.set(1024,1024);group.add(key);
