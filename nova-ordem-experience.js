@@ -853,6 +853,31 @@
     renderer.render(scene,camera);
   }
 
+  var landscapePhotoCache={};
+  function applyLandscapePhotoMaps(kind,material){
+    var asset=(kind==='jungle'||kind==='temperate')?'brown_mud_leaves_01':
+      (kind==='coast'||kind==='frozen-coast'||kind==='glacier')?'coast_sand_rocks_02':
+      (kind==='desert'||kind==='badlands'||kind==='canyon'||kind==='salt')?'aerial_sand':'aerial_rocks_02';
+    var cached=landscapePhotoCache[asset];
+    if(cached){
+      if(cached.map)material.map=cached.map;
+      if(cached.normal)material.normalMap=cached.normal;
+      material.needsUpdate=true;
+      return;
+    }
+    cached=landscapePhotoCache[asset]={map:null,normal:null,materials:[material],failed:false};
+    var loader=new THREE.TextureLoader();loader.setCrossOrigin('anonymous');
+    var root='https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/'+asset+'/'+asset;
+    loader.load(root+'_diff_1k.jpg',function(tex){
+      tex.colorSpace=THREE.SRGBColorSpace;tex.wrapS=tex.wrapT=THREE.RepeatWrapping;tex.repeat.set(4,4);tex.anisotropy=4;
+      cached.map=tex;cached.materials.forEach(function(m){m.map=tex;m.needsUpdate=true;});
+    },undefined,function(){cached.failed=true;});
+    loader.load(root+'_nor_gl_1k.jpg',function(tex){
+      tex.wrapS=tex.wrapT=THREE.RepeatWrapping;tex.repeat.set(4,4);tex.anisotropy=4;
+      cached.normal=tex;cached.materials.forEach(function(m){m.normalMap=tex;m.normalScale.set(.72,.72);m.needsUpdate=true;});
+    },undefined,function(){});
+  }
+
   function createLandscape(index){
     if(landscapeSegments&&landscapeSegments.length){
       landscapeSegments.forEach(function(part){
@@ -982,7 +1007,9 @@
         colors.push(tint.r,tint.g,tint.b);
       }
       geo.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));geo.computeVertexNormals();
-      var terrain=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({map:maps.map,bumpMap:maps.bump,bumpScale:.42,vertexColors:true,roughness:.96,metalness:.015}));
+      var terrainMaterial=new THREE.MeshStandardMaterial({map:maps.map,bumpMap:maps.bump,bumpScale:.42,vertexColors:true,roughness:.96,metalness:.015});
+      applyLandscapePhotoMaps(k,terrainMaterial);
+      var terrain=new THREE.Mesh(geo,terrainMaterial);
       terrain.position.y=-8;terrain.receiveShadow=true;group.add(terrain);
       var rockGeo=irregularRockGeometry(s),rockMat=new THREE.MeshStandardMaterial({color:0xffffff,map:maps.map,roughness:.97,flatShading:false});
       var rockCount=k==='jungle'?30:64,rocks=new THREE.InstancedMesh(rockGeo,rockMat,rockCount),dummy=new THREE.Object3D();
