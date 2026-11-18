@@ -692,7 +692,7 @@ footer{border-top-color:rgba(132,179,202,.16)!important;color:#668092!important;
 
 /* Photoreal landscape exploration: extended walk-through and natural atmosphere */
 .wrap.no-planet-exploration{
-  min-height:480vh!important;
+  min-height:680vh!important;
   padding-bottom:38vh!important;
   background:linear-gradient(180deg,rgba(3,9,15,.08),rgba(3,9,15,.18) 38%,rgba(3,9,15,.48))!important;
 }
@@ -719,7 +719,7 @@ footer{border-top-color:rgba(132,179,202,.16)!important;color:#668092!important;
 }
 @media(max-width:760px){
   .wrap.no-planet-exploration{
-    min-height:440vh!important;
+    min-height:620vh!important;
     padding:24px 14px 34vh!important;
   }
 }
