@@ -173,7 +173,7 @@
   function makeSurfaceTexture(route,index) {
     var cache=palettes[route.id];
     if(cache&&cache.surface)return cache.surface;
-    var c=document.createElement('canvas');c.width=768;c.height=384;
+    var c=document.createElement('canvas');c.width=384;c.height=192;
     var ctx=c.getContext('2d'),img=ctx.createImageData(c.width,c.height),data=img.data;
     var sea=color(route.palette[0]),land=color(route.palette[1]),high=color(route.palette[2]),ice=color(route.palette[3]);
     var seed=index*31+17;
@@ -217,7 +217,7 @@
   function makeCloudTexture(route,index) {
     var cache=palettes[route.id];
     if(cache&&cache.clouds)return cache.clouds;
-    var c=document.createElement('canvas');c.width=512;c.height=256;
+    var c=document.createElement('canvas');c.width=256;c.height=128;
     var ctx=c.getContext('2d'),img=ctx.createImageData(c.width,c.height),data=img.data;
     for(var y=0;y<c.height;y++)for(var x=0;x<c.width;x++){
       var n=fbm(x/76+index*2,y/44+index, index*19+3);
@@ -577,6 +577,7 @@
     if(reduced)return;
     try{if(sessionStorage.getItem('no-cinema-intro-seen'))return;sessionStorage.setItem('no-cinema-intro-seen','1');}catch(e){}
     var intro=stage.querySelector('.no-cinema-intro');
+    if(!intro)return;
     intro.classList.add('is-playing');
     introTimer=window.setTimeout(dismissIntro,5200);
   }
@@ -596,9 +597,11 @@
           var notice=stage.querySelector('.no-journey-error');
           if(notice){
             notice.hidden=false;
-            notice.querySelector('b').textContent='AMBIENTE 3D NÃO INICIALIZADO';
-            notice.querySelector('p').textContent='Falha ao iniciar o motor gráfico. '+(err&&err.message?err.message:'Verifique a compatibilidade WebGL deste navegador.');
+            notice.querySelector('b').textContent='MODO VISUAL DE CONTINGÊNCIA';
+            notice.querySelector('p').textContent='O motor 3D não iniciou neste dispositivo. A navegação permanece visível em modo visual simplificado. '+(err&&err.message?err.message:'');
           }
+          var fallback=stage.querySelector('.no-journey-fallback-scene');
+          if(fallback)fallback.classList.add('is-active');
         }
         return null;
       });
@@ -668,7 +671,8 @@
       '<div class="no-journey-scrollhint">ROLE PARA VIAJAR <span>↓</span></div>',
       '<div class="no-journey-planet-labels"></div>',
       '<div class="no-journey-landing" aria-live="polite"><span>ACESSO PLANETÁRIO</span><b>PREPARANDO APROXIMAÇÃO</b></div>',
-      '<aside class="no-journey-error" hidden role="status"><b>INICIALIZANDO MOTOR 3D</b><p>A experiência espacial está sendo preparada.</p></aside>'
+      '<aside class="no-journey-error" hidden role="status"><b>INICIALIZANDO MOTOR 3D</b><p>A experiência espacial está sendo preparada.</p></aside>',
+      '<div class="no-journey-fallback-scene" aria-hidden="true"><i class="fallback-starfield"></i><i class="fallback-planet fallback-planet-a"></i><i class="fallback-planet fallback-planet-b"></i><i class="fallback-planet fallback-planet-c"></i><i class="fallback-ship"></i></div>'
     ].join('');
     journey.appendChild(stage);
     if(top&&top.nextSibling)main.insertBefore(journey,top.nextSibling);else main.insertBefore(journey,main.firstChild);
@@ -839,7 +843,21 @@
     var content=document.getElementById('content');if(content&&window.MutationObserver){var observer=new MutationObserver(function(){syncTopics();});observer.observe(content,{childList:true,subtree:true,characterData:true});}
   }
   function start(){
-    buildStage();wrapNavigation();buildNavigation();loadThree();
+    try{
+      buildStage();
+      if(!stage)throw new Error('A estrutura da jornada não foi criada.');
+      wrapNavigation();buildNavigation();
+      loadThree();
+    }catch(err){
+      console.error('Nova Ordem journey startup failed:',err);
+      var main=document.querySelector('.main');
+      if(main&&!document.getElementById('no-journey-startup-error')){
+        var box=document.createElement('section');box.id='no-journey-startup-error';
+        box.innerHTML='<strong>NOVA ORDEM · MODO DE RECUPERAÇÃO</strong><p>Não foi possível iniciar a experiência espacial. O conteúdo institucional continua disponível abaixo.</p>';
+        main.insertBefore(box,main.firstChild);
+      }
+      document.querySelectorAll('.hero').forEach(function(el){el.classList.remove('no-cinema-old-hero');});
+    }
     var search=document.getElementById('search');if(search)search.addEventListener('input',function(){var q=search.value.trim().toLowerCase();if(!q)return;var root=document.getElementById('content');var match=root&&Array.prototype.find.call(root.querySelectorAll('h2,h3,h4,p,.row'),function(el){return(el.textContent||'').toLowerCase().indexOf(q)>=0;});if(match)match.scrollIntoView({behavior:'smooth',block:'center'});});
   }
 
