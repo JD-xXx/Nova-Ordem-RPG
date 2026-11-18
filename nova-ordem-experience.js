@@ -736,7 +736,7 @@
   };
 
   function styleBumpScale(index){return index%7===5?.035:(index%7===2?.105:.075);}
-  var journeyPlanets=[],journeyProgress=0,selectedPlanet=null,landscape=null,landscapeClouds=[],journeyLength=0,ark=null,journeyCelestials=[];
+  var journeyPlanets=[],journeyProgress=0,selectedPlanet=null,landscape=null,landscapeClouds=[],landscapeSegments=[],landscapeSkyColors=[],journeyLength=0,ark=null,journeyCelestials=[];
   function onJourneyPointer(ev){
     if(!raycaster||!camera||!journeyPlanets.length||ev.target.closest('button'))return;
     var rect=canvas.getBoundingClientRect(),mouse=new THREE.Vector2((ev.clientX-rect.left)/rect.width*2-1,-((ev.clientY-rect.top)/rect.height*2-1));
@@ -809,7 +809,7 @@
     journeyLength=58+(journeyPlanets.length-1)*spacing+70;
     raycaster=new THREE.Raycaster();clock=new THREE.Clock();
     window.addEventListener('resize',onResize,{passive:true});
-    window.addEventListener('scroll',onJourneyScroll,{passive:true});
+    window.addEventListener('scroll',onJourneyScroll,{passive:true});window.addEventListener('scroll',onLandscapeScroll,{passive:true});
     onJourneyScroll();animate();
   }
   function onJourneyScroll(){
@@ -854,64 +854,215 @@
   }
 
   function createLandscape(index){
-    if(landscape){scene.remove(landscape);landscape.traverse(function(o){if(o.geometry)o.geometry.dispose();if(o.material){if(Array.isArray(o.material))o.material.forEach(function(m){m.dispose();});else o.material.dispose();}});}
+    if(landscape){
+      scene.remove(landscape);
+      landscape.traverse(function(o){
+        if(o.geometry)o.geometry.dispose();
+        if(o.material){
+          if(Array.isArray(o.material))o.material.forEach(function(m){m.dispose();});
+          else o.material.dispose();
+        }
+      });
+    }
     var route=ROUTES.find(function(x){return x.id===selectedPlanet;})||ROUTES[1];
     var biomes={
-      lore:{type:'crystal',sky:0x9aabb9,ground:[.20,.25,.31],rock:[.43,.53,.61],wet:false},
-      agency:{type:'coast',sky:0x91aeb9,ground:[.16,.25,.23],rock:[.36,.43,.43],wet:true},
-      organizations:{type:'badlands',sky:0xb39a7e,ground:[.39,.25,.16],rock:[.57,.39,.25],wet:false},
-      characters:{type:'temperate',sky:0x9eb8a6,ground:[.12,.24,.13],rock:[.34,.39,.28],wet:true},
-      protocol:{type:'glacier',sky:0xa8c1cf,ground:[.55,.65,.69],rock:[.72,.79,.81],wet:true},
-      systems:{type:'volcanic',sky:0x786d6a,ground:[.12,.10,.10],rock:[.27,.23,.22],wet:false},
-      power:{type:'desert',sky:0xc0a17d,ground:[.53,.35,.18],rock:[.69,.49,.29],wet:false},
-      combat:{type:'ash',sky:0x898582,ground:[.20,.19,.18],rock:[.37,.34,.31],wet:false},
-      progression:{type:'alpine',sky:0x9eb3b2,ground:[.22,.31,.23],rock:[.48,.53,.49],wet:true},
-      races:{type:'jungle',sky:0x8ca99b,ground:[.08,.19,.11],rock:[.25,.34,.25],wet:true},
-      equipment:{type:'rocky',sky:0x9aa1a6,ground:[.29,.30,.29],rock:[.49,.51,.51],wet:false},
-      crafting:{type:'geothermal',sky:0x9b8a78,ground:[.29,.19,.12],rock:[.48,.32,.20],wet:false},
-      economy:{type:'salt',sky:0xb7b4a8,ground:[.57,.55,.48],rock:[.67,.63,.54],wet:true},
-      ranks:{type:'highland',sky:0x9daeb9,ground:[.30,.34,.34],rock:[.55,.58,.58],wet:false}
+      lore:{type:'crystal',sky:0x9aabb9,ground:[.19,.23,.28],rock:[.43,.49,.55],wet:false},
+      agency:{type:'coast',sky:0x91aeb9,ground:[.13,.22,.19],rock:[.37,.43,.42],wet:true},
+      organizations:{type:'badlands',sky:0xb39a7e,ground:[.34,.22,.14],rock:[.58,.42,.29],wet:false},
+      characters:{type:'temperate',sky:0x9eb8a6,ground:[.10,.20,.11],rock:[.35,.40,.29],wet:true},
+      protocol:{type:'glacier',sky:0xa8c1cf,ground:[.48,.57,.62],rock:[.72,.78,.81],wet:true},
+      systems:{type:'volcanic',sky:0x786d6a,ground:[.09,.085,.08],rock:[.29,.25,.23],wet:false},
+      power:{type:'desert',sky:0xc0a17d,ground:[.47,.30,.15],rock:[.70,.51,.32],wet:false},
+      combat:{type:'ash',sky:0x898582,ground:[.16,.15,.14],rock:[.39,.35,.31],wet:false},
+      progression:{type:'alpine',sky:0x9eb3b2,ground:[.19,.27,.20],rock:[.48,.53,.49],wet:true},
+      races:{type:'jungle',sky:0x8ca99b,ground:[.055,.15,.075],rock:[.25,.34,.24],wet:true},
+      equipment:{type:'rocky',sky:0x9aa1a6,ground:[.25,.26,.26],rock:[.49,.51,.52],wet:false},
+      crafting:{type:'geothermal',sky:0x9b8a78,ground:[.25,.15,.09],rock:[.49,.32,.20],wet:false},
+      economy:{type:'salt',sky:0xb7b4a8,ground:[.52,.50,.43],rock:[.70,.67,.58],wet:true},
+      ranks:{type:'highland',sky:0x9daeb9,ground:[.25,.29,.30],rock:[.55,.59,.60],wet:false}
     };
-    var b=biomes[route.id]||biomes.alpine,seed=index+19,kind=b.type;
-    landscape=new THREE.Group();landscapeClouds=[];scene.background=new THREE.Color(b.sky);scene.fog=new THREE.Fog(new THREE.Color(b.sky),28,175);
-    var geo=new THREE.PlaneGeometry(260,260,190,190);geo.rotateX(-Math.PI/2);
-    var pos=geo.attributes.position,colors=[];
-    function wave(x,z,scale,offset){return Math.sin(x*scale+seed*offset)*Math.cos(z*scale*1.17-seed*offset*.73);}
-    for(var i=0;i<pos.count;i++){
-      var x=pos.getX(i),z=pos.getZ(i),broad=wave(x,z,.022,.8),ridge=1-Math.abs(wave(x,z,.047,1.7)),detail=wave(x,z,.13,2.4)*.45+wave(x,z,.29,3.1)*.16;
-      var h=broad*3.2+ridge*3.8+detail;
-      if(kind==='badlands'||kind==='desert'||kind==='salt')h+=Math.sin(x*.034+z*.012)*2.6;
-      if(kind==='glacier'||kind==='alpine'||kind==='highland')h+=Math.pow(Math.max(0,ridge-.48),2)*28;
-      if(kind==='volcanic'||kind==='ash'||kind==='geothermal')h+=Math.pow(Math.max(0,ridge-.58),2)*19;
-      if(kind==='coast'||kind==='temperate'||kind==='jungle')h+=Math.sin(x*.018+z*.013)*1.5;
-      pos.setY(i,h);
-      var elevation=Math.max(0,Math.min(1,(h+5)/29)),slope=Math.abs(broad-ridge);
-      var vc=new THREE.Color().setRGB(b.ground[0],b.ground[1],b.ground[2]);
-      vc.lerp(new THREE.Color().setRGB(b.rock[0],b.rock[1],b.rock[2]),Math.max(0,Math.min(1,elevation*.72+slope*.34)));
-      if((kind==='glacier'||kind==='alpine'||kind==='highland')&&elevation>.65)vc.lerp(new THREE.Color(0xdce8ec),Math.min(.9,(elevation-.65)*2.8));
-      if((kind==='volcanic'||kind==='geothermal')&&detail>.35)vc.lerp(new THREE.Color(0x8e3820),Math.min(.65,(detail-.35)*1.4));
-      if(kind==='jungle'||kind==='temperate'||kind==='coast')vc.multiplyScalar(.82+Math.max(0,detail)*.24);
-      colors.push(vc.r,vc.g,vc.b);
+    var base=biomes[route.id]||biomes.alpine,kind=base.type,seed=index*37+91;
+    var sequences={
+      crystal:['crystal','rocky','highland','crystal'],
+      coast:['coast','temperate','coast','alpine'],
+      badlands:['badlands','canyon','desert','highland'],
+      temperate:['temperate','alpine','coast','temperate'],
+      glacier:['glacier','alpine','frozen-coast','glacier'],
+      volcanic:['volcanic','ash','geothermal','volcanic'],
+      desert:['desert','badlands','canyon','salt'],
+      ash:['ash','volcanic','rocky','highland'],
+      alpine:['alpine','temperate','highland','glacier'],
+      jungle:['jungle','temperate','coast','jungle'],
+      rocky:['rocky','highland','canyon','rocky'],
+      geothermal:['geothermal','volcanic','badlands','geothermal'],
+      salt:['salt','desert','coast','salt'],
+      highland:['highland','alpine','rocky','highland']
+    };
+    var sequence=sequences[kind]||[kind,kind,kind,kind];
+    landscape=new THREE.Group();
+    landscapeClouds=[];
+    landscapeSegments=[];
+    var skyColors=[];
+    function fractal(x,z,s){
+      return fbm(x*.027+s*.13,z*.027-s*.07,s+3)*.55+
+        fbm(x*.071-s*.08,z*.071+s*.11,s+17)*.29+
+        fbm(x*.19+s*.04,z*.19-s*.03,s+31)*.16;
     }
-    geo.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));geo.computeVertexNormals();
-    var terrain=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({vertexColors:true,roughness:.98,metalness:.01}));terrain.position.y=-8;terrain.receiveShadow=true;landscape.add(terrain);
-    var rockGeo=new THREE.DodecahedronGeometry(1,1),rockMat=new THREE.MeshStandardMaterial({color:new THREE.Color(b.rock[0],b.rock[1],b.rock[2]),roughness:1,flatShading:true});
-    var rockCount=(kind==='glacier'||kind==='highland')?34:52,rocks=new THREE.InstancedMesh(rockGeo,rockMat,rockCount),dummy=new THREE.Object3D();
-    for(var ri=0;ri<rockCount;ri++){var side=ri%2?1:-1,rx=side*(24+(ri*17%57)),rz=-20-(ri*29%105),height=5+(ri*13%17);dummy.position.set(rx,-5+height*.25,rz);dummy.rotation.set((ri%7)*.12,(ri*1.7)%6.28,(ri%5)*.08);dummy.scale.set(3+(ri%4)*1.7,height,3+(ri%3)*1.4);dummy.updateMatrix();rocks.setMatrixAt(ri,dummy.matrix);}
-    landscape.add(rocks);
-    if(kind==='temperate'||kind==='jungle'||kind==='coast'||kind==='alpine'){
-      var count=kind==='jungle'?150:(kind==='temperate'?112:kind==='coast'?62:46),trunkGeo=new THREE.CylinderGeometry(.12,.24,3.7,7),crownGeo=kind==='jungle'?new THREE.SphereGeometry(1.45,9,7):new THREE.ConeGeometry(1.55,4.1,8);
-      var trunks=new THREE.InstancedMesh(trunkGeo,new THREE.MeshStandardMaterial({color:0x514333,roughness:1}),count),crowns=new THREE.InstancedMesh(crownGeo,new THREE.MeshStandardMaterial({color:kind==='jungle'?0x214c35:0x31513a,roughness:1}),count);
-      for(var ti=0;ti<count;ti++){var tx=((ti*47+seed*31)%190)-95,tz=-8-((ti*71+seed*17)%145),sc=.65+((ti*13)%8)*.13;dummy.position.set(tx,-5.2,tz);dummy.scale.set(sc,sc,sc);dummy.rotation.set(0,(ti*1.31)%6.28,0);dummy.updateMatrix();trunks.setMatrixAt(ti,dummy.matrix);dummy.position.set(tx,-2.8+sc*.45,tz);dummy.updateMatrix();crowns.setMatrixAt(ti,dummy.matrix);}
-      landscape.add(trunks);landscape.add(crowns);
+    function heightAt(x,z,k,s){
+      var wx=x+(fbm(x*.018,z*.018,s+2)-.5)*24;
+      var wz=z+(fbm(x*.018+21,z*.018-13,s+8)-.5)*24;
+      var broad=fractal(wx,wz,s),ridge=1-Math.abs(fractal(wx*1.55,wz*1.55,s+11)*2-1);
+      var detail=fractal(wx*2.8,wz*2.8,s+23)-.5;
+      var h=(broad-.48)*13+detail*2.8;
+      if(k==='glacier'||k==='alpine'||k==='highland')h+=Math.pow(Math.max(0,ridge-.48),2)*118;
+      else if(k==='volcanic'||k==='geothermal')h+=Math.pow(Math.max(0,ridge-.53),2)*92;
+      else if(k==='badlands'||k==='canyon')h+=Math.pow(Math.max(0,ridge-.54),2)*72;
+      else if(k==='desert'||k==='salt')h+=Math.sin(wx*.035+Math.sin(wz*.018)*1.8)*4.4+Math.sin(wz*.022)*2.2;
+      else if(k==='coast'||k==='temperate'||k==='jungle')h+=Math.sin(wx*.016+wz*.012)*3.2;
+      if(k==='canyon')h-=Math.pow(Math.max(0,1-Math.abs(x-Math.sin(z*.018)*23)/19),2)*20;
+      if(k==='coast'||k==='frozen-coast')h-=Math.max(0,1-Math.abs(x+Math.sin(z*.014)*22)/38)*9;
+      if(k==='crystal')h+=Math.pow(Math.max(0,ridge-.57),2)*54;
+      return h;
     }
-    if(kind==='desert'||kind==='badlands'||kind==='salt'){for(var di=0;di<12;di++){var dune=new THREE.Mesh(new THREE.SphereGeometry(1,24,14),new THREE.MeshStandardMaterial({color:kind==='salt'?0xc7c2b2:0xb18a5b,roughness:1}));dune.scale.set(15+(di%4)*5,2.4+(di%3),9+(di%3)*3);dune.position.set((di%2?1:-1)*(18+(di*11%48)),-5,-18-(di*17%100));landscape.add(dune);}}
-    if(kind==='crystal'){var crystalMat=new THREE.MeshPhysicalMaterial({color:0x80c9d8,metalness:.22,roughness:.18,transmission:.18,thickness:.8,emissive:0x12394a,emissiveIntensity:.25});for(var ci=0;ci<28;ci++){var crystal=new THREE.Mesh(new THREE.ConeGeometry(.7+(ci%4)*.25,4+(ci%5)*2,6),crystalMat);crystal.position.set((ci*31%150)-75,-4,-12-(ci*23%105));crystal.rotation.z=(ci%5-2)*.12;landscape.add(crystal);}}
-    if(kind==='volcanic'||kind==='geothermal'){var lavaMat=new THREE.MeshBasicMaterial({color:kind==='volcanic'?0xff5a20:0xff9b43});for(var li=0;li<13;li++){var fissure=new THREE.Mesh(new THREE.BoxGeometry(.18+(li%3)*.16,.035,8+(li%4)*3),lavaMat);fissure.position.set((li*19%130)-65,-3.5,-12-(li*21%115));fissure.rotation.y=(li%6)*.16;landscape.add(fissure);}}
-    if(b.wet){var waterMat=new THREE.MeshPhysicalMaterial({color:kind==='glacier'?0x8fb8c7:0x315d68,roughness:.17,metalness:.08,transparent:true,opacity:.88,clearcoat:1});var water=new THREE.Mesh(new THREE.PlaneGeometry(180,100),waterMat);water.rotation.x=-Math.PI/2;water.position.set(0,-5.25,-48);landscape.add(water);}
-    for(var cl=0;cl<6;cl++){var cloud=new THREE.Sprite(new THREE.SpriteMaterial({map:makeNebulaTexture('rgba(238,246,250,.34)'),transparent:true,depthWrite:false,opacity:.42}));cloud.position.set(-75+cl*29,19+(cl%3)*6,-35-cl*19);cloud.scale.set(48,20,1);landscape.add(cloud);landscapeClouds.push(cloud);}
-    var keyLight=new THREE.DirectionalLight(kind==='volcanic'?0xffb18a:0xffe8cc,kind==='volcanic'?2.2:2.7);keyLight.position.set(-28,42,24);landscape.add(keyLight);landscape.add(new THREE.HemisphereLight(0xc3d8e5,0x34302b,.72));
-    landscape.position.set(0,-1,-20);scene.add(landscape);
+    function makeGroundMaps(k,s){
+      var w=384,h=384,c=document.createElement('canvas'),b=document.createElement('canvas');
+      c.width=b.width=w;c.height=b.height=h;
+      var cx=c.getContext('2d'),bx=b.getContext('2d'),im=cx.createImageData(w,h),bm=bx.createImageData(w,h);
+      var lo=base.ground,hi=base.rock;
+      if(k==='glacier'||k==='frozen-coast'){lo=[.35,.46,.52];hi=[.79,.86,.89];}
+      if(k==='volcanic'||k==='geothermal'||k==='ash'){lo=[.075,.065,.06];hi=[.32,.27,.23];}
+      if(k==='desert'||k==='badlands'||k==='canyon'||k==='salt'){lo=[.36,.24,.14];hi=[.72,.55,.36];}
+      if(k==='jungle'||k==='temperate'){lo=[.07,.16,.075];hi=[.32,.39,.25];}
+      for(var py=0;py<h;py++)for(var px=0;px<w;px++){
+        var n=fbm(px/w*19+s*.1,py/h*19-s*.07,s+5);
+        var fine=hash(px,py,s+13),strata=Math.sin(py*.17+n*15+s)*.5+.5;
+        var v=Math.max(0,Math.min(1,(n-.32)*1.25+strata*.16+(fine-.5)*.12));
+        var shade=(fine-.5)*.09+(n-.5)*.12;
+        var p=(py*w+px)*4;
+        im.data[p]=Math.max(0,Math.min(255,(lo[0]+(hi[0]-lo[0])*v+shade)*255));
+        im.data[p+1]=Math.max(0,Math.min(255,(lo[1]+(hi[1]-lo[1])*v+shade)*255));
+        im.data[p+2]=Math.max(0,Math.min(255,(lo[2]+(hi[2]-lo[2])*v+shade)*255));
+        im.data[p+3]=255;
+        var bump=Math.max(0,Math.min(255,95+n*90+strata*28+(fine-.5)*40));
+        bm.data[p]=bm.data[p+1]=bm.data[p+2]=bump;bm.data[p+3]=255;
+      }
+      cx.putImageData(im,0,0);bx.putImageData(bm,0,0);
+      var map=new THREE.CanvasTexture(c),bump=new THREE.CanvasTexture(b);
+      map.colorSpace=THREE.SRGBColorSpace;map.wrapS=map.wrapT=THREE.RepeatWrapping;map.repeat.set(3,3);map.anisotropy=4;
+      bump.wrapS=bump.wrapT=THREE.RepeatWrapping;bump.repeat.set(3,3);bump.anisotropy=4;
+      return {map:map,bump:bump};
+    }
+    function irregularRockGeometry(s){
+      var g=new THREE.IcosahedronGeometry(1,2),a=g.attributes.position;
+      for(var q=0;q<a.count;q++){
+        var x=a.getX(q),y=a.getY(q),z=a.getZ(q);
+        var n=hash(Math.round((x+1)*100),Math.round((y+1)*100)+Math.round((z+1)*50),s);
+        var f=.78+n*.38+Math.sin(x*11+y*7+z*9+s)*.055;
+        a.setXYZ(q,x*f,y*f,z*f);
+      }
+      g.computeVertexNormals();return g;
+    }
+    function makeSegment(seg,segIndex){
+      var s=seed+segIndex*29,k=seg,group=new THREE.Group(),maps=makeGroundMaps(k,s);
+      var geo=new THREE.PlaneGeometry(230,180,128,112);geo.rotateX(-Math.PI/2);
+      var attr=geo.attributes.position,colors=[];
+      for(var vi=0;vi<attr.count;vi++){
+        var x=attr.getX(vi),z=attr.getZ(vi),h=heightAt(x,z,k,s);
+        attr.setY(vi,h);
+        var elevation=Math.max(0,Math.min(1,(h+5)/92));
+        var tint=new THREE.Color(1,1,1);
+        var variation=.88+fractal(x*.8,z*.8,s)*.18;
+        tint.multiplyScalar(variation);
+        if((k==='glacier'||k==='frozen-coast')&&elevation>.46)tint.lerp(new THREE.Color(0xe9f2f4),Math.min(.85,(elevation-.46)*1.5));
+        if((k==='volcanic'||k==='geothermal'||k==='ash')&&elevation>.35)tint.lerp(new THREE.Color(0x5d514a),Math.min(.65,(elevation-.35)*.8));
+        if((k==='jungle'||k==='temperate')&&elevation<.22)tint.multiplyScalar(.84);
+        colors.push(tint.r,tint.g,tint.b);
+      }
+      geo.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));geo.computeVertexNormals();
+      var terrain=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({map:maps.map,bumpMap:maps.bump,bumpScale:.42,vertexColors:true,roughness:.96,metalness:.015}));
+      terrain.position.y=-8;terrain.receiveShadow=true;group.add(terrain);
+      var rockGeo=irregularRockGeometry(s),rockMat=new THREE.MeshStandardMaterial({color:0xffffff,map:maps.map,roughness:.97,flatShading:false});
+      var rockCount=k==='jungle'?30:64,rocks=new THREE.InstancedMesh(rockGeo,rockMat,rockCount),dummy=new THREE.Object3D();
+      for(var ri=0;ri<rockCount;ri++){
+        var side=ri%2?1:-1,rx=side*(22+(hash(ri,1,s)*67)),rz=-72+hash(ri,2,s)*142;
+        var rh=heightAt(rx,rz,k,s)-8,scale=1.5+hash(ri,3,s)*7;
+        dummy.position.set(rx,rh+scale*.36,rz);dummy.rotation.set(hash(ri,4,s)*.8,hash(ri,5,s)*6.28,hash(ri,6,s)*.8);
+        dummy.scale.set(scale*(.7+hash(ri,7,s)*.7),scale*(.8+hash(ri,8,s)*1.8),scale*(.7+hash(ri,9,s)*.7));dummy.updateMatrix();rocks.setMatrixAt(ri,dummy.matrix);
+      }
+      rocks.castShadow=true;rocks.receiveShadow=true;group.add(rocks);
+      if(k==='temperate'||k==='jungle'||k==='coast'||k==='alpine'){
+        var treeCount=k==='jungle'?92:(k==='temperate'?68:46);
+        var trunkGeo=new THREE.CylinderGeometry(.12,.28,4.8,9),crownGeo=irregularRockGeometry(s+51);
+        var trunkMat=new THREE.MeshStandardMaterial({color:k==='jungle'?0x493b2b:0x5c4936,roughness:1});
+        var crownMat=new THREE.MeshStandardMaterial({color:k==='jungle'?0x315c38:0x55734b,roughness:1});
+        var trunks=new THREE.InstancedMesh(trunkGeo,trunkMat,treeCount),crowns=new THREE.InstancedMesh(crownGeo,crownMat,treeCount*3);
+        for(var ti=0;ti<treeCount;ti++){
+          var tx=(hash(ti,11,s)-.5)*190,tz=-82+hash(ti,12,s)*150;
+          if(Math.abs(tx)<18)tx+=tx<0?-20:20;
+          var ground=heightAt(tx,tz,k,s)-8,scale=.55+hash(ti,13,s)*.95;
+          dummy.position.set(tx,ground+2.25*scale,tz);dummy.rotation.set(0,hash(ti,14,s)*6.28,0);dummy.scale.set(scale,scale,scale);dummy.updateMatrix();trunks.setMatrixAt(ti,dummy.matrix);
+          for(var crown=0;crown<3;crown++){
+            var angle=crown*2.094+hash(ti,crown+20,s)*.8,rad=.55*scale;
+            dummy.position.set(tx+Math.cos(angle)*rad,ground+(3.4+crown*.55)*scale,tz+Math.sin(angle)*rad);
+            dummy.rotation.set(hash(ti,crown+30,s)*.5,angle,hash(ti,crown+40,s)*.5);
+            dummy.scale.set(scale*(.9+hash(ti,crown+50,s)*.55),scale*(.8+hash(ti,crown+60,s)*.6),scale*(.9+hash(ti,crown+70,s)*.55));
+            dummy.updateMatrix();crowns.setMatrixAt(ti*3+crown,dummy.matrix);
+          }
+        }
+        trunks.castShadow=true;crowns.castShadow=true;group.add(trunks);group.add(crowns);
+      }
+      if(k==='crystal'){
+        var crystalMat=new THREE.MeshPhysicalMaterial({color:0xa5d8e3,metalness:.12,roughness:.2,transmission:.28,thickness:1.1,clearcoat:1});
+        for(var ci=0;ci<20;ci++){
+          var crystal=new THREE.Mesh(new THREE.CylinderGeometry(.08,.72,5+hash(ci,3,s)*11,6,1),crystalMat);
+          var cx=(hash(ci,4,s)-.5)*150,cz=-78+hash(ci,5,s)*145;
+          crystal.position.set(cx,heightAt(cx,cz,k,s)-2,cz);crystal.rotation.z=(hash(ci,6,s)-.5)*.28;crystal.rotation.x=(hash(ci,7,s)-.5)*.24;group.add(crystal);
+        }
+      }
+      if(k==='volcanic'||k==='geothermal'){
+        var lavaMat=new THREE.MeshStandardMaterial({color:0xff5a24,emissive:0xe13b12,emissiveIntensity:2.2,roughness:.38});
+        for(var li=0;li<9;li++){
+          var lx=(hash(li,21,s)-.5)*145,lz=-78+hash(li,22,s)*145;
+          var points=[];
+          for(var lp=0;lp<7;lp++){var px=lx+(hash(li,lp+30,s)-.5)*12,pz=lz+lp*2.7;points.push(new THREE.Vector3(px,heightAt(px,pz,k,s)-7.7,pz));}
+          var curve=new THREE.CatmullRomCurve3(points),fissure=new THREE.Mesh(new THREE.TubeGeometry(curve,28,.12+hash(li,23,s)*.12,5,false),lavaMat);group.add(fissure);
+        }
+      }
+      if(k==='desert'||k==='badlands'||k==='canyon'||k==='salt'){
+        // Ondulações de dunas e escarpas são parte do relevo, não esferas sobrepostas.
+        var duneMat=new THREE.MeshStandardMaterial({color:k==='salt'?0xd0cabb:0xb58c5d,roughness:.94});
+        for(var di=0;di<6;di++){
+          var dx=(hash(di,41,s)-.5)*145,dz=-78+hash(di,42,s)*145;
+          var duneGeo=new THREE.PlaneGeometry(42,34,32,24);duneGeo.rotateX(-Math.PI/2);
+          var da=duneGeo.attributes.position;
+          for(var dj=0;dj<da.count;dj++){var px=da.getX(dj),pz=da.getZ(dj);da.setY(dj,Math.sin(px*.09+di)*1.8+Math.cos(pz*.11)*.9);}
+          duneGeo.computeVertexNormals();
+          var dune=new THREE.Mesh(duneGeo,duneMat);dune.position.set(dx,heightAt(dx,dz,k,s)-8,dz);group.add(dune);
+        }
+      }
+      if(base.wet||k==='coast'||k==='frozen-coast'){
+        var waterMat=new THREE.MeshPhysicalMaterial({color:k==='glacier'||k==='frozen-coast'?0x91b9c8:0x285d69,roughness:.16,metalness:.12,transparent:true,opacity:.92,clearcoat:1,clearcoatRoughness:.08});
+        var water=new THREE.Mesh(new THREE.PlaneGeometry(190,92),waterMat);water.rotation.x=-Math.PI/2;water.position.set(0,-7.2,-38);group.add(water);
+      }
+      var cloudTexture=makeNebulaTexture('rgba(226,239,246,.22)');
+      for(var cl=0;cl<4;cl++){
+        var cloud=new THREE.Sprite(new THREE.SpriteMaterial({map:cloudTexture,transparent:true,depthWrite:false,opacity:.24}));
+        cloud.position.set(-78+cl*48,34+(cl%2)*8,-45-cl*15);cloud.scale.set(65,22,1);group.add(cloud);landscapeClouds.push(cloud);
+      }
+      var key=new THREE.DirectionalLight(k==='volcanic'||k==='geothermal'?0xffb18a:0xffe8d2,2.45);
+      key.position.set(-32,58,28);key.castShadow=true;group.add(key);
+      group.add(new THREE.HemisphereLight(0xc9dce7,0x292722,.82));
+      group.position.set(0,0,-22-segIndex*86);
+      scene.add(group);landscapeSegments.push(group);
+      skyColors.push(new THREE.Color(base.sky));
+    }
+    var variants=sequence.slice();
+    for(var si=0;si<4;si++)makeSegment(variants[si]||kind,si);
+    landscape=landscapeSegments[0];
+    scene.background=new THREE.Color(base.sky);
+    scene.fog=new THREE.Fog(new THREE.Color(base.sky),42,260);
+    if(renderer){renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;}
+    landscapeSkyColors=skyColors;
   }
 
   function openPlanetDestination(id){
@@ -965,15 +1116,22 @@
 
 
   function onLandscapeScroll(){
-    if(!landscape||!selectedPlanet)return;
+    if(!landscapeSegments||!landscapeSegments.length||!selectedPlanet)return;
     var wrap=document.querySelector('.wrap');if(!wrap)return;
     var rect=wrap.getBoundingClientRect(),span=Math.max(1,wrap.offsetHeight-window.innerHeight);
     var p=Math.max(0,Math.min(1,-rect.top/span));
-    camera.position.set(Math.sin(p*Math.PI*2)*13,7+Math.sin(p*Math.PI*3)*3,34-p*23);
-    camera.lookAt(Math.sin(p*Math.PI*2)*4,0,-26-p*38);
-    landscape.rotation.y=p*.22;
-    landscape.position.z=-20-p*12;
+    var travel=330,segmentFloat=p*3,segment=Math.min(2,Math.floor(segmentFloat)),blend=segmentFloat-segment;
+    var z=28-p*travel,x=Math.sin(p*Math.PI*3)*8;
+    camera.position.set(x,8+Math.sin(p*Math.PI*4)*1.4,z);
+    camera.lookAt(x*.38,0,z-43);
+    var a=landscapeSkyColors[segment]||new THREE.Color(0x9aabb9),b=landscapeSkyColors[Math.min(3,segment+1)]||a;
+    var sky=a.clone().lerp(b,blend);
+    scene.background.copy(sky);
+    if(scene.fog&&scene.fog.color)scene.fog.color.copy(sky);
+    if(ship){ship.position.set(-9,-2.2,8);ship.rotation.set(.015,Math.PI/2,-.025);}
+    if(ark&&ship){ark.position.set(ship.position.x+2.3,ship.position.y+.8,ship.position.z-.8);}
   }
+
   function returnToJourney(){
     selectedPlanet=null;current='overview';
     var wrap=document.querySelector('.wrap');if(wrap){wrap.classList.remove('no-planet-exploration');delete wrap.dataset.planet;}
