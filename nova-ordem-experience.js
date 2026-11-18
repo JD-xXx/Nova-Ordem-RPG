@@ -804,7 +804,7 @@
     var from=camera.position.clone(),target=new THREE.Vector3(entry.group.position.x,entry.group.position.y+entry.size*.22,entry.group.position.z+entry.size*3.6);
     var start=performance.now(),duration=3900;
     function approach(now){var t=Math.min(1,(now-start)/duration),e=t*t*(3-2*t);camera.position.lerpVectors(from,target,e);camera.lookAt(entry.group.position);ship.position.lerpVectors(ship.position,new THREE.Vector3(target.x-1,target.y-1,target.z+entry.size*1.5),.055);if(t<1)requestAnimationFrame(approach);else{
-      scene.remove(entry.group);createLandscape(entry.index);camera.position.set(0,7,34);camera.lookAt(0,0,-25);
+      scene.remove(entry.group);createLandscape(entry.index);ship.position.set(-8,-2.1,5);ship.rotation.set(.015,Math.PI/2,-.025);camera.position.set(0,7,34);camera.lookAt(0,0,-25);
       stage.querySelector('.no-journey-landing b').textContent='POUSO CONCLUÍDO · '+entry.route.name.toUpperCase();
       var wrap=document.querySelector('.wrap');if(wrap){wrap.classList.add('no-planet-exploration');wrap.dataset.planet=id;window.setTimeout(function(){wrap.scrollIntoView({behavior:reduced?'auto':'smooth',block:'start'});},500);}
     }}
