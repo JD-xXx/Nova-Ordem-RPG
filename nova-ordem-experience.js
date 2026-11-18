@@ -36,6 +36,24 @@
   var raycaster, pointer = {x:0,y:0}, pointerTarget = {x:0,y:0}, laserTimer = 0, lasers = [], introTimer = 0;
   var palettes = {};
 
+  var ECOLOGIES = {
+    lore:{type:'crystal',sky:0x87739f,ground:[.13,.075,.20],rock:[.39,.27,.51],flora:0x8650a5,floraLight:0xc08bd6,trunk:0x33243e,water:0x586eaa,accent:0xb78cdb,sun:0xffd7f2,fill:0x7768ad,terrainTint:0xcfc0dc,rockTint:0x8e77a2,cloud:'rgba(190,155,225,.30)',cloudRGB:[186,150,220],surface:['#19152c','#53366b','#a77ab9','#e5d8ee'],wet:true},
+    agency:{type:'coast',sky:0x91b7bd,ground:[.075,.18,.16],rock:[.30,.43,.41],flora:0x4b9b8b,floraLight:0x91c9b5,trunk:0x34483e,water:0x317f91,accent:0x70c9d0,sun:0xffe4c1,fill:0x72a9b5,terrainTint:0xc5d9d0,rockTint:0x708e88,cloud:'rgba(165,218,218,.28)',cloudRGB:[160,212,214],surface:['#102c38','#286d70','#76b9a4','#d7e9d9'],wet:true},
+    organizations:{type:'badlands',sky:0xa77a70,ground:[.29,.085,.075],rock:[.59,.25,.20],flora:0x9d3542,floraLight:0xe06b58,trunk:0x4a2828,water:0x713d4a,accent:0xd75d58,sun:0xffd0aa,fill:0xa35a55,terrainTint:0xe0b5a2,rockTint:0x98605a,cloud:'rgba(224,145,120,.22)',cloudRGB:[214,132,112],surface:['#351b25','#8c343d','#c66a58','#edc0a0'],wet:false},
+    characters:{type:'temperate',sky:0x92b29a,ground:[.065,.17,.085],rock:[.28,.39,.26],flora:0x43834b,floraLight:0x9fbd62,trunk:0x493b2c,water:0x397d70,accent:0x86b875,sun:0xffe6bd,fill:0x76a88a,terrainTint:0xc8d6b4,rockTint:0x6c8260,cloud:'rgba(181,218,182,.24)',cloudRGB:[174,212,176],surface:['#102b29','#2e6d4d','#82a96d','#d9e2bb'],wet:true},
+    protocol:{type:'glacier',sky:0x9bbdce,ground:[.27,.40,.49],rock:[.70,.80,.86],flora:0x5c9caf,floraLight:0xb4e6ed,trunk:0x405b69,water:0x4c91b5,accent:0x9de5f1,sun:0xe7f6ff,fill:0x7dbbd4,terrainTint:0xd5e7ed,rockTint:0x9bbac8,cloud:'rgba(211,239,250,.32)',cloudRGB:[202,230,244],surface:['#203d54','#608da8','#a9d5e1','#edf8fb'],wet:true},
+    systems:{type:'volcanic',sky:0x77666b,ground:[.075,.045,.05],rock:[.29,.13,.15],flora:0x792b3c,floraLight:0xd04a45,trunk:0x282329,water:0x5a2635,accent:0xff6845,sun:0xffa477,fill:0x824451,terrainTint:0xb98c83,rockTint:0x68444a,cloud:'rgba(218,115,92,.20)',cloudRGB:[210,104,82],surface:['#17151d','#57252f','#a84439','#d38b6c'],wet:false},
+    power:{type:'desert',sky:0xb99a6d,ground:[.39,.25,.10],rock:[.70,.49,.24],flora:0xa77b28,floraLight:0xe3c16a,trunk:0x57432a,water:0x5c7e83,accent:0xe6b75d,sun:0xffe0a0,fill:0xc28b4e,terrainTint:0xe2c69a,rockTint:0xa78956,cloud:'rgba(241,207,150,.20)',cloudRGB:[230,194,135],surface:['#3c2c1b','#94703b','#c5a05a','#efdbac'],wet:false},
+    combat:{type:'ash',sky:0x82706e,ground:[.13,.065,.075],rock:[.37,.18,.19],flora:0x8c2736,floraLight:0xd45b53,trunk:0x302329,water:0x49323d,accent:0xe65a48,sun:0xffb18b,fill:0x98585b,terrainTint:0xc49a91,rockTint:0x76565a,cloud:'rgba(190,123,113,.20)',cloudRGB:[185,115,105],surface:['#20191f','#632d38','#a84c48','#d89a82'],wet:false},
+    progression:{type:'alpine',sky:0x91b6bd,ground:[.10,.22,.22],rock:[.38,.54,.55],flora:0x3c8b83,floraLight:0x9ed4b7,trunk:0x3c4b43,water:0x3b8eaa,accent:0x8bd4d0,sun:0xffedcf,fill:0x78aeb9,terrainTint:0xc5ded6,rockTint:0x6b9694,cloud:'rgba(180,226,224,.24)',cloudRGB:[170,218,220],surface:['#163442','#347b79','#82bcb1','#e1eee0'],wet:true},
+    races:{type:'jungle',sky:0x7f9e83,ground:[.045,.13,.075],rock:[.22,.34,.23],flora:0x6b9b38,floraLight:0xc0d76b,trunk:0x3d3826,water:0x286f59,accent:0xa7ce5d,sun:0xffe3b4,fill:0x6b9c76,terrainTint:0xbdd0a1,rockTint:0x627d50,cloud:'rgba(175,213,150,.23)',cloudRGB:[166,208,143],surface:['#12291e','#416e36','#8eae51','#d8e2b1'],wet:true},
+    equipment:{type:'rocky',sky:0x9da5ad,ground:[.19,.21,.23],rock:[.49,.53,.57],flora:0x778b91,floraLight:0xb9c8c5,trunk:0x41494c,water:0x477987,accent:0x9fb9c0,sun:0xffe6ce,fill:0x829eaa,terrainTint:0xd0d8d9,rockTint:0x7c898f,cloud:'rgba(197,215,220,.22)',cloudRGB:[190,210,218],surface:['#222e39','#596c78','#9baeb0','#e1e6df'],wet:false},
+    crafting:{type:'geothermal',sky:0xa17e68,ground:[.23,.105,.055],rock:[.53,.29,.16],flora:0x9b4f2b,floraLight:0xe69b4e,trunk:0x3f2b24,water:0x76513a,accent:0xf18b42,sun:0xffc08a,fill:0xb76c4a,terrainTint:0xd2a17d,rockTint:0x895c47,cloud:'rgba(235,165,115,.20)',cloudRGB:[220,145,98],surface:['#2c1d19','#70402b','#b86b3d','#e2ad79'],wet:false},
+    economy:{type:'salt',sky:0xb6b6a9,ground:[.40,.39,.32],rock:[.69,.66,.55],flora:0x879c75,floraLight:0xd0d7a0,trunk:0x69634b,water:0x4e8c9c,accent:0xc9c58b,sun:0xffefcc,fill:0x8eb5b6,terrainTint:0xe4dfc9,rockTint:0xaaa58b,cloud:'rgba(230,231,211,.24)',cloudRGB:[222,223,203],surface:['#3c3a2e','#888365','#c2b98b','#f1e9c9'],wet:true},
+    ranks:{type:'highland',sky:0x8d83ad,ground:[.16,.13,.27],rock:[.43,.39,.62],flora:0x594d9b,floraLight:0xa89be0,trunk:0x302b45,water:0x4b5b9b,accent:0xafa1ed,sun:0xffe0d0,fill:0x7775b6,terrainTint:0xc7c0e0,rockTint:0x716b9c,cloud:'rgba(192,182,235,.25)',cloudRGB:[185,175,226],surface:['#1b1b3b','#48467e','#8886ba','#ded9f1'],wet:false}
+  };
+
+
   function routeId(id) { return ALIASES[id] || id || 'overview'; }
   function metaFor(id) {
     var key = routeId(id);
@@ -175,12 +193,15 @@
     if(cache&&cache.surface)return cache.surface;
     // Textura procedural determinística: continentes, faixas atmosféricas e micro-relevo.
     // Resolução moderada para preservar o tempo de inicialização em celulares.
-    var width=384,height=192,style=index%7,seed=index*31+17;
+    var eco=ECOLOGIES[route.id]||ECOLOGIES.characters;
+    var styleByType={crystal:0,coast:4,badlands:1,temperate:4,glacier:2,volcanic:3,desert:1,ash:3,alpine:2,jungle:4,rocky:6,geothermal:3,salt:1,highland:2};
+    var width=384,height=192,style=styleByType[eco.type]===undefined?index%7:styleByType[eco.type],seed=index*31+17;
     var c=document.createElement('canvas');c.width=width;c.height=height;
     var ctx=c.getContext('2d'),img=ctx.createImageData(width,height),data=img.data;
     var hc=document.createElement('canvas');hc.width=width;hc.height=height;
     var hctx=hc.getContext('2d'),himg=hctx.createImageData(width,height),hd=himg.data;
-    var sea=color(route.palette[0]),land=color(route.palette[1]),high=color(route.palette[2]),ice=color(route.palette[3]);
+    var surfacePalette=eco.surface||route.palette;
+    var sea=color(surfacePalette[0]),land=color(surfacePalette[1]),high=color(surfacePalette[2]),ice=color(surfacePalette[3]);
     for(var y=0;y<height;y++){
       var v=y/height,latitude=Math.abs(v-.5)*2,polar=Math.pow(latitude,2.2);
       for(var x=0;x<width;x++){
@@ -259,6 +280,7 @@
   function makeCloudTexture(route,index) {
     var cache=palettes[route.id];
     if(cache&&cache.clouds)return cache.clouds;
+    var eco=ECOLOGIES[route.id]||ECOLOGIES.characters;
     var width=320,height=160,style=index%7,seed=index*19+3;
     var c=document.createElement('canvas');c.width=width;c.height=height;
     var ctx=c.getContext('2d'),img=ctx.createImageData(width,height),data=img.data;
@@ -270,7 +292,8 @@
       if(style===1||style===6)density*=.58;
       var alpha=Math.max(0,Math.min(style===5?190:158,(density-(style===5?.43:.57))*(style===5?340:390)));
       var i=(y*width+x)*4;
-      data[i]=style===3?238:220;data[i+1]=style===3?205:235;data[i+2]=style===3?190:245;data[i+3]=alpha;
+      var cloudRGB=eco.cloudRGB||[220,235,245];
+      data[i]=cloudRGB[0];data[i+1]=cloudRGB[1];data[i+2]=cloudRGB[2];data[i+3]=alpha;
     }
     ctx.putImageData(img,0,0);
     var tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;tex.anisotropy=3;tex.wrapS=THREE.RepeatWrapping;tex.needsUpdate=true;
@@ -279,11 +302,21 @@
     return tex;
   }
   function makeNebulaTexture(tint) {
-    var c=document.createElement('canvas');c.width=256;c.height=256;
-    var ctx=c.getContext('2d'),g=ctx.createRadialGradient(128,128,4,128,128,126);
-    g.addColorStop(0,'rgba(180,210,255,.48)');g.addColorStop(.18,tint);g.addColorStop(.5,'rgba(52,78,135,.13)');g.addColorStop(1,'rgba(0,0,0,0)');
-    ctx.fillStyle=g;ctx.fillRect(0,0,256,256);
-    return new THREE.CanvasTexture(c);
+    var c=document.createElement('canvas');c.width=320;c.height=320;
+    var ctx=c.getContext('2d'),img=ctx.createImageData(320,320),m=String(tint||'').match(/rgba?\(([^)]+)\)/);
+    var rgb=m?m[1].split(',').slice(0,3).map(function(v){return parseFloat(v)||0;}):[150,185,220];
+    for(var y=0;y<320;y++)for(var x=0;x<320;x++){
+      var nx=x/320,ny=y/320,cloud=fbm(nx*5.4+1.7,ny*5.4-2.1,43)*.58+fbm(nx*12.8-3,ny*12.8+4,71)*.29+fbm(nx*28,ny*28,97)*.13;
+      var filament=1-Math.abs(cloud*2-1),edge=Math.pow(Math.max(0,1-Math.hypot((nx-.5)*1.55,(ny-.5)*1.55)),.7);
+      var density=Math.max(0,Math.min(1,(cloud-.43)*3.2+Math.max(0,filament-.72)*.9))*edge;
+      var p=(y*320+x)*4;
+      img.data[p]=Math.min(255,rgb[0]+density*55);
+      img.data[p+1]=Math.min(255,rgb[1]+density*58);
+      img.data[p+2]=Math.min(255,rgb[2]+density*70);
+      img.data[p+3]=Math.round(density*155);
+    }
+    ctx.putImageData(img,0,0);
+    var tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;tex.needsUpdate=true;return tex;
   }
 
   function buildShip() {
@@ -404,6 +437,22 @@
     add(new THREE.SphereGeometry(.035,10,8),glowMat,-2.02,.72,0);
     [-.39,.39].forEach(function(z){add(new THREE.SphereGeometry(.045,12,8),warmGlow,1.82,.08,z);});
 
+    // Visible, layered drive plumes and micro navigation lights.
+    var exhaustMat=new THREE.MeshBasicMaterial({color:0x56c9f5,transparent:true,opacity:.34,blending:THREE.AdditiveBlending,depthWrite:false,side:THREE.DoubleSide});
+    var exhaustCore=new THREE.MeshBasicMaterial({color:0xb9f4ff,transparent:true,opacity:.62,blending:THREE.AdditiveBlending,depthWrite:false});
+    [-.29,0,.29].forEach(function(z,i){
+      var plume=add(new THREE.ConeGeometry(.17,.92,20,1,true),exhaustMat,-3.08,-.02,z,0,0,Math.PI/2);
+      plume.scale.set(1,.72+i*.08,1);
+      var core=add(new THREE.ConeGeometry(.07,.56,16,1,true),exhaustCore,-3.08,-.02,z,0,0,Math.PI/2);
+      core.scale.set(1,.7,1);
+      var beacon=add(new THREE.SphereGeometry(.035,10,8),glowMat,-.2,.91,z);
+    });
+    for(var decal=0;decal<7;decal++){
+      panel(-1.55+decal*.43,.86,.29,.22,.012,.012,darkMat);
+      panel(-1.55+decal*.43,.86,-.29,.22,.012,.012,darkMat);
+    }
+    var dorsalAntenna=beam([.42,.48,0],[.58,.88,0],.025,.012,panelMat);
+    add(new THREE.SphereGeometry(.045,12,8),glowMat,.58,.88,0);
     group.userData.engineLights=engineLights;
     group.scale.setScalar(.74);
     group.position.set(-4.2,-1.55,2.5);
@@ -477,6 +526,15 @@
     animate();
   }
 
+  function applyRouteAtmosphere(id){
+    var route=ROUTES.find(function(r){return r.id===id;})||ROUTES[0],eco=ECOLOGIES[id]||ECOLOGIES.characters;
+    if(!document.body)return;
+    document.body.dataset.noPlanetTheme=id;
+    document.body.style.setProperty('--no-ecology-accent','#'+(eco.accent||0x83c9d5).toString(16).padStart(6,'0'));
+    document.body.style.setProperty('--no-ecology-flora','#'+(eco.flora||0x55734b).toString(16).padStart(6,'0'));
+    document.body.style.setProperty('--no-ecology-glow',route.palette[2]);
+  }
+
   function applyPlanet(id) {
     if(!planetMesh)return;
     var m=metaFor(id),r=m.route;
@@ -485,7 +543,7 @@
     planetMesh.material.needsUpdate=true;
     cloudMesh.material.map=makeCloudTexture(r,m.index);
     cloudMesh.material.needsUpdate=true;
-    atmosphereMesh.material.uniforms.glowColor.value.set(r.palette[2]);
+    atmosphereMesh.material.uniforms.glowColor.value.set(ECOLOGIES[r.id]?new THREE.Color(ECOLOGIES[r.id].accent):new THREE.Color(r.palette[2]));
     planetGroup.rotation.set(.04+m.index*.025,.1+m.index*.12,.015);
     planetGroup.scale.setScalar(1);
   }
@@ -894,22 +952,7 @@
       landscapeSegments=[];
     }else if(landscape){scene.remove(landscape);}
     var route=ROUTES.find(function(x){return x.id===selectedPlanet;})||ROUTES[1];
-    var biomes={
-      lore:{type:'crystal',sky:0x9aabb9,ground:[.19,.23,.28],rock:[.43,.49,.55],wet:false},
-      agency:{type:'coast',sky:0x91aeb9,ground:[.13,.22,.19],rock:[.37,.43,.42],wet:true},
-      organizations:{type:'badlands',sky:0xb39a7e,ground:[.34,.22,.14],rock:[.58,.42,.29],wet:false},
-      characters:{type:'temperate',sky:0x9eb8a6,ground:[.10,.20,.11],rock:[.35,.40,.29],wet:true},
-      protocol:{type:'glacier',sky:0xa8c1cf,ground:[.48,.57,.62],rock:[.72,.78,.81],wet:true},
-      systems:{type:'volcanic',sky:0x786d6a,ground:[.09,.085,.08],rock:[.29,.25,.23],wet:false},
-      power:{type:'desert',sky:0xc0a17d,ground:[.47,.30,.15],rock:[.70,.51,.32],wet:false},
-      combat:{type:'ash',sky:0x898582,ground:[.16,.15,.14],rock:[.39,.35,.31],wet:false},
-      progression:{type:'alpine',sky:0x9eb3b2,ground:[.19,.27,.20],rock:[.48,.53,.49],wet:true},
-      races:{type:'jungle',sky:0x8ca99b,ground:[.055,.15,.075],rock:[.25,.34,.24],wet:true},
-      equipment:{type:'rocky',sky:0x9aa1a6,ground:[.25,.26,.26],rock:[.49,.51,.52],wet:false},
-      crafting:{type:'geothermal',sky:0x9b8a78,ground:[.25,.15,.09],rock:[.49,.32,.20],wet:false},
-      economy:{type:'salt',sky:0xb7b4a8,ground:[.52,.50,.43],rock:[.70,.67,.58],wet:true},
-      ranks:{type:'highland',sky:0x9daeb9,ground:[.25,.29,.30],rock:[.55,.59,.60],wet:false}
-    };
+    var biomes=ECOLOGIES;
     var base=biomes[route.id]||biomes.alpine,kind=base.type,seed=index*37+91;
     var sequences={
       crystal:['crystal','rocky','highland','crystal'],
@@ -1008,11 +1051,11 @@
         colors.push(tint.r,tint.g,tint.b);
       }
       geo.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));geo.computeVertexNormals();
-      var terrainMaterial=new THREE.MeshStandardMaterial({map:maps.map,bumpMap:maps.bump,bumpScale:.42,vertexColors:true,roughness:.96,metalness:.015});
+      var terrainMaterial=new THREE.MeshStandardMaterial({color:base.terrainTint||0xffffff,map:maps.map,bumpMap:maps.bump,bumpScale:.52,vertexColors:true,roughness:.94,metalness:.018});
       applyLandscapePhotoMaps(k,terrainMaterial);
       var terrain=new THREE.Mesh(geo,terrainMaterial);
       terrain.position.y=-8;terrain.receiveShadow=true;group.add(terrain);
-      var rockGeo=irregularRockGeometry(s),rockMat=new THREE.MeshStandardMaterial({color:0xffffff,map:maps.map,roughness:.97,flatShading:false});
+      var rockGeo=irregularRockGeometry(s),rockMat=new THREE.MeshStandardMaterial({color:base.rockTint||0xffffff,map:maps.map,roughness:.97,flatShading:false});
       var rockCount=k==='jungle'?30:64,rocks=new THREE.InstancedMesh(rockGeo,rockMat,rockCount),dummy=new THREE.Object3D();
       for(var ri=0;ri<rockCount;ri++){
         var side=ri%2?1:-1,rx=side*(22+(hash(ri,1,s)*67)),rz=-72+hash(ri,2,s)*142;
@@ -1024,8 +1067,8 @@
       if(k==='temperate'||k==='jungle'||k==='coast'||k==='alpine'){
         var treeCount=k==='jungle'?92:(k==='temperate'?68:46);
         var trunkGeo=new THREE.CylinderGeometry(.12,.28,4.8,9),crownGeo=irregularRockGeometry(s+51);
-        var trunkMat=new THREE.MeshStandardMaterial({color:k==='jungle'?0x493b2b:0x5c4936,roughness:1});
-        var crownMat=new THREE.MeshStandardMaterial({color:k==='jungle'?0x315c38:0x55734b,roughness:1});
+        var trunkMat=new THREE.MeshStandardMaterial({color:base.trunk||0x514637,roughness:.96});
+        var crownMat=new THREE.MeshStandardMaterial({color:base.flora||0x55734b,emissive:base.floraGlow||0x000000,emissiveIntensity:base.floraGlow?.16:0,roughness:.88});
         var trunks=new THREE.InstancedMesh(trunkGeo,trunkMat,treeCount),crowns=new THREE.InstancedMesh(crownGeo,crownMat,treeCount*3);
         for(var ti=0;ti<treeCount;ti++){
           var tx=(hash(ti,11,s)-.5)*190,tz=-82+hash(ti,12,s)*150;
@@ -1043,7 +1086,7 @@
         trunks.castShadow=true;crowns.castShadow=true;group.add(trunks);group.add(crowns);
       }
       if(k==='crystal'){
-        var crystalMat=new THREE.MeshPhysicalMaterial({color:0xa5d8e3,metalness:.12,roughness:.2,transmission:.28,thickness:1.1,clearcoat:1});
+        var crystalMat=new THREE.MeshPhysicalMaterial({color:base.floraLight||base.accent,metalness:.12,roughness:.16,transmission:.34,thickness:1.35,clearcoat:1,emissive:base.flora||0x4c6c8c,emissiveIntensity:.08});
         for(var ci=0;ci<20;ci++){
           var crystal=new THREE.Mesh(new THREE.CylinderGeometry(.08,.72,5+hash(ci,3,s)*11,6,1),crystalMat);
           var cx=(hash(ci,4,s)-.5)*150,cz=-78+hash(ci,5,s)*145;
@@ -1051,7 +1094,7 @@
         }
       }
       if(k==='volcanic'||k==='geothermal'){
-        var lavaMat=new THREE.MeshStandardMaterial({color:0xff5a24,emissive:0xe13b12,emissiveIntensity:2.2,roughness:.38});
+        var lavaMat=new THREE.MeshStandardMaterial({color:base.accent||0xff5a24,emissive:base.accent||0xe13b12,emissiveIntensity:2.0,roughness:.34});
         for(var li=0;li<9;li++){
           var lx=(hash(li,21,s)-.5)*145,lz=-78+hash(li,22,s)*145;
           var points=[];
@@ -1061,7 +1104,7 @@
       }
       if(k==='desert'||k==='badlands'||k==='canyon'||k==='salt'){
         // Ondulações de dunas e escarpas são parte do relevo, não esferas sobrepostas.
-        var duneMat=new THREE.MeshStandardMaterial({color:k==='salt'?0xd0cabb:0xb58c5d,roughness:.94});
+        var duneMat=new THREE.MeshStandardMaterial({color:base.rockTint||0xb58c5d,roughness:.94});
         for(var di=0;di<6;di++){
           var dx=(hash(di,41,s)-.5)*145,dz=-78+hash(di,42,s)*145;
           var duneGeo=new THREE.PlaneGeometry(42,34,32,24);duneGeo.rotateX(-Math.PI/2);
@@ -1072,31 +1115,28 @@
         }
       }
       if(base.wet||k==='coast'||k==='frozen-coast'){
-        var waterMat=new THREE.MeshPhysicalMaterial({color:k==='glacier'||k==='frozen-coast'?0x91b9c8:0x285d69,roughness:.16,metalness:.12,transparent:true,opacity:.92,clearcoat:1,clearcoatRoughness:.08});
+        var waterMat=new THREE.MeshPhysicalMaterial({color:base.water||0x285d69,roughness:.13,metalness:.08,transparent:true,opacity:.94,clearcoat:1,clearcoatRoughness:.045,ior:1.333});
         var water=new THREE.Mesh(new THREE.PlaneGeometry(190,92),waterMat);water.rotation.x=-Math.PI/2;water.position.set(0,-7.2,-38);group.add(water);
       }
-      var cloudTexture=makeNebulaTexture('rgba(226,239,246,.22)');
+      var cloudTexture=makeNebulaTexture(base.cloud||'rgba(226,239,246,.22)');
       for(var cl=0;cl<4;cl++){
         var cloud=new THREE.Sprite(new THREE.SpriteMaterial({map:cloudTexture,transparent:true,depthWrite:false,opacity:.24}));
         cloud.position.set(-78+cl*48,34+(cl%2)*8,-45-cl*15);cloud.scale.set(65,22,1);group.add(cloud);landscapeClouds.push(cloud);
       }
-      var key=new THREE.DirectionalLight(k==='volcanic'||k==='geothermal'?0xffb18a:0xffe8d2,2.45);
-      key.position.set(-32,58,28);key.castShadow=true;group.add(key);
-      group.add(new THREE.HemisphereLight(0xc9dce7,0x292722,.82));
+      var key=new THREE.DirectionalLight(base.sun||0xffe8d2,3.05);
+      key.position.set(-32,58,28);key.castShadow=true;key.shadow.mapSize.set(1024,1024);group.add(key);
+      var fill=new THREE.DirectionalLight(base.fill||0x86a9c4,1.15);fill.position.set(38,18,-42);group.add(fill);
+      group.add(new THREE.HemisphereLight(base.sky||0xc9dce7,base.groundColor||0x292722,1.05));
+      var ecologyGlow=new THREE.PointLight(base.accent||0x8acfe2,.55,115);ecologyGlow.position.set(0,22,-46);group.add(ecologyGlow);
       group.position.set(0,0,-22-segIndex*168);
       scene.add(group);landscapeSegments.push(group);
-      var skyHex=k==='glacier'||k==='frozen-coast'?0xa8c5d1:
-        k==='desert'||k==='badlands'||k==='canyon'||k==='salt'?0xc2a17e:
-        k==='volcanic'||k==='geothermal'||k==='ash'?0x756b68:
-        k==='jungle'||k==='temperate'?0x91ad9b:
-        k==='coast'?0x91b4c0:base.sky;
-      skyColors.push(new THREE.Color(skyHex));
+      skyColors.push(new THREE.Color(base.sky));
     }
     var variants=sequence.slice();
     for(var si=0;si<4;si++)makeSegment(variants[si]||kind,si);
     landscape=landscapeSegments[0];
     scene.background=new THREE.Color(base.sky);
-    scene.fog=new THREE.Fog(new THREE.Color(base.sky),42,260);
+    scene.fog=new THREE.Fog(new THREE.Color(base.sky),38,285);
     if(renderer){renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;}
     landscapeSkyColors=skyColors;
   }
@@ -1104,7 +1144,7 @@
   function openPlanetDestination(id){
     if(selectedPlanet||!camera)return;
     var entry=journeyPlanets.find(function(p){return p.route.id===id;});if(!entry)return;
-    selectedPlanet=id;current=id;
+    selectedPlanet=id;current=id;applyRouteAtmosphere(id);
     if(typeof originalGo==='function')originalGo.call(window,id);
     stage.classList.add('is-planet-landing');
     stage.querySelector('.no-journey-landing').classList.add('is-active');
@@ -1169,7 +1209,7 @@
   }
 
   function returnToJourney(){
-    selectedPlanet=null;current='overview';
+    selectedPlanet=null;current='overview';applyRouteAtmosphere('overview');
     var wrap=document.querySelector('.wrap');if(wrap){wrap.classList.remove('no-planet-exploration');delete wrap.dataset.planet;}
     if(landscapeSegments&&landscapeSegments.length){
       landscapeSegments.forEach(function(part){
