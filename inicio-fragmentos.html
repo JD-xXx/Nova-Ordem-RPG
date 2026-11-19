@@ -37,7 +37,7 @@ h1 span{color:#aaa0c8}
 #hover-card p{font-size:10px;line-height:1.6;color:#aaa7b6;margin:6px 0 0}
 #detail{position:absolute;z-index:9;inset:76px 0 0;display:grid;place-items:center;padding:30px 6vw 75px;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .45s,visibility .45s}
 #detail.open{opacity:1;visibility:visible;pointer-events:auto}
-.detail-shell{width:min(1020px,88vw);min-height:min(570px,72vh);position:relative;display:grid;grid-template-columns:1fr .82fr;border:1px solid rgba(214,205,239,.19);background:linear-gradient(135deg,rgba(28,27,42,.94),rgba(11,12,19,.96));box-shadow:0 35px 120px #0009;overflow:hidden}
+.detail-shell{width:min(1020px,88vw);min-height:min(570px,72vh);position:relative;display:grid;grid-template-columns:1fr .82fr;border:1px solid rgba(214,205,239,.19);background:linear-gradient(90deg,rgba(28,27,42,.98) 0%,rgba(14,14,23,.96) 49%,rgba(11,12,19,.30) 100%);box-shadow:0 35px 120px #0009;overflow:hidden}
 .detail-shell:before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,rgba(177,158,242,.08),transparent 38%,rgba(121,194,197,.04));}
 .detail-copy{position:relative;z-index:1;padding:clamp(30px,5vw,68px);align-self:center}
 .detail-copy .micro{color:#b7a8e9}
@@ -54,6 +54,11 @@ h1 span{color:#aaa0c8}
 .node:nth-child(2){transform:translate(0,-155px)}.node:nth-child(3){transform:translate(145px,48px);background:#a4dfe2;box-shadow:0 0 16px #a4dfe2;animation-delay:.4s}.node:nth-child(4){transform:translate(-142px,65px);animation-delay:.8s}.node:nth-child(5){transform:translate(75px,135px);background:#e1c7a2;box-shadow:0 0 16px #e1c7a2;animation-delay:1.2s}.node:nth-child(6){transform:translate(-85px,-130px);animation-delay:1.6s}
 .system-map{position:absolute;inset:0;display:none;align-items:center;justify-content:center}
 #detail[data-kind="systems"] .system-map{display:flex}
+#detail[data-kind="systems"] .detail-visual:before{border-color:rgba(183,164,235,.13);box-shadow:0 0 85px rgba(139,119,196,.11),inset 0 0 55px rgba(139,119,196,.08)}
+#detail[data-kind="systems"] .detail-visual:after{border-style:solid;border-color:rgba(163,210,214,.28);animation-duration:13s}
+#detail[data-kind="systems"] .detail-visual .visual-core{opacity:0;transform:scale(.4)}
+#detail[data-kind="systems"] .map-ring{border-color:rgba(190,177,235,.32);box-shadow:0 0 18px rgba(167,148,225,.08)}
+#detail[data-kind="systems"] .map-tag{background:rgba(11,13,21,.82);backdrop-filter:blur(9px);border-color:rgba(194,181,232,.34);box-shadow:0 5px 22px #0006}
 #detail[data-kind="systems"] .visual-core{width:94px;height:94px;font-size:9px}
 #detail[data-kind="systems"] .detail-visual:before{width:370px;height:370px}
 #detail[data-kind="systems"] .detail-visual:after{width:280px;height:280px}
@@ -77,7 +82,7 @@ h1 span{color:#aaa0c8}
  .instruction{font-size:8px;margin-top:20px}
  #shard-hud{bottom:5%;font-size:7px}
  #detail{inset:64px 0 0;padding:16px 14px 54px;align-items:center}
- .detail-shell{width:100%;min-height:0;height:min(78svh,700px);grid-template-columns:1fr;grid-template-rows:1fr .78fr;overflow:auto}
+ .detail-shell{width:100%;min-height:0;height:min(78svh,700px);grid-template-columns:1fr;grid-template-rows:1fr .78fr;overflow:auto;background:linear-gradient(180deg,rgba(23,22,35,.98) 0%,rgba(13,14,22,.96) 53%,rgba(10,11,18,.22) 100%)}
  .detail-copy{padding:28px 25px 12px;align-self:start}.detail-copy h2{font-size:34px;margin:14px 0}.detail-copy>p{font-size:11px;line-height:1.7}.detail-list{gap:8px;margin-top:17px}.detail-row{font-size:10px}
  .detail-visual{min-height:200px}.detail-visual:before{width:210px;height:210px}.detail-visual:after{width:155px;height:155px}
  .visual-core{width:76px;height:76px;font-size:8px}.node:nth-child(2){transform:translate(0,-105px)}.node:nth-child(3){transform:translate(98px,32px)}.node:nth-child(4){transform:translate(-98px,38px)}.node:nth-child(5){transform:translate(55px,88px)}.node:nth-child(6){transform:translate(-58px,-88px)}
@@ -102,8 +107,9 @@ h1 span{color:#aaa0c8}
 <script type="module">
 import * as THREE from 'three';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
+import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
 const canvas=document.querySelector('#scene'),small=matchMedia('(max-width:760px)').matches,reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
-const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,small?1.35:1.8));renderer.setSize(innerWidth,innerHeight);renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,small?1.35:1.8));renderer.setSize(innerWidth,innerHeight);renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;renderer.transmissionResolutionScale=small?.42:.68;
 const scene=new THREE.Scene();scene.fog=new THREE.FogExp2(0x08090e,.018);
 const camera=new THREE.PerspectiveCamera(34,innerWidth/innerHeight,.1,100);camera.position.set(0,0,21);
 const pmrem=new THREE.PMREMGenerator(renderer);scene.environment=pmrem.fromScene(new RoomEnvironment(),.04).texture;
@@ -125,7 +131,7 @@ realityDefs.forEach((d,i)=>{
 });
 const root=new THREE.Group();scene.add(root);
 const ray=new THREE.Raycaster(),mouse=new THREE.Vector2(5,5),clock=new THREE.Clock();
-const matGlass=new THREE.MeshPhysicalMaterial({color:0x9994ac,metalness:.24,roughness:.18,clearcoat:1,clearcoatRoughness:.08,iridescence:.9,iridescenceIOR:1.32,iridescenceThicknessRange:[280,680],envMapIntensity:1.5,transparent:true,opacity:.82});
+const matGlass=new THREE.MeshPhysicalMaterial({color:0xc7c5d5,metalness:.04,roughness:.075,transmission:.86,thickness:.32,ior:1.46,clearcoat:1,clearcoatRoughness:.035,iridescence:.72,iridescenceIOR:1.32,iridescenceThicknessRange:[260,620],envMapIntensity:1.8,attenuationColor:new THREE.Color(0xb8b2d8),attenuationDistance:2.4,transparent:true,opacity:1});
 const edgeMat=new THREE.MeshStandardMaterial({color:0x8d82aa,metalness:.85,roughness:.2});
 const data=[
  {id:'history',name:'História',tag:'REGISTRO 01',preview:'As eras, os acontecimentos e as forças que moldaram este mundo.',desc:'Conheça a trajetória deste mundo: suas origens, acontecimentos decisivos, povos e conflitos. Os registros revelam a história gradualmente, sem antecipar os mistérios que ainda não foram descobertos.',items:['Eras e acontecimentos que definiram o mundo.','Deuses, civilizações e regiões conhecidas.','Conflitos e mudanças que afetam a realidade.']},
@@ -142,18 +148,18 @@ function makeShard(d,i){
  const pts=[[-w*.5,-h*.34],[-w*.08,-h*.5],[w*.5,-h*.18],[w*.34,h*.46],[-w*.3,h*.5]];
  const shape=new THREE.Shape();shape.moveTo(...pts[0]);pts.slice(1).forEach(p=>shape.lineTo(...p));shape.closePath();
  const geo=new THREE.ExtrudeGeometry(shape,{depth:.13,bevelEnabled:true,bevelSegments:3,steps:1,bevelSize:.045,bevelThickness:.035});geo.computeVertexNormals();
- const mesh=new THREE.Mesh(geo,[matGlass,edgeMat]);mesh.position.set(cx,cy,(i%2)*.12);mesh.rotation.z=a*.12;mesh.userData={...d,index:i,base:new THREE.Vector3(cx,cy,(i%2)*.12),baseRot:a*.12,hover:0,fall:0};root.add(mesh);shards.push(mesh);
+ const mesh=new THREE.Mesh(geo,[matGlass.clone(),edgeMat]);mesh.position.set(cx,cy,(i%2)*.12);mesh.rotation.z=a*.12;mesh.userData={...d,index:i,base:new THREE.Vector3(cx,cy,(i%2)*.12),baseRot:a*.12,hover:0,fall:0};root.add(mesh);shards.push(mesh);
  const line=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.ShapeGeometry(shape)),new THREE.LineBasicMaterial({color:0xb6a5ef,transparent:true,opacity:.24}));line.position.copy(mesh.position);line.position.z+=.15;line.rotation.copy(mesh.rotation);root.add(line);mesh.userData.edge=line;
 }
 data.forEach(makeShard);
 const dust=new THREE.Group();scene.add(dust);for(let i=0;i<110;i++){const g=new THREE.SphereGeometry(.012+Math.random()*.022,6,6),m=new THREE.MeshBasicMaterial({color:i%5===0?0xa99bdf:0xaaa9bd,transparent:true,opacity:.35});const s=new THREE.Mesh(g,m);s.position.set((Math.random()-.5)*25,(Math.random()-.5)*15,-3-Math.random()*13);dust.add(s)}
 // A.R.K. — white ceramic service robot, built procedurally in Three.js.
-const ark=new THREE.Group();scene.add(ark);ark.position.set(small?0:-.05,small?-.05:-.08,1.2);ark.scale.setScalar(small?.74:1.02);
+const ark=new THREE.Group();scene.add(ark);ark.position.set(small?0:-.05,small?-.05:-.08,1.2);ark.scale.setScalar(small?.68:1.02);
 const ceramic=new THREE.MeshPhysicalMaterial({color:0xece9e3,roughness:.34,metalness:.04,clearcoat:.62,clearcoatRoughness:.22});
 const white=new THREE.MeshPhysicalMaterial({color:0xf8f6f1,roughness:.3,clearcoat:.7});
 const dark=new THREE.MeshStandardMaterial({color:0x17181e,roughness:.42,metalness:.25});
 const glow=new THREE.MeshBasicMaterial({color:0xc8b8ff});
-function rounded(parent,w,h,d,r,material,pos){const geo=new THREE.BoxGeometry(w,h,d);const mesh=new THREE.Mesh(geo,material);mesh.position.set(...pos);parent.add(mesh);return mesh}
+function rounded(parent,w,h,d,r,material,pos){const geo=new RoundedBoxGeometry(w,h,d,4,r);const mesh=new THREE.Mesh(geo,material);mesh.position.set(...pos);mesh.castShadow=true;mesh.receiveShadow=true;parent.add(mesh);return mesh}
 function ball(parent,r,material,pos,scale=[1,1,1]){const m=new THREE.Mesh(new THREE.SphereGeometry(r,24,18),material);m.position.set(...pos);m.scale.set(...scale);parent.add(m);return m}
 const body=new THREE.Group();ark.add(body);
 rounded(body,1.12,1.02,.78,.2,ceramic,[0,-.42,0]);
@@ -179,15 +185,19 @@ function resize(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h);camera.
 addEventListener('resize',resize);
 function showPreview(obj,clientX,clientY){if(!obj){hoverCard.classList.remove('show');return}hoverCard.querySelector('strong').textContent=obj.userData.name;hoverCard.querySelector('p').textContent=obj.userData.preview;hoverCard.querySelector('small').textContent=obj.userData.tag+' · PRÉVIA';const x=Math.min(innerWidth-270,Math.max(14,clientX+18)),y=Math.min(innerHeight-130,Math.max(80,clientY+18));hoverCard.style.left=x+'px';hoverCard.style.top=y+'px';hoverCard.classList.add('show')}
 function openShard(mesh){if(sceneMode!=='idle')return;selected=mesh;sceneMode='fall';hoverCard.classList.remove('show');document.querySelector('#shard-hud').textContent='ACESSANDO '+mesh.userData.name.toUpperCase();mesh.userData.velocity=new THREE.Vector3((mesh.position.x*.14)+(Math.random()-.5)*.8,-2.7,2.5);mesh.userData.spin=(Math.random()-.5)*4;mesh.userData.fall=0;shards.forEach(s=>{if(s!==mesh)s.userData.dim=true});document.querySelector('#ark-status').textContent='ONLINE · ABRINDO REGISTRO';}
-function reveal(){const d=selected.userData;document.querySelector('#detail-kicker').textContent='ARQUIVO '+d.tag;document.querySelector('#detail-title').textContent=d.name;document.querySelector('#detail-desc').textContent=d.desc;const list=document.querySelector('#detail-list');list.innerHTML='';d.items.forEach(t=>{const row=document.createElement('div');row.className='detail-row';row.textContent=t;list.appendChild(row)});detail.dataset.kind=d.id;detail.classList.add('open');detail.setAttribute('aria-hidden','false');document.querySelector('#shard-hud').textContent='REGISTRO ABERTO · '+d.name.toUpperCase();if(d.id==='systems'){document.querySelector('#detail-title').textContent='A arquitetura dos sistemas';document.querySelector('#detail-desc').textContent='Uma rede de regras conectadas: cada sistema influencia os demais, mas mantém sua própria função. Explore os módulos que estruturam a experiência de Nova Ordem.';}}
+function reveal(){const d=selected.userData;document.querySelector('#detail-kicker').textContent='ARQUIVO '+d.tag;document.querySelector('#detail-title').textContent=d.name;document.querySelector('#detail-desc').textContent=d.desc;const list=document.querySelector('#detail-list');list.innerHTML='';d.items.forEach(t=>{const row=document.createElement('div');row.className='detail-row';row.textContent=t;list.appendChild(row)});detail.dataset.kind=d.id;detail.classList.add('open');detail.setAttribute('aria-hidden','false');sceneMode=d.id==='systems'?'systems':'detail';document.querySelector('#shard-hud').textContent='REGISTRO ABERTO · '+d.name.toUpperCase();if(d.id==='systems'){document.querySelector('#detail-title').textContent='A arquitetura dos sistemas';document.querySelector('#detail-desc').textContent='Uma rede de regras conectadas: cada sistema influencia os demais, mas mantém sua própria função. Explore os módulos que estruturam a experiência de Nova Ordem.';}}
 function closeDetail(){detail.classList.remove('open');detail.setAttribute('aria-hidden','true');sceneMode='restore';document.querySelector('#ark-status').textContent='ONLINE · RECOMPONDO FRAGMENTOS';document.querySelector('#shard-hud').textContent='RECONSTRUINDO A REALIDADE';}
 document.querySelector('#close').addEventListener('click',closeDetail);
 addEventListener('pointermove',e=>{mouse.x=e.clientX/innerWidth*2-1;mouse.y=-(e.clientY/innerHeight*2-1)});
 addEventListener('pointerdown',e=>{if(sceneMode!=='idle')return;ray.setFromCamera(new THREE.Vector2(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight)*2+1),camera);const hit=ray.intersectObjects(shards,false)[0];if(hit)openShard(hit.object)});
 function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.04),t=clock.elapsedTime;ray.setFromCamera(mouse,camera);const hits=sceneMode==='idle'?ray.intersectObjects(shards,false):[];const next=hits.length?hits[0].object:null;if(next!==hovered){if(hovered)hovered.userData.targetHover=0;hovered=next;if(hovered)hovered.userData.targetHover=1;}
-shards.forEach(s=>{const u=s.userData;if(sceneMode==='idle'){u.hover+=( (u.targetHover||0)-u.hover)*(1-Math.exp(-dt*10));s.position.z=u.base.z+u.hover*.28;s.scale.setScalar(1+u.hover*.035);if(u.dim){s.material.opacity+=(.18-s.material.opacity)*.08}}else if(sceneMode==='fall'&&s===selected){u.fall+=dt;s.position.addScaledVector(u.velocity,dt);u.velocity.y-=5.2*dt;s.rotation.x+=u.spin*dt;s.rotation.y+=u.spin*.7*dt;if(u.fall>0.68&&!detail.classList.contains('open'))reveal()}else if(sceneMode==='fall'){s.material.opacity+=(.12-s.material.opacity)*.06}else if(sceneMode==='restore'){const q=1-Math.exp(-dt*7);s.position.lerp(u.base,q);s.rotation.x+=(0-s.rotation.x)*q;s.rotation.y+=(0-s.rotation.y)*q;s.rotation.z+=(u.baseRot-s.rotation.z)*q;s.scale.lerp(new THREE.Vector3(1,1,1),q);s.material.opacity+=(.82-s.material.opacity)*q;if(s.position.distanceTo(u.base)<.025){s.position.copy(u.base);s.rotation.set(0,u.baseRot,0);s.material.opacity=.82;u.dim=false;u.fall=0;}}});
+shards.forEach(s=>{const u=s.userData;if(sceneMode==='idle'){u.hover+=( (u.targetHover||0)-u.hover)*(1-Math.exp(-dt*10));s.position.z=u.base.z+u.hover*.28;s.scale.setScalar(1+u.hover*.035);if(u.dim){s.material[0].opacity+=(.18-s.material[0].opacity)*.08}}else if(sceneMode==='fall'&&s===selected){u.fall+=dt;s.position.addScaledVector(u.velocity,dt);u.velocity.y-=5.2*dt;s.rotation.x+=u.spin*dt;s.rotation.y+=u.spin*.7*dt;if(u.fall>0.68&&!detail.classList.contains('open'))reveal()}else if(sceneMode==='fall'){s.material[0].opacity+=(.12-s.material[0].opacity)*.06}else if(sceneMode==='restore'){const q=1-Math.exp(-dt*7);s.position.lerp(u.base,q);s.rotation.x+=(0-s.rotation.x)*q;s.rotation.y+=(0-s.rotation.y)*q;s.rotation.z+=(u.baseRot-s.rotation.z)*q;s.scale.lerp(new THREE.Vector3(1,1,1),q);s.material[0].opacity+=(1-s.material[0].opacity)*q;if(s.position.distanceTo(u.base)<.025){s.position.copy(u.base);s.rotation.set(0,u.baseRot,0);s.material[0].opacity=1;u.dim=false;u.fall=0;}}});
 if(sceneMode==='restore'&&shards.every(s=>s.position.distanceTo(s.userData.base)<.04)){sceneMode='idle';selected=null;document.querySelector('#ark-status').textContent='ONLINE · OBSERVANDO';document.querySelector('#shard-hud').textContent='APONTE PARA UM FRAGMENTO · CLIQUE PARA EXPLORAR';}
-if(sceneMode==='idle'){root.rotation.y+=(mouse.x*.045-root.rotation.y)*(1-Math.exp(-dt*2));root.rotation.x+=(-mouse.y*.025-root.rotation.x)*(1-Math.exp(-dt*2));ark.position.y=(small?-.05:-.08)+Math.sin(t*1.1)*.045;body.rotation.y=Math.sin(t*.55)*.035;headPivot.rotation.y=Math.sin(t*.7)*.06+mouse.x*.12;headPivot.rotation.z=Math.sin(t*.8)*.025;pedestalRing.rotation.z=t*.15;}
+if(sceneMode==='idle'){root.rotation.y+=(mouse.x*.045-root.rotation.y)*(1-Math.exp(-dt*2));root.rotation.x+=(-mouse.y*.025-root.rotation.x)*(1-Math.exp(-dt*2));}
+const arkHome=new THREE.Vector3(small?0:-.05,small?-.05:-.08,1.2),arkSystems=new THREE.Vector3(small?0:5.15,small?-3.15:-.42,small?2.5:2.6);
+const targetArk=sceneMode==='systems'?arkSystems:arkHome;ark.position.lerp(targetArk,1-Math.exp(-dt*(sceneMode==='systems'?2.8:4.2)));
+const targetScale=sceneMode==='systems'?(small?.57:.82):(small?.68:1.02);const sNow=ark.scale.x+(targetScale-ark.scale.x)*(1-Math.exp(-dt*3));ark.scale.setScalar(sNow);
+ark.position.y+=(Math.sin(t*1.05)*.045)*dt*2.2;body.rotation.y=Math.sin(t*.55)*.035;headPivot.rotation.y=Math.sin(t*.7)*.06+mouse.x*.12;headPivot.rotation.z=Math.sin(t*.8)*.025;pedestalRing.rotation.z=t*.15;
 dust.rotation.y=t*.008;realities.rotation.y=Math.sin(t*.09)*.035;realities.rotation.x=Math.cos(t*.07)*.018;renderer.render(scene,camera);}
 if(renderer.getContext())animate();
 </script>
