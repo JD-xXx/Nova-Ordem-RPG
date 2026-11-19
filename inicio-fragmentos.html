@@ -96,7 +96,6 @@ h1 span{color:#aaa0c8}
 <section id="intro"><div class="kicker">ACESSO AO ARQUIVO CENTRAL</div><h1>Realidades<br><span>em fragmentos.</span></h1><p class="intro-copy">Cada fragmento guarda uma parte deste mundo. Explore a história, compreenda os sistemas e descubra os registros que a Agência preserva.</p><div class="instruction">APONTE PARA UM CACO · CLIQUE PARA EXPLORAR</div></section>
 <div id="ark-label"><strong>A.R.K. / UNIDADE DE APOIO</strong><span>INTERFACE DE ARQUIVO E ORIENTAÇÃO</span><div id="ark-status">ONLINE · OBSERVANDO</div></div>
 <div id="hover-card"><small>FRAGMENTO DETECTADO</small><strong></strong><p></p></div>
-<div id="shard-hud">SELECIONE UM FRAGMENTO PARA ACESSAR SEU REGISTRO</div>
 <section id="detail" aria-hidden="true" data-kind=""><article class="detail-shell"><button class="close" id="close">← VOLTAR AOS FRAGMENTOS</button><div class="detail-copy"><div class="micro" id="detail-kicker">REGISTRO 001</div><h2 id="detail-title">História</h2><p id="detail-desc"></p><div class="detail-list" id="detail-list"></div><div id="systems-extra"><div class="system-chip">CHI · ENERGIA VITAL</div><div class="system-chip">TALENTOS · HABILIDADES</div><div class="system-chip">RAÇAS · ORIGENS</div><div class="system-chip">PROGRESSÃO · EVOLUÇÃO</div><div class="system-chip">EQUIPAMENTOS · RECURSOS</div><div class="system-chip">MISSÕES · OPERAÇÕES</div></div></div><div class="detail-visual"><div class="map-ring r2"></div><div class="map-ring r3"></div><div class="visual-core">A ORDEM</div><i class="node"></i><i class="node"></i><i class="node"></i><i class="node"></i><i class="node"></i><div class="system-map"><span class="map-tag t1">CHI</span><span class="map-tag t2">TALENTOS</span><span class="map-tag t3">RAÇAS</span><span class="map-tag t4">PROGRESSÃO</span><span class="map-tag t5">EQUIPAMENTOS</span></div></div></article></section>
 <div id="shard-hud">FRAGMENTOS DE REALIDADE · A ORDEM</div>
 </div>
@@ -112,6 +111,18 @@ scene.add(new THREE.HemisphereLight(0xdedaff,0x171723,.9));
 const key=new THREE.DirectionalLight(0xf0eaff,3.2);key.position.set(-5,8,10);scene.add(key);
 const rim=new THREE.PointLight(0x9b83ed,45,35);rim.position.set(6,2,5);scene.add(rim);
 const cyan=new THREE.PointLight(0x77cbd1,22,28);cyan.position.set(-7,-5,2);scene.add(cyan);
+const realities=new THREE.Group();scene.add(realities);
+const realityDefs=[
+ {p:[-8,3,-7],r:1.55,c:0x8874c9},{p:[8,3,-8],r:1.15,c:0x6c9da9},
+ {p:[-7,-4,-9],r:1.05,c:0xb38c72},{p:[7,-4,-7],r:1.7,c:0x7f78b7},
+ {p:[0,6,-12],r:.8,c:0x8ca8cf}
+];
+realityDefs.forEach((d,i)=>{
+ const shell=new THREE.Mesh(new THREE.SphereGeometry(d.r,32,24),new THREE.MeshPhysicalMaterial({color:d.c,metalness:.18,roughness:.25,transparent:true,opacity:.13,wireframe:false,clearcoat:1,emissive:d.c,emissiveIntensity:.12}));
+ shell.position.set(...d.p);realities.add(shell);
+ const wire=new THREE.Mesh(new THREE.SphereGeometry(d.r*1.045,18,12),new THREE.MeshBasicMaterial({color:d.c,wireframe:true,transparent:true,opacity:.16}));wire.position.copy(shell.position);realities.add(wire);
+ const orbit=new THREE.Mesh(new THREE.TorusGeometry(d.r*1.35,.006,5,96),new THREE.MeshBasicMaterial({color:d.c,transparent:true,opacity:.3}));orbit.position.copy(shell.position);orbit.rotation.set(.8+i*.27,.35*i,.4);realities.add(orbit);
+});
 const root=new THREE.Group();scene.add(root);
 const ray=new THREE.Raycaster(),mouse=new THREE.Vector2(5,5),clock=new THREE.Clock();
 const matGlass=new THREE.MeshPhysicalMaterial({color:0x9994ac,metalness:.24,roughness:.18,clearcoat:1,clearcoatRoughness:.08,iridescence:.9,iridescenceIOR:1.32,iridescenceThicknessRange:[280,680],envMapIntensity:1.5,transparent:true,opacity:.82});
@@ -177,7 +188,7 @@ function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDel
 shards.forEach(s=>{const u=s.userData;if(sceneMode==='idle'){u.hover+=( (u.targetHover||0)-u.hover)*(1-Math.exp(-dt*10));s.position.z=u.base.z+u.hover*.28;s.scale.setScalar(1+u.hover*.035);if(u.dim){s.material.opacity+=(.18-s.material.opacity)*.08}}else if(sceneMode==='fall'&&s===selected){u.fall+=dt;s.position.addScaledVector(u.velocity,dt);u.velocity.y-=5.2*dt;s.rotation.x+=u.spin*dt;s.rotation.y+=u.spin*.7*dt;if(u.fall>0.68&&!detail.classList.contains('open'))reveal()}else if(sceneMode==='fall'){s.material.opacity+=(.12-s.material.opacity)*.06}else if(sceneMode==='restore'){const q=1-Math.exp(-dt*7);s.position.lerp(u.base,q);s.rotation.x+=(0-s.rotation.x)*q;s.rotation.y+=(0-s.rotation.y)*q;s.rotation.z+=(u.baseRot-s.rotation.z)*q;s.scale.lerp(new THREE.Vector3(1,1,1),q);s.material.opacity+=(.82-s.material.opacity)*q;if(s.position.distanceTo(u.base)<.025){s.position.copy(u.base);s.rotation.set(0,u.baseRot,0);s.material.opacity=.82;u.dim=false;u.fall=0;}}});
 if(sceneMode==='restore'&&shards.every(s=>s.position.distanceTo(s.userData.base)<.04)){sceneMode='idle';selected=null;document.querySelector('#ark-status').textContent='ONLINE · OBSERVANDO';document.querySelector('#shard-hud').textContent='APONTE PARA UM FRAGMENTO · CLIQUE PARA EXPLORAR';}
 if(sceneMode==='idle'){root.rotation.y+=(mouse.x*.045-root.rotation.y)*(1-Math.exp(-dt*2));root.rotation.x+=(-mouse.y*.025-root.rotation.x)*(1-Math.exp(-dt*2));ark.position.y=(small?-.05:-.08)+Math.sin(t*1.1)*.045;body.rotation.y=Math.sin(t*.55)*.035;headPivot.rotation.y=Math.sin(t*.7)*.06+mouse.x*.12;headPivot.rotation.z=Math.sin(t*.8)*.025;pedestalRing.rotation.z=t*.15;}
-dust.rotation.y=t*.008;renderer.render(scene,camera);}
+dust.rotation.y=t*.008;realities.rotation.y=Math.sin(t*.09)*.035;realities.rotation.x=Math.cos(t*.07)*.018;renderer.render(scene,camera);}
 if(renderer.getContext())animate();
 </script>
 </body></html>
