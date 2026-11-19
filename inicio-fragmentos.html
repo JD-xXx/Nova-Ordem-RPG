@@ -1,167 +1,183 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#07070a">
-<title>A Ordem — Acesso ao Arquivo Central</title>
-<meta name="description" content="Entre no universo de Nova Ordem. Arquivos, sistemas e registros da Agência Interdimensional.">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#08090e">
+<title>A ORDEM — Arquivo de Realidades</title>
+<meta name="description" content="Acesso ao arquivo central da Agência Interdimensional A Ordem.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{color-scheme:dark;--bg:#07070a;--ink:#f1eff6;--muted:#92909d;--violet:#b6a5ef;--line:rgba(255,255,255,.12)}
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif}body{min-height:100svh}button{font:inherit}
-#stage{position:fixed;inset:0;background:radial-gradient(ellipse at 50% 45%,#17151e 0,#0b0a10 36%,#07070a 72%);overflow:hidden}
-#webgl{position:absolute;inset:0;width:100%;height:100%;display:block}
-.grain{position:absolute;inset:0;pointer-events:none;opacity:.12;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.22'/%3E%3C/svg%3E")}
-.topline{position:absolute;z-index:4;left:5.5%;right:5.5%;top:5.3%;display:flex;align-items:center;justify-content:space-between;pointer-events:none}
-.brand{display:flex;align-items:center;gap:12px;font-size:12px;letter-spacing:.22em;font-weight:600}.brand-mark{width:26px;height:26px;border:1px solid #9d8bc9;display:grid;place-items:center;transform:rotate(45deg);box-shadow:0 0 18px #8c78c533}.brand-mark:after{content:"";width:8px;height:8px;border:1px solid #c5b6f2}.top-meta{font-size:9px;letter-spacing:.2em;color:#777481}
-.hint{position:absolute;z-index:4;bottom:5.2%;left:5.5%;font-size:9px;letter-spacing:.18em;color:#716e7a}.version{position:absolute;z-index:4;bottom:5.2%;right:5.5%;font-size:9px;letter-spacing:.15em;color:#716e7a}
-.overlay{position:absolute;z-index:3;inset:0;pointer-events:none;display:grid;place-items:center}
-.content{position:absolute;width:min(76vw,950px);height:min(58vh,590px);display:grid;grid-template-columns:1.2fr .8fr;align-items:center;padding:clamp(28px,5vw,78px);gap:5vw;transform:translateY(1px);transition:opacity .35s,filter .35s}
-.copy{max-width:570px}.eyebrow{font-size:10px;letter-spacing:.23em;color:#b4a6df;margin-bottom:28px}.eyebrow:before{content:"";display:inline-block;width:23px;height:1px;background:#a995df;vertical-align:middle;margin-right:12px}
-h1{font-size:clamp(38px,5.2vw,76px);line-height:.99;letter-spacing:-.065em;font-weight:500;margin:0 0 23px;background:linear-gradient(150deg,#fff 8%,#d8d3e3 58%,#9b94aa);color:transparent;background-clip:text}
-.lede{font-size:clamp(13px,1.15vw,16px);line-height:1.8;color:#a6a2af;max-width:480px;margin:0}
-.actions{display:flex;align-items:center;gap:26px;margin-top:35px;pointer-events:auto}
-.primary{border:1px solid rgba(255,255,255,.8);background:#e9e6ef;color:#111016;padding:13px 19px;border-radius:4px;font-size:11px;font-weight:600;letter-spacing:.04em;cursor:pointer;transition:.25s}
-.primary:hover{background:#b9a7f2;border-color:#b9a7f2;transform:translateY(-2px);box-shadow:0 8px 30px #a18bd633}
-.secondary{border:0;background:transparent;color:#d0cadb;font-size:11px;letter-spacing:.04em;padding:10px 0;cursor:pointer}.secondary:hover{color:#c2b1ff}
-.index{justify-self:end;align-self:end;text-align:right;color:#777381;font-size:9px;line-height:2;letter-spacing:.15em}.index strong{display:block;color:#c2b6e3;font-size:11px;font-weight:500}
-.glass-caption{position:absolute;right:9%;top:17%;writing-mode:vertical-rl;font-size:8px;letter-spacing:.24em;color:#8e879c;opacity:.7}
-#definitions{position:absolute;z-index:5;inset:0;display:grid;place-items:center;opacity:0;pointer-events:none;transition:opacity .35s}
-#definitions.show{opacity:1;pointer-events:auto}
-.def-inner{width:min(560px,76vw);margin-left:8vw}.def-kicker{font-size:9px;letter-spacing:.22em;color:#a99bd0;margin-bottom:24px}.def-inner h2{font-size:clamp(28px,3.5vw,48px);font-weight:500;letter-spacing:-.05em;margin:0 0 30px}.terms{display:grid;gap:18px}.term{font-size:13px;line-height:1.7;color:#a6a2af}.term b{color:#eeeaf5;font-weight:600}.back{margin-top:36px;border:1px solid #6e657f;background:rgba(22,20,29,.82);color:#eeeaf5;padding:11px 17px;font-size:11px;cursor:pointer;transform:rotate(-4deg);transition:.25s}.back:hover{color:#c4b3ff;border-color:#b9abff;transform:rotate(0) translateY(-2px)}
-#status{position:absolute;z-index:6;left:50%;bottom:10%;transform:translateX(-50%);font-size:9px;letter-spacing:.18em;color:#807b8c;opacity:0;transition:opacity .3s;white-space:nowrap}
-@media(max-width:700px){
- .topline{top:max(24px,env(safe-area-inset-top));left:22px;right:22px}.brand{font-size:11px}.top-meta{font-size:8px;max-width:120px;text-align:right;line-height:1.6}
- .content{width:84vw;height:72svh;grid-template-columns:1fr;align-content:center;gap:0;padding:30px 26px 36px;transform:translateY(-2vh)}
- .copy{max-width:100%}.eyebrow{font-size:9px;margin-bottom:23px}h1{font-size:clamp(43px,11vw,62px);max-width:390px;margin-bottom:20px}.lede{font-size:13px;line-height:1.75;max-width:340px}
- .actions{margin-top:28px;gap:22px}.primary{padding:13px 16px}.index{justify-self:start;align-self:end;text-align:left;margin-top:34px;font-size:8px}.index strong{font-size:10px}
- .glass-caption{right:7%;top:18%;font-size:7px}
- .hint{left:22px;bottom:max(22px,env(safe-area-inset-bottom));font-size:8px}.version{right:22px;bottom:max(22px,env(safe-area-inset-bottom));font-size:8px}
- .def-inner{width:78vw;margin-left:0}.def-inner h2{font-size:34px;margin-bottom:25px}.terms{gap:14px}.term{font-size:12px}
- #status{bottom:9%}
+:root{--bg:#08090e;--paper:#f2f0f7;--muted:#9998a7;--violet:#bba9ff;--cyan:#9bdce2;--line:rgba(221,218,241,.16);--mono:"DM Mono",monospace;--sans:Manrope,system-ui,sans-serif}
+*{box-sizing:border-box}html,body{margin:0;width:100%;min-height:100%;background:var(--bg);color:var(--paper);font-family:var(--sans)}body{overflow:hidden}button{font:inherit}
+#stage{position:fixed;inset:0;overflow:hidden;background:radial-gradient(ellipse at 50% 47%,#171724 0%,#0d0e17 37%,#08090e 76%)}
+#scene{position:absolute;inset:0;width:100%;height:100%;display:block}
+#veil{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 34%,rgba(3,4,9,.48) 100%);z-index:1}
+.noise{position:absolute;inset:0;z-index:8;pointer-events:none;opacity:.07;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E")}
+header{position:absolute;z-index:10;top:0;left:0;right:0;height:76px;padding:0 5.2%;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.08);background:linear-gradient(180deg,rgba(8,9,14,.82),rgba(8,9,14,.15));backdrop-filter:blur(12px)}
+.brand{display:flex;align-items:center;gap:13px}.sigil{width:28px;height:28px;border:1px solid #b9a7ed;transform:rotate(45deg);display:grid;place-items:center;box-shadow:0 0 20px #9d88e533}.sigil:after{content:"";width:8px;height:8px;border:1px solid #d6caff}.brand strong{font-size:12px;letter-spacing:.24em;font-weight:700}.brand small,.header-right{font:9px var(--mono);letter-spacing:.15em;color:#858394}.header-right{text-align:right;line-height:1.8}
+#intro{position:absolute;z-index:4;left:7%;top:18%;width:min(390px,34vw);pointer-events:none;transition:opacity .4s,transform .5s}
+.kicker,.micro{font:10px var(--mono);letter-spacing:.19em;color:#b8a9e7;text-transform:uppercase}
+.kicker:before{content:"";display:inline-block;width:24px;height:1px;background:#b8a9e7;vertical-align:middle;margin-right:12px}
+h1{font-size:clamp(38px,5.4vw,78px);letter-spacing:-.075em;line-height:.98;font-weight:500;margin:22px 0 20px;max-width:650px}
+h1 span{color:#aaa0c8}
+.intro-copy{font-size:13px;line-height:1.9;color:#aaa8b5;max-width:345px}
+.instruction{margin-top:29px;font:9px var(--mono);letter-spacing:.14em;color:#777585}
+#ark-label{position:absolute;z-index:4;right:8%;top:22%;width:180px;text-align:right;pointer-events:none}
+#ark-label strong{display:block;font-size:11px;letter-spacing:.2em;font-weight:600}
+#ark-label span{display:block;margin-top:7px;font:9px var(--mono);color:#9692a4;letter-spacing:.1em}
+#ark-status{display:inline-flex;align-items:center;gap:7px;margin-top:16px;font:8px var(--mono);letter-spacing:.12em;color:#8e8a9b}
+#ark-status:before{content:"";width:6px;height:6px;border-radius:50%;background:#9ad6c3;box-shadow:0 0 10px #9ad6c3}
+#shard-hud{position:absolute;z-index:6;left:50%;bottom:8%;transform:translateX(-50%);font:9px var(--mono);letter-spacing:.16em;color:#777585;white-space:nowrap;pointer-events:none}
+#hover-card{position:absolute;z-index:7;min-width:190px;max-width:250px;padding:13px 15px;border:1px solid rgba(201,188,241,.35);background:rgba(13,13,22,.88);backdrop-filter:blur(14px);box-shadow:0 12px 45px #0008;opacity:0;transform:translateY(7px);transition:opacity .18s,transform .18s;pointer-events:none}
+#hover-card.show{opacity:1;transform:translateY(0)}
+#hover-card small{display:block;font:8px var(--mono);letter-spacing:.18em;color:#b6a5e9;margin-bottom:7px}
+#hover-card strong{font-size:14px;font-weight:600;display:block}
+#hover-card p{font-size:10px;line-height:1.6;color:#aaa7b6;margin:6px 0 0}
+#detail{position:absolute;z-index:9;inset:76px 0 0;display:grid;place-items:center;padding:30px 6vw 75px;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .45s,visibility .45s}
+#detail.open{opacity:1;visibility:visible;pointer-events:auto}
+.detail-shell{width:min(1020px,88vw);min-height:min(570px,72vh);position:relative;display:grid;grid-template-columns:1fr .82fr;border:1px solid rgba(214,205,239,.19);background:linear-gradient(135deg,rgba(28,27,42,.94),rgba(11,12,19,.96));box-shadow:0 35px 120px #0009;overflow:hidden}
+.detail-shell:before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,rgba(177,158,242,.08),transparent 38%,rgba(121,194,197,.04));}
+.detail-copy{position:relative;z-index:1;padding:clamp(30px,5vw,68px);align-self:center}
+.detail-copy .micro{color:#b7a8e9}
+.detail-copy h2{font-size:clamp(32px,4.2vw,58px);line-height:1.02;letter-spacing:-.065em;font-weight:500;margin:20px 0}
+.detail-copy>p{max-width:520px;color:#aaa8b5;font-size:13px;line-height:1.9}
+.detail-list{display:grid;gap:12px;margin-top:28px}
+.detail-row{display:flex;gap:12px;align-items:flex-start;color:#c9c5d2;font-size:11px;line-height:1.65}
+.detail-row:before{content:"";width:5px;height:5px;flex:none;margin-top:6px;background:#b5a4ed;box-shadow:0 0 10px #b5a4ed}
+.detail-visual{position:relative;min-height:360px;display:grid;place-items:center;overflow:hidden}
+.detail-visual:before{content:"";position:absolute;width:320px;height:320px;border:1px solid rgba(186,170,235,.17);border-radius:50%;box-shadow:0 0 80px rgba(139,119,196,.09),inset 0 0 60px rgba(139,119,196,.06)}
+.detail-visual:after{content:"";position:absolute;width:220px;height:220px;border:1px dashed rgba(186,170,235,.22);border-radius:50%;animation:orbit 24s linear infinite}
+.visual-core{position:relative;z-index:1;width:112px;height:112px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ded4ff,#8472b2 35%,#262236 72%);box-shadow:0 0 65px #a995e955,0 0 140px #8e79d322;display:grid;place-items:center;font:10px var(--mono);letter-spacing:.15em;color:#fff}
+.node{position:absolute;z-index:2;width:9px;height:9px;border-radius:50%;background:#c6b7ff;box-shadow:0 0 16px #b8a4ff;animation:pulse 2.8s ease-in-out infinite}
+.node:nth-child(2){transform:translate(0,-155px)}.node:nth-child(3){transform:translate(145px,48px);background:#a4dfe2;box-shadow:0 0 16px #a4dfe2;animation-delay:.4s}.node:nth-child(4){transform:translate(-142px,65px);animation-delay:.8s}.node:nth-child(5){transform:translate(75px,135px);background:#e1c7a2;box-shadow:0 0 16px #e1c7a2;animation-delay:1.2s}.node:nth-child(6){transform:translate(-85px,-130px);animation-delay:1.6s}
+.system-map{position:absolute;inset:0;display:none;align-items:center;justify-content:center}
+#detail[data-kind="systems"] .system-map{display:flex}
+#detail[data-kind="systems"] .visual-core{width:94px;height:94px;font-size:9px}
+#detail[data-kind="systems"] .detail-visual:before{width:370px;height:370px}
+#detail[data-kind="systems"] .detail-visual:after{width:280px;height:280px}
+.map-ring{position:absolute;border:1px solid rgba(181,164,235,.24);border-radius:50%;animation:orbit 18s linear infinite}
+.map-ring.r2{width:330px;height:170px;transform:rotate(-35deg);animation-duration:25s}
+.map-ring.r3{width:330px;height:170px;transform:rotate(55deg);animation-duration:31s;animation-direction:reverse}
+.map-tag{position:absolute;padding:7px 9px;border:1px solid rgba(199,187,232,.26);background:#11121d;color:#d7d0e8;font:8px var(--mono);letter-spacing:.1em;animation:tagIn .6s both}
+.map-tag.t1{top:16%;left:13%}.map-tag.t2{top:22%;right:8%;animation-delay:.1s}.map-tag.t3{bottom:23%;left:7%;animation-delay:.2s}.map-tag.t4{bottom:16%;right:12%;animation-delay:.3s}.map-tag.t5{top:48%;right:4%;animation-delay:.4s}
+.close{position:absolute;z-index:3;right:20px;top:20px;border:1px solid rgba(255,255,255,.25);background:rgba(8,9,14,.6);color:#e8e3f2;padding:10px 13px;font:9px var(--mono);letter-spacing:.12em;cursor:pointer}
+.close:hover{border-color:#c4b4fa;color:#c4b4fa}
+#systems-extra{display:none}
+#detail[data-kind="systems"] #systems-extra{display:grid}
+#systems-extra{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:20px}
+.system-chip{padding:9px 10px;border:1px solid rgba(190,177,225,.2);background:rgba(255,255,255,.025);font:8px var(--mono);letter-spacing:.06em;color:#c9c3d5}
+@keyframes orbit{to{transform:rotate(360deg)}}@keyframes pulse{0%,100%{opacity:.55;scale:.8}50%{opacity:1;scale:1.25}}@keyframes tagIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:760px){
+ header{height:64px;padding:0 20px}.brand strong{font-size:11px}.header-right{font-size:7px}
+ #intro{left:24px;top:13%;width:calc(100% - 48px);max-width:360px}
+ h1{font-size:clamp(40px,11vw,60px);margin:16px 0}.intro-copy{font-size:11px;max-width:290px}
+ #ark-label{right:23px;top:auto;bottom:19%;width:140px}#ark-label strong{font-size:9px}#ark-label span{font-size:7px}
+ .instruction{font-size:8px;margin-top:20px}
+ #shard-hud{bottom:5%;font-size:7px}
+ #detail{inset:64px 0 0;padding:16px 14px 54px;align-items:center}
+ .detail-shell{width:100%;min-height:0;height:min(78svh,700px);grid-template-columns:1fr;grid-template-rows:1fr .78fr;overflow:auto}
+ .detail-copy{padding:28px 25px 12px;align-self:start}.detail-copy h2{font-size:34px;margin:14px 0}.detail-copy>p{font-size:11px;line-height:1.7}.detail-list{gap:8px;margin-top:17px}.detail-row{font-size:10px}
+ .detail-visual{min-height:200px}.detail-visual:before{width:210px;height:210px}.detail-visual:after{width:155px;height:155px}
+ .visual-core{width:76px;height:76px;font-size:8px}.node:nth-child(2){transform:translate(0,-105px)}.node:nth-child(3){transform:translate(98px,32px)}.node:nth-child(4){transform:translate(-98px,38px)}.node:nth-child(5){transform:translate(55px,88px)}.node:nth-child(6){transform:translate(-58px,-88px)}
+ #detail[data-kind="systems"] .detail-visual:before{width:235px;height:235px}#detail[data-kind="systems"] .detail-visual:after{width:175px;height:175px}
+ .map-ring.r2,.map-ring.r3{width:220px;height:115px}.map-tag{font-size:6px;padding:5px 6px}.map-tag.t1{top:8%;left:8%}.map-tag.t2{top:12%;right:4%}.map-tag.t3{bottom:14%;left:3%}.map-tag.t4{bottom:9%;right:7%}.map-tag.t5{top:45%;right:1%}
+ .close{right:10px;top:10px;padding:8px 9px;font-size:8px}
 }
-@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}</script>
 </head>
 <body>
 <div id="stage">
- <canvas id="webgl"></canvas><div class="grain"></div>
- <header class="topline"><div class="brand"><span class="brand-mark"></span><span>A ORDEM</span></div><div class="top-meta">AGÊNCIA INTERDIMENSIONAL<br>ARQUIVO CENTRAL · ACESSO PÚBLICO</div></header>
- <main class="overlay" id="overlay">
-  <section class="content" id="content">
-   <div class="copy"><div class="eyebrow">REGISTRO CENTRAL · NOVA ORDEM</div><h1>O mundo é<br>maior do que parece.</h1><p class="lede">Existências, talentos e civilizações coexistem em uma realidade muito além da compreensão comum. Explore os registros da Agência.</p>
-    <div class="actions"><button class="primary" id="enter">INICIAR ACESSO <span aria-hidden="true">↗</span></button><button class="secondary" id="read">Conhecer a Agência →</button></div>
-   </div>
-   <div class="index"><strong>NO — 001 / ACESSO INICIAL</strong>HISTÓRIA · SISTEMAS · ARQUIVOS<br>ESTADO DO SISTEMA: OPERACIONAL</div>
-  </section>
-  <div class="glass-caption">A REALIDADE É APENAS O PRIMEIRO ARQUIVO</div>
- </main>
- <section id="definitions" aria-hidden="true"><div class="def-inner"><div class="def-kicker">AGÊNCIA INTERDIMENSIONAL · A ORDEM</div><h2>Um universo. Muitas camadas.</h2><div class="terms"><div class="term"><b>História —</b> conheça os acontecimentos e as eras que moldaram o mundo.</div><div class="term"><b>Sistemas —</b> descubra as regras que definem personagens, talentos, raças e evolução.</div><div class="term"><b>Arquivos —</b> consulte documentos, registros e informações da Agência.</div></div><button class="back" id="back">← Reconstituir acesso</button></div></section>
- <div id="status">RECONFIGURANDO ESTRUTURA</div>
- <div class="hint">MOVA O CURSOR · TOQUE NOS FRAGMENTOS</div><div class="version">PROTOCOLO DE TESTE 01</div>
+<canvas id="scene"></canvas><div id="veil"></div><div class="noise"></div>
+<header><div class="brand"><span class="sigil"></span><strong>A ORDEM</strong></div><div class="header-right">AGÊNCIA INTERDIMENSIONAL<br>ARQUIVO CENTRAL · NOVA ORDEM</div></header>
+<section id="intro"><div class="kicker">ACESSO AO ARQUIVO CENTRAL</div><h1>Realidades<br><span>em fragmentos.</span></h1><p class="intro-copy">Cada fragmento guarda uma parte deste mundo. Explore a história, compreenda os sistemas e descubra os registros que a Agência preserva.</p><div class="instruction">APONTE PARA UM CACO · CLIQUE PARA EXPLORAR</div></section>
+<div id="ark-label"><strong>A.R.K. / UNIDADE DE APOIO</strong><span>INTERFACE DE ARQUIVO E ORIENTAÇÃO</span><div id="ark-status">ONLINE · OBSERVANDO</div></div>
+<div id="hover-card"><small>FRAGMENTO DETECTADO</small><strong></strong><p></p></div>
+<div id="shard-hud">SELECIONE UM FRAGMENTO PARA ACESSAR SEU REGISTRO</div>
+<section id="detail" aria-hidden="true" data-kind=""><article class="detail-shell"><button class="close" id="close">← VOLTAR AOS FRAGMENTOS</button><div class="detail-copy"><div class="micro" id="detail-kicker">REGISTRO 001</div><h2 id="detail-title">História</h2><p id="detail-desc"></p><div class="detail-list" id="detail-list"></div><div id="systems-extra"><div class="system-chip">CHI · ENERGIA VITAL</div><div class="system-chip">TALENTOS · HABILIDADES</div><div class="system-chip">RAÇAS · ORIGENS</div><div class="system-chip">PROGRESSÃO · EVOLUÇÃO</div><div class="system-chip">EQUIPAMENTOS · RECURSOS</div><div class="system-chip">MISSÕES · OPERAÇÕES</div></div></div><div class="detail-visual"><div class="map-ring r2"></div><div class="map-ring r3"></div><div class="visual-core">A ORDEM</div><i class="node"></i><i class="node"></i><i class="node"></i><i class="node"></i><i class="node"></i><div class="system-map"><span class="map-tag t1">CHI</span><span class="map-tag t2">TALENTOS</span><span class="map-tag t3">RAÇAS</span><span class="map-tag t4">PROGRESSÃO</span><span class="map-tag t5">EQUIPAMENTOS</span></div></div></article></section>
+<div id="shard-hud">FRAGMENTOS DE REALIDADE · A ORDEM</div>
 </div>
 <script type="module">
 import * as THREE from 'three';
-import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-const canvas=document.querySelector('#webgl'), stage=document.querySelector('#stage'), content=document.querySelector('#content');
-const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
-const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'high-performance'});
-renderer.setPixelRatio(Math.min(devicePixelRatio,matchMedia('(max-width:700px)').matches?1.35:1.8));
-renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
-const scene=new THREE.Scene();scene.background=new THREE.Color('#07070a');
-const camera=new THREE.PerspectiveCamera(30,innerWidth/innerHeight,.1,100);camera.position.set(0,0,27);
+import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
+const canvas=document.querySelector('#scene'),small=matchMedia('(max-width:760px)').matches,reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,small?1.35:1.8));renderer.setSize(innerWidth,innerHeight);renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
+const scene=new THREE.Scene();scene.fog=new THREE.FogExp2(0x08090e,.018);
+const camera=new THREE.PerspectiveCamera(34,innerWidth/innerHeight,.1,100);camera.position.set(0,0,21);
 const pmrem=new THREE.PMREMGenerator(renderer);scene.environment=pmrem.fromScene(new RoomEnvironment(),.04).texture;
-scene.environmentIntensity=.42;
-scene.add(new THREE.AmbientLight(0x9b91b8,.42));
-const key=new THREE.DirectionalLight(0xe4e5ff,3.2);key.position.set(-7,8,11);scene.add(key);
-const rim=new THREE.PointLight(0x9c83d8,34,28);rim.position.set(7,-5,7);scene.add(rim);
-const group=new THREE.Group();scene.add(group);
-const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2(9,9),clock=new THREE.Clock();
-let pieces=[],hovered=null,mode='home',mouse={x:0,y:0},target={x:0,y:0},lastPointer=0;
-const mat=new THREE.MeshPhysicalMaterial({color:0x19191f,metalness:.18,roughness:.29,clearcoat:.9,clearcoatRoughness:.12,iridescence:.72,iridescenceIOR:1.3,iridescenceThicknessRange:[260,620],envMapIntensity:1.35});
-const edgeMat=new THREE.MeshStandardMaterial({color:0x716982,metalness:.72,roughness:.23});
-const W=innerWidth<=700?6.9:12.8,H=innerWidth<=700?10.8:7.15;
-const shapesDesktop=[
- [[0,0],[.23,0],[.39,.55],[0,.72]],
- [[.23,0],[.57,0],[.49,.48],[.39,.55]],
- [[.57,0],[1,0],[1,.43],[.72,.6],[.49,.48]],
- [[0,.72],[.39,.55],[.49,.48],[.72,.6],[.62,1],[0,1]],
- [[.49,.48],[.72,.6],[1,.43],[1,1],[.62,1]]
+scene.add(new THREE.HemisphereLight(0xdedaff,0x171723,.9));
+const key=new THREE.DirectionalLight(0xf0eaff,3.2);key.position.set(-5,8,10);scene.add(key);
+const rim=new THREE.PointLight(0x9b83ed,45,35);rim.position.set(6,2,5);scene.add(rim);
+const cyan=new THREE.PointLight(0x77cbd1,22,28);cyan.position.set(-7,-5,2);scene.add(cyan);
+const root=new THREE.Group();scene.add(root);
+const ray=new THREE.Raycaster(),mouse=new THREE.Vector2(5,5),clock=new THREE.Clock();
+const matGlass=new THREE.MeshPhysicalMaterial({color:0x9994ac,metalness:.24,roughness:.18,clearcoat:1,clearcoatRoughness:.08,iridescence:.9,iridescenceIOR:1.32,iridescenceThicknessRange:[280,680],envMapIntensity:1.5,transparent:true,opacity:.82});
+const edgeMat=new THREE.MeshStandardMaterial({color:0x8d82aa,metalness:.85,roughness:.2});
+const data=[
+ {id:'history',name:'História',tag:'REGISTRO 01',preview:'As eras, os acontecimentos e as forças que moldaram este mundo.',desc:'Conheça a trajetória deste mundo: suas origens, acontecimentos decisivos, povos e conflitos. Os registros revelam a história gradualmente, sem antecipar os mistérios que ainda não foram descobertos.',items:['Eras e acontecimentos que definiram o mundo.','Deuses, civilizações e regiões conhecidas.','Conflitos e mudanças que afetam a realidade.']},
+ {id:'systems',name:'Sistemas',tag:'REGISTRO 02',preview:'As regras que sustentam personagens, habilidades e evolução.',desc:'Os sistemas definem como o universo funciona durante o RPG. Cada regra possui limites, custos e consequências — da utilização do Chi à evolução de um personagem.',items:['Entenda Chi, Talentos e suas limitações.','Consulte raças, equipamentos e progressão.','Veja como funcionam missões, combates e treinamento.']},
+ {id:'races',name:'Raças',tag:'REGISTRO 03',preview:'Conheça as diferentes formas de existência reconhecidas.',desc:'Nem todos os seres deste mundo compartilham a mesma natureza. Este registro apresenta as categorias jogáveis e suas diferenças, sem transformar origem em destino obrigatório.',items:['Humanos e suas possibilidades.','Híbridos, Químios e Ciborgues.','Características e diferenças entre as categorias.']},
+ {id:'talents',name:'Talentos',tag:'REGISTRO 04',preview:'Habilidades únicas, congênitas e com regras próprias.',desc:'Talentos são capacidades únicas ligadas à natureza de seus portadores. Sua aplicação depende de domínio, contexto, custo e das limitações descritas no sistema.',items:['Tipos e classes de Talento.','Aplicações, condições e limitações.','Raridades e especializações disponíveis.']},
+ {id:'progress',name:'Progressão',tag:'REGISTRO 05',preview:'Desenvolvimento, treinamento e consequências das escolhas.',desc:'A evolução não é automática nem garantida. O desenvolvimento depende das ações, experiências e consequências enfrentadas durante a jornada.',items:['Evolução ligada às experiências do personagem.','Treinamento e aperfeiçoamento.','Crescimento sujeito à avaliação e às regras do RPG.']},
+ {id:'agency',name:'A Agência',tag:'REGISTRO 06',preview:'Estrutura, arquivos e operações da organização interdimensional.',desc:'A Ordem mantém registros, organiza operações e acompanha acontecimentos que ultrapassam o cotidiano. Este fragmento reúne informações institucionais e documentos públicos.',items:['Conheça a estrutura da Agência.','Consulte documentos e protocolos.','Explore operações e registros disponíveis.']}
 ];
-const shapesMobile=[
- [[0,0],[.58,0],[.48,.22],[0,.29]],
- [[.58,0],[1,0],[1,.3],[.48,.22]],
- [[0,.29],[.48,.22],[.53,.51],[.32,.67],[0,.61]],
- [[.48,.22],[1,.3],[1,.65],[.68,.58],[.53,.51]],
- [[0,.61],[.32,.67],[.68,.58],[1,.65],[1,1],[0,1]]
-];
-const mobile=innerWidth<=700,shapes=mobile?shapesMobile:shapesDesktop;
-function panelTexture(){
- const c=document.createElement('canvas');c.width=1400;c.height=900;const x=c.getContext('2d');
- x.fillStyle='#18171d';x.fillRect(0,0,c.width,c.height);
- const g=x.createLinearGradient(0,0,1200,900);g.addColorStop(0,'rgba(196,180,255,.16)');g.addColorStop(.5,'rgba(255,255,255,.015)');g.addColorStop(1,'rgba(100,170,160,.09)');x.fillStyle=g;x.fillRect(0,0,c.width,c.height);
- x.strokeStyle='rgba(255,255,255,.09)';x.lineWidth=2;x.strokeRect(22,22,1356,856);
- x.fillStyle='rgba(200,187,236,.78)';x.font='500 20px Inter';x.fillText('AGÊNCIA INTERDIMENSIONAL  /  REGISTRO 001',82,100);
- x.fillStyle='rgba(255,255,255,.94)';x.font='500 72px Inter';x.fillText('A ORDEM',82,210);
- x.fillStyle='rgba(255,255,255,.44)';x.font='400 22px Inter';x.fillText('ARQUIVO CENTRAL · NOVA ORDEM',84,255);
- x.fillStyle='rgba(255,255,255,.12)';x.fillRect(82,292,500,1);
- x.fillStyle='rgba(232,228,242,.85)';x.font='500 40px Inter';x.fillText('O mundo é maior',82,405);x.fillText('do que parece.',82,455);
- x.fillStyle='rgba(224,220,234,.58)';x.font='400 20px Inter';x.fillText('Existências, talentos e civilizações coexistem',82,510);x.fillText('em uma realidade além da compreensão comum.',82,542);
- x.fillStyle='rgba(180,162,231,.9)';x.font='500 16px Inter';x.fillText('INICIAR ACESSO   ↗',82,650);
- x.fillStyle='rgba(255,255,255,.32)';x.font='400 15px Inter';x.fillText('HISTÓRIA     SISTEMAS     ARQUIVOS',82,815);
- x.fillText('A ORDEM  ·  PROTOCOLO 001',1080,815);
- const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;return tex;
+const shards=[],hoverCard=document.querySelector('#hover-card'),detail=document.querySelector('#detail');let hovered=null,selected=null,sceneMode='idle',pointer={x:0,y:0};
+function makeShard(d,i){
+ const a=i/6*Math.PI*2-Math.PI/2,rad=small?4.5:5.25,cx=Math.cos(a)*rad,cy=Math.sin(a)*rad*.67;
+ const w=small?1.75:2.25,h=small?2.05:2.65;
+ const pts=[[-w*.5,-h*.34],[-w*.08,-h*.5],[w*.5,-h*.18],[w*.34,h*.46],[-w*.3,h*.5]];
+ const shape=new THREE.Shape();shape.moveTo(...pts[0]);pts.slice(1).forEach(p=>shape.lineTo(...p));shape.closePath();
+ const geo=new THREE.ExtrudeGeometry(shape,{depth:.13,bevelEnabled:true,bevelSegments:3,steps:1,bevelSize:.045,bevelThickness:.035});geo.computeVertexNormals();
+ const mesh=new THREE.Mesh(geo,[matGlass,edgeMat]);mesh.position.set(cx,cy,(i%2)*.12);mesh.rotation.z=a*.12;mesh.userData={...d,index:i,base:new THREE.Vector3(cx,cy,(i%2)*.12),baseRot:a*.12,hover:0,fall:0};root.add(mesh);shards.push(mesh);
+ const line=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.ShapeGeometry(shape)),new THREE.LineBasicMaterial({color:0xb6a5ef,transparent:true,opacity:.24}));line.position.copy(mesh.position);line.position.z+=.15;line.rotation.copy(mesh.rotation);root.add(line);mesh.userData.edge=line;
 }
-const tex=panelTexture();
-function makePiece(points,index){
- const pts=points.map(([x,y])=>new THREE.Vector2((x-.5)*W,(.5-y)*H));
- const shape=new THREE.Shape();shape.moveTo(pts[0].x,pts[0].y);pts.slice(1).forEach(p=>shape.lineTo(p.x,p.y));shape.closePath();
- const geo=new THREE.ExtrudeGeometry(shape,{depth:.105,bevelEnabled:true,bevelSegments:3,steps:1,bevelSize:.035,bevelThickness:.035});
- const pos=geo.attributes.position,uv=geo.attributes.uv;
- for(let i=0;i<pos.count;i++){const u=(pos.getX(i)+W/2)/W,v=(pos.getY(i)+H/2)/H;uv.setXY(i,u,v)}
- uv.needsUpdate=true;geo.computeVertexNormals();
- const face=new THREE.MeshPhysicalMaterial({color:0xffffff,map:tex,metalness:.12,roughness:.32,clearcoat:.82,clearcoatRoughness:.12,iridescence:.58,iridescenceIOR:1.3,iridescenceThicknessRange:[260,640],envMapIntensity:1.25});
- const mesh=new THREE.Mesh(geo,[face,edgeMat]);mesh.userData={index,base:pts.reduce((a,p)=>a.add(p),new THREE.Vector2()).multiplyScalar(1/pts.length),lift:0,rot:0};mesh.position.z=index*.008;group.add(mesh);pieces.push(mesh);
+data.forEach(makeShard);
+const dust=new THREE.Group();scene.add(dust);for(let i=0;i<110;i++){const g=new THREE.SphereGeometry(.012+Math.random()*.022,6,6),m=new THREE.MeshBasicMaterial({color:i%5===0?0xa99bdf:0xaaa9bd,transparent:true,opacity:.35});const s=new THREE.Mesh(g,m);s.position.set((Math.random()-.5)*25,(Math.random()-.5)*15,-3-Math.random()*13);dust.add(s)}
+// A.R.K. — white ceramic service robot, built procedurally in Three.js.
+const ark=new THREE.Group();scene.add(ark);ark.position.set(small?0:-.05,small?-.05:-.08,1.2);ark.scale.setScalar(small?.74:1.02);
+const ceramic=new THREE.MeshPhysicalMaterial({color:0xece9e3,roughness:.34,metalness:.04,clearcoat:.62,clearcoatRoughness:.22});
+const white=new THREE.MeshPhysicalMaterial({color:0xf8f6f1,roughness:.3,clearcoat:.7});
+const dark=new THREE.MeshStandardMaterial({color:0x17181e,roughness:.42,metalness:.25});
+const glow=new THREE.MeshBasicMaterial({color:0xc8b8ff});
+function rounded(parent,w,h,d,r,material,pos){const geo=new THREE.BoxGeometry(w,h,d);const mesh=new THREE.Mesh(geo,material);mesh.position.set(...pos);parent.add(mesh);return mesh}
+function ball(parent,r,material,pos,scale=[1,1,1]){const m=new THREE.Mesh(new THREE.SphereGeometry(r,24,18),material);m.position.set(...pos);m.scale.set(...scale);parent.add(m);return m}
+const body=new THREE.Group();ark.add(body);
+rounded(body,1.12,1.02,.78,.2,ceramic,[0,-.42,0]);
+rounded(body,.85,.15,.62,.08,white,[0,.08,.02]);
+rounded(body,.56,.25,.08,.04,dark,[0,-.48,.42]);
+for(let i=0;i<3;i++)ball(body,.035,new THREE.MeshBasicMaterial({color:[0xffb36b,0xff7e9a,0xa996ef][i]}),[-.18+i*.18,-.5,.48]);
+ball(body,.32,dark,[0,-1.02,0],[1,.48,1]);
+const headPivot=new THREE.Group();headPivot.position.set(0,.47,0);body.add(headPivot);
+rounded(headPivot,1.34,1.22,1.05,.2,ceramic,[0,.7,0]);
+rounded(headPivot,1.1,.98,.12,.18,dark,[0,.7,.55]);
+const screen=new THREE.Mesh(new THREE.BoxGeometry(.9,.76,.055),new THREE.MeshPhysicalMaterial({color:0x07080c,roughness:.18,clearcoat:1}));screen.position.set(0,.7,.63);headPivot.add(screen);
+const eyeMat=new THREE.MeshBasicMaterial({color:0xf4f1ff});
+ball(headPivot,.095,eyeMat,[-.22,.75,.68],[.75,1.25,.3]);ball(headPivot,.095,eyeMat,[.22,.75,.68],[.75,1.25,.3]);
+for(const side of [-1,1]){ball(headPivot,.19,dark,[side*.72,.7,0],[.55,1,1]);ball(headPivot,.12,white,[side*.78,.7,0],[.55,1,1]);}
+const ring=new THREE.Mesh(new THREE.TorusGeometry(.25,.035,10,48),new THREE.MeshStandardMaterial({color:0xb7a4f2,metalness:.55,roughness:.22,emissive:0x40305f,emissiveIntensity:.4}));ring.position.set(0,1.39,.02);headPivot.add(ring);
+for(const side of [-1,1]){
+ const shoulder=ball(body,.18,dark,[side*.68,-.12,0]);const upper=rounded(body,.27,.66,.3,.08,ceramic,[side*.78,-.48,0]);upper.rotation.z=side*-.12;ball(body,.15,dark,[side*.8,-.86,0]);rounded(body,.28,.4,.3,.08,white,[side*.82,-1.07,.02]);
+ const hip=ball(body,.2,dark,[side*.3,-1.08,0]);rounded(body,.3,.75,.36,.08,ceramic,[side*.32,-1.48,0]);rounded(body,.46,.22,.62,.08,white,[side*.32,-1.88,.12]);
 }
-shapes.forEach(makePiece);
-function resize(){
- const w=innerWidth,h=innerHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.position.z=mobile?24:27;camera.updateProjectionMatrix();
- const scale=mobile?Math.min(w/8.5,h/12):Math.min(w/15,h/9);group.scale.setScalar(scale);group.position.y=mobile?.05:-.02;
-}
-resize();addEventListener('resize',resize);
-function setPointer(e){const r=canvas.getBoundingClientRect();pointer.x=((e.clientX-r.left)/r.width)*2-1;pointer.y=-((e.clientY-r.top)/r.height)*2+1;target.x=pointer.x;target.y=pointer.y;lastPointer=performance.now()}
-addEventListener('pointermove',e=>{setPointer(e);if(e.pointerType==='touch')return;});
-addEventListener('pointerdown',e=>{if(e.pointerType==='touch')setPointer(e);});
-function explode(){
- if(mode!=='home')return;mode='away';document.querySelector('#status').style.opacity=1;
- pieces.forEach((p,i)=>{const dir=p.userData.base.clone().normalize();p.userData.v=new THREE.Vector3(dir.x* (1.6+Math.random()*1.8),dir.y*(1.4+Math.random()*1.7),2.4+Math.random()*2.6);p.userData.spin=(Math.random()-.5)*2.8;p.userData.delay=i*.035;p.userData.start=clock.elapsedTime;});
- setTimeout(()=>{document.querySelector('#definitions').classList.add('show');document.querySelector('#definitions').setAttribute('aria-hidden','false');document.querySelector('#status').style.opacity=0;},310);
-}
-function reassemble(){
- document.querySelector('#definitions').classList.remove('show');document.querySelector('#definitions').setAttribute('aria-hidden','true');mode='return';document.querySelector('#status').style.opacity=1;
- pieces.forEach((p,i)=>{p.userData.returnAt=clock.elapsedTime+i*.025});
-}
-document.querySelector('#enter').addEventListener('click',explode);document.querySelector('#read').addEventListener('click',explode);document.querySelector('#back').addEventListener('click',()=>{reassemble()});
-function animate(){
- requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.04),t=clock.elapsedTime;
- if(mode==='home'){
-  mouse.x+=(target.x-mouse.x)*(1-Math.exp(-dt*5));mouse.y+=(target.y-mouse.y)*(1-Math.exp(-dt*5));
-  group.rotation.y+=(mouse.x*.105-group.rotation.y)*(1-Math.exp(-dt*4));
-  group.rotation.x+=(-mouse.y*.075-group.rotation.x)*(1-Math.exp(-dt*4));
-  raycaster.setFromCamera(pointer,camera);const hits=raycaster.intersectObjects(pieces,false);const next=hits.length?hits[0].object:null;
-  if(hovered!==next){if(hovered)hovered.userData.targetLift=0;hovered=next;if(hovered)hovered.userData.targetLift=.42}
-  pieces.forEach(p=>{p.userData.lift+=( (p.userData.targetLift||0)-p.userData.lift)*(1-Math.exp(-dt*12));p.position.z=p.userData.index*.008+p.userData.lift;p.rotation.x+=(0-p.rotation.x)*(1-Math.exp(-dt*8));});
- }else if(mode==='away'){
-  pieces.forEach(p=>{const age=t-p.userData.start-p.userData.delay;if(age>0){p.position.x+=p.userData.v.x*dt;p.position.y+=p.userData.v.y*dt-1.7*dt*age;p.position.z+=p.userData.v.z*dt;p.rotation.x+=p.userData.spin*dt;p.rotation.y+=p.userData.spin*.7*dt;p.material&&p.material.opacity!==undefined; }});
- }else if(mode==='return'){
-  let done=true;pieces.forEach(p=>{if(t<p.userData.returnAt)return;const q=1-Math.exp(-dt*8);p.position.x+=(0-p.position.x)*q;p.position.y+=(0-p.position.y)*q;p.position.z+=(p.userData.index*.008-p.position.z)*q;p.rotation.x+=(0-p.rotation.x)*q;p.rotation.y+=(0-p.rotation.y)*q;if(Math.abs(p.position.x)+Math.abs(p.position.y)+Math.abs(p.position.z-p.userData.index*.008)>.025)done=false;});
-  if(done){mode='home';group.rotation.set(0,0,0);pieces.forEach(p=>{p.userData.targetLift=0;p.rotation.set(0,0,0)});document.querySelector('#status').style.opacity=0;}
- }
- if(!reduced&&mode==='home'&&performance.now()-lastPointer>3000){group.rotation.z=Math.sin(t*.22)*.008}else group.rotation.z+=(0-group.rotation.z)*.08;
- renderer.render(scene,camera);
-}
-if(renderer.capabilities.isWebGL2||renderer.getContext())animate();else{document.querySelector('#status').textContent='MODO DE VISUALIZAÇÃO ESTÁTICA';}
+const pedestal=new THREE.Mesh(new THREE.CylinderGeometry(.95,1.08,.28,8),new THREE.MeshStandardMaterial({color:0x25242c,roughness:.7,metalness:.25}));pedestal.position.y=-2.12;ark.add(pedestal);
+const pedestalRing=new THREE.Mesh(new THREE.TorusGeometry(.9,.018,8,64),new THREE.MeshBasicMaterial({color:0x9d8bd3}));pedestalRing.rotation.x=Math.PI/2;pedestalRing.position.y=-1.96;ark.add(pedestalRing);
+function resize(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.position.z=small?23:21;camera.updateProjectionMatrix();root.scale.setScalar(small?.77:1);root.position.y=small?-.05:0;ark.scale.setScalar(small?.68:1.02);ark.position.x=small?0:-.05}
+addEventListener('resize',resize);
+function showPreview(obj,clientX,clientY){if(!obj){hoverCard.classList.remove('show');return}hoverCard.querySelector('strong').textContent=obj.userData.name;hoverCard.querySelector('p').textContent=obj.userData.preview;hoverCard.querySelector('small').textContent=obj.userData.tag+' · PRÉVIA';const x=Math.min(innerWidth-270,Math.max(14,clientX+18)),y=Math.min(innerHeight-130,Math.max(80,clientY+18));hoverCard.style.left=x+'px';hoverCard.style.top=y+'px';hoverCard.classList.add('show')}
+function openShard(mesh){if(sceneMode!=='idle')return;selected=mesh;sceneMode='fall';hoverCard.classList.remove('show');document.querySelector('#shard-hud').textContent='ACESSANDO '+mesh.userData.name.toUpperCase();mesh.userData.velocity=new THREE.Vector3((mesh.position.x*.14)+(Math.random()-.5)*.8,-2.7,2.5);mesh.userData.spin=(Math.random()-.5)*4;mesh.userData.fall=0;shards.forEach(s=>{if(s!==mesh)s.userData.dim=true});document.querySelector('#ark-status').textContent='ONLINE · ABRINDO REGISTRO';}
+function reveal(){const d=selected.userData;document.querySelector('#detail-kicker').textContent='ARQUIVO '+d.tag;document.querySelector('#detail-title').textContent=d.name;document.querySelector('#detail-desc').textContent=d.desc;const list=document.querySelector('#detail-list');list.innerHTML='';d.items.forEach(t=>{const row=document.createElement('div');row.className='detail-row';row.textContent=t;list.appendChild(row)});detail.dataset.kind=d.id;detail.classList.add('open');detail.setAttribute('aria-hidden','false');document.querySelector('#shard-hud').textContent='REGISTRO ABERTO · '+d.name.toUpperCase();if(d.id==='systems'){document.querySelector('#detail-title').textContent='A arquitetura dos sistemas';document.querySelector('#detail-desc').textContent='Uma rede de regras conectadas: cada sistema influencia os demais, mas mantém sua própria função. Explore os módulos que estruturam a experiência de Nova Ordem.';}}
+function closeDetail(){detail.classList.remove('open');detail.setAttribute('aria-hidden','true');sceneMode='restore';document.querySelector('#ark-status').textContent='ONLINE · RECOMPONDO FRAGMENTOS';document.querySelector('#shard-hud').textContent='RECONSTRUINDO A REALIDADE';}
+document.querySelector('#close').addEventListener('click',closeDetail);
+addEventListener('pointermove',e=>{mouse.x=e.clientX/innerWidth*2-1;mouse.y=-(e.clientY/innerHeight*2-1)});
+addEventListener('pointerdown',e=>{if(sceneMode!=='idle')return;ray.setFromCamera(new THREE.Vector2(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight)*2+1),camera);const hit=ray.intersectObjects(shards,false)[0];if(hit)openShard(hit.object)});
+function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.04),t=clock.elapsedTime;ray.setFromCamera(mouse,camera);const hits=sceneMode==='idle'?ray.intersectObjects(shards,false):[];const next=hits.length?hits[0].object:null;if(next!==hovered){if(hovered)hovered.userData.targetHover=0;hovered=next;if(hovered)hovered.userData.targetHover=1;}
+shards.forEach(s=>{const u=s.userData;if(sceneMode==='idle'){u.hover+=( (u.targetHover||0)-u.hover)*(1-Math.exp(-dt*10));s.position.z=u.base.z+u.hover*.28;s.scale.setScalar(1+u.hover*.035);if(u.dim){s.material.opacity+=(.18-s.material.opacity)*.08}}else if(sceneMode==='fall'&&s===selected){u.fall+=dt;s.position.addScaledVector(u.velocity,dt);u.velocity.y-=5.2*dt;s.rotation.x+=u.spin*dt;s.rotation.y+=u.spin*.7*dt;if(u.fall>0.68&&!detail.classList.contains('open'))reveal()}else if(sceneMode==='fall'){s.material.opacity+=(.12-s.material.opacity)*.06}else if(sceneMode==='restore'){const q=1-Math.exp(-dt*7);s.position.lerp(u.base,q);s.rotation.x+=(0-s.rotation.x)*q;s.rotation.y+=(0-s.rotation.y)*q;s.rotation.z+=(u.baseRot-s.rotation.z)*q;s.scale.lerp(new THREE.Vector3(1,1,1),q);s.material.opacity+=(.82-s.material.opacity)*q;if(s.position.distanceTo(u.base)<.025){s.position.copy(u.base);s.rotation.set(0,u.baseRot,0);s.material.opacity=.82;u.dim=false;u.fall=0;}}});
+if(sceneMode==='restore'&&shards.every(s=>s.position.distanceTo(s.userData.base)<.04)){sceneMode='idle';selected=null;document.querySelector('#ark-status').textContent='ONLINE · OBSERVANDO';document.querySelector('#shard-hud').textContent='APONTE PARA UM FRAGMENTO · CLIQUE PARA EXPLORAR';}
+if(sceneMode==='idle'){root.rotation.y+=(mouse.x*.045-root.rotation.y)*(1-Math.exp(-dt*2));root.rotation.x+=(-mouse.y*.025-root.rotation.x)*(1-Math.exp(-dt*2));ark.position.y=(small?-.05:-.08)+Math.sin(t*1.1)*.045;body.rotation.y=Math.sin(t*.55)*.035;headPivot.rotation.y=Math.sin(t*.7)*.06+mouse.x*.12;headPivot.rotation.z=Math.sin(t*.8)*.025;pedestalRing.rotation.z=t*.15;}
+dust.rotation.y=t*.008;renderer.render(scene,camera);}
+if(renderer.getContext())animate();
 </script>
 </body></html>
