@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07070a">
+<title>A Ordem — Acesso ao Arquivo Central</title>
+<meta name="description" content="Entre no universo de Nova Ordem. Arquivos, sistemas e registros da Agência Interdimensional.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#07070a;--ink:#f1eff6;--muted:#92909d;--violet:#b6a5ef;--line:rgba(255,255,255,.12)}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif}body{min-height:100svh}button{font:inherit}
+#stage{position:fixed;inset:0;background:radial-gradient(ellipse at 50% 45%,#17151e 0,#0b0a10 36%,#07070a 72%);overflow:hidden}
+#webgl{position:absolute;inset:0;width:100%;height:100%;display:block}
+.grain{position:absolute;inset:0;pointer-events:none;opacity:.12;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.22'/%3E%3C/svg%3E")}
+.topline{position:absolute;z-index:4;left:5.5%;right:5.5%;top:5.3%;display:flex;align-items:center;justify-content:space-between;pointer-events:none}
+.brand{display:flex;align-items:center;gap:12px;font-size:12px;letter-spacing:.22em;font-weight:600}.brand-mark{width:26px;height:26px;border:1px solid #9d8bc9;display:grid;place-items:center;transform:rotate(45deg);box-shadow:0 0 18px #8c78c533}.brand-mark:after{content:"";width:8px;height:8px;border:1px solid #c5b6f2}.top-meta{font-size:9px;letter-spacing:.2em;color:#777481}
+.hint{position:absolute;z-index:4;bottom:5.2%;left:5.5%;font-size:9px;letter-spacing:.18em;color:#716e7a}.version{position:absolute;z-index:4;bottom:5.2%;right:5.5%;font-size:9px;letter-spacing:.15em;color:#716e7a}
+.overlay{position:absolute;z-index:3;inset:0;pointer-events:none;display:grid;place-items:center}
+.content{position:absolute;width:min(76vw,950px);height:min(58vh,590px);display:grid;grid-template-columns:1.2fr .8fr;align-items:center;padding:clamp(28px,5vw,78px);gap:5vw;transform:translateY(1px);transition:opacity .35s,filter .35s}
+.copy{max-width:570px}.eyebrow{font-size:10px;letter-spacing:.23em;color:#b4a6df;margin-bottom:28px}.eyebrow:before{content:"";display:inline-block;width:23px;height:1px;background:#a995df;vertical-align:middle;margin-right:12px}
+h1{font-size:clamp(38px,5.2vw,76px);line-height:.99;letter-spacing:-.065em;font-weight:500;margin:0 0 23px;background:linear-gradient(150deg,#fff 8%,#d8d3e3 58%,#9b94aa);color:transparent;background-clip:text}
+.lede{font-size:clamp(13px,1.15vw,16px);line-height:1.8;color:#a6a2af;max-width:480px;margin:0}
+.actions{display:flex;align-items:center;gap:26px;margin-top:35px;pointer-events:auto}
+.primary{border:1px solid rgba(255,255,255,.8);background:#e9e6ef;color:#111016;padding:13px 19px;border-radius:4px;font-size:11px;font-weight:600;letter-spacing:.04em;cursor:pointer;transition:.25s}
+.primary:hover{background:#b9a7f2;border-color:#b9a7f2;transform:translateY(-2px);box-shadow:0 8px 30px #a18bd633}
+.secondary{border:0;background:transparent;color:#d0cadb;font-size:11px;letter-spacing:.04em;padding:10px 0;cursor:pointer}.secondary:hover{color:#c2b1ff}
+.index{justify-self:end;align-self:end;text-align:right;color:#777381;font-size:9px;line-height:2;letter-spacing:.15em}.index strong{display:block;color:#c2b6e3;font-size:11px;font-weight:500}
+.glass-caption{position:absolute;right:9%;top:17%;writing-mode:vertical-rl;font-size:8px;letter-spacing:.24em;color:#8e879c;opacity:.7}
+#definitions{position:absolute;z-index:5;inset:0;display:grid;place-items:center;opacity:0;pointer-events:none;transition:opacity .35s}
+#definitions.show{opacity:1;pointer-events:auto}
+.def-inner{width:min(560px,76vw);margin-left:8vw}.def-kicker{font-size:9px;letter-spacing:.22em;color:#a99bd0;margin-bottom:24px}.def-inner h2{font-size:clamp(28px,3.5vw,48px);font-weight:500;letter-spacing:-.05em;margin:0 0 30px}.terms{display:grid;gap:18px}.term{font-size:13px;line-height:1.7;color:#a6a2af}.term b{color:#eeeaf5;font-weight:600}.back{margin-top:36px;border:1px solid #6e657f;background:rgba(22,20,29,.82);color:#eeeaf5;padding:11px 17px;font-size:11px;cursor:pointer;transform:rotate(-4deg);transition:.25s}.back:hover{color:#c4b3ff;border-color:#b9abff;transform:rotate(0) translateY(-2px)}
+#status{position:absolute;z-index:6;left:50%;bottom:10%;transform:translateX(-50%);font-size:9px;letter-spacing:.18em;color:#807b8c;opacity:0;transition:opacity .3s;white-space:nowrap}
+@media(max-width:700px){
+ .topline{top:max(24px,env(safe-area-inset-top));left:22px;right:22px}.brand{font-size:11px}.top-meta{font-size:8px;max-width:120px;text-align:right;line-height:1.6}
+ .content{width:84vw;height:72svh;grid-template-columns:1fr;align-content:center;gap:0;padding:30px 26px 36px;transform:translateY(-2vh)}
+ .copy{max-width:100%}.eyebrow{font-size:9px;margin-bottom:23px}h1{font-size:clamp(43px,11vw,62px);max-width:390px;margin-bottom:20px}.lede{font-size:13px;line-height:1.75;max-width:340px}
+ .actions{margin-top:28px;gap:22px}.primary{padding:13px 16px}.index{justify-self:start;align-self:end;text-align:left;margin-top:34px;font-size:8px}.index strong{font-size:10px}
+ .glass-caption{right:7%;top:18%;font-size:7px}
+ .hint{left:22px;bottom:max(22px,env(safe-area-inset-bottom));font-size:8px}.version{right:22px;bottom:max(22px,env(safe-area-inset-bottom));font-size:8px}
+ .def-inner{width:78vw;margin-left:0}.def-inner h2{font-size:34px;margin-bottom:25px}.terms{gap:14px}.term{font-size:12px}
+ #status{bottom:9%}
+}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important}}
+</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}</script>
+</head>
+<body>
+<div id="stage">
+ <canvas id="webgl"></canvas><div class="grain"></div>
+ <header class="topline"><div class="brand"><span class="brand-mark"></span><span>A ORDEM</span></div><div class="top-meta">AGÊNCIA INTERDIMENSIONAL<br>ARQUIVO CENTRAL · ACESSO PÚBLICO</div></header>
+ <main class="overlay" id="overlay">
+  <section class="content" id="content">
+   <div class="copy"><div class="eyebrow">REGISTRO CENTRAL · NOVA ORDEM</div><h1>O mundo é<br>maior do que parece.</h1><p class="lede">Existências, talentos e civilizações coexistem em uma realidade muito além da compreensão comum. Explore os registros da Agência.</p>
+    <div class="actions"><button class="primary" id="enter">INICIAR ACESSO <span aria-hidden="true">↗</span></button><button class="secondary" id="read">Conhecer a Agência →</button></div>
+   </div>
+   <div class="index"><strong>NO — 001 / ACESSO INICIAL</strong>HISTÓRIA · SISTEMAS · ARQUIVOS<br>ESTADO DO SISTEMA: OPERACIONAL</div>
+  </section>
+  <div class="glass-caption">A REALIDADE É APENAS O PRIMEIRO ARQUIVO</div>
+ </main>
+ <section id="definitions" aria-hidden="true"><div class="def-inner"><div class="def-kicker">AGÊNCIA INTERDIMENSIONAL · A ORDEM</div><h2>Um universo. Muitas camadas.</h2><div class="terms"><div class="term"><b>História —</b> conheça os acontecimentos e as eras que moldaram o mundo.</div><div class="term"><b>Sistemas —</b> descubra as regras que definem personagens, talentos, raças e evolução.</div><div class="term"><b>Arquivos —</b> consulte documentos, registros e informações da Agência.</div></div><button class="back" id="back">← Reconstituir acesso</button></div></section>
+ <div id="status">RECONFIGURANDO ESTRUTURA</div>
+ <div class="hint">MOVA O CURSOR · TOQUE NOS FRAGMENTOS</div><div class="version">PROTOCOLO DE TESTE 01</div>
+</div>
+<script type="module">
+import * as THREE from 'three';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+const canvas=document.querySelector('#webgl'), stage=document.querySelector('#stage'), content=document.querySelector('#content');
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'high-performance'});
+renderer.setPixelRatio(Math.min(devicePixelRatio,matchMedia('(max-width:700px)').matches?1.35:1.8));
+renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
+const scene=new THREE.Scene();scene.background=new THREE.Color('#07070a');
+const camera=new THREE.PerspectiveCamera(30,innerWidth/innerHeight,.1,100);camera.position.set(0,0,27);
+const pmrem=new THREE.PMREMGenerator(renderer);scene.environment=pmrem.fromScene(new RoomEnvironment(),.04).texture;
+scene.environmentIntensity=.42;
+scene.add(new THREE.AmbientLight(0x9b91b8,.42));
+const key=new THREE.DirectionalLight(0xe4e5ff,3.2);key.position.set(-7,8,11);scene.add(key);
+const rim=new THREE.PointLight(0x9c83d8,34,28);rim.position.set(7,-5,7);scene.add(rim);
+const group=new THREE.Group();scene.add(group);
+const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2(9,9),clock=new THREE.Clock();
+let pieces=[],hovered=null,mode='home',mouse={x:0,y:0},target={x:0,y:0},lastPointer=0;
+const mat=new THREE.MeshPhysicalMaterial({color:0x19191f,metalness:.18,roughness:.29,clearcoat:.9,clearcoatRoughness:.12,iridescence:.72,iridescenceIOR:1.3,iridescenceThicknessRange:[260,620],envMapIntensity:1.35});
+const edgeMat=new THREE.MeshStandardMaterial({color:0x716982,metalness:.72,roughness:.23});
+const W=innerWidth<=700?6.9:12.8,H=innerWidth<=700?10.8:7.15;
+const shapesDesktop=[
+ [[0,0],[.23,0],[.39,.55],[0,.72]],
+ [[.23,0],[.57,0],[.49,.48],[.39,.55]],
+ [[.57,0],[1,0],[1,.43],[.72,.6],[.49,.48]],
+ [[0,.72],[.39,.55],[.49,.48],[.72,.6],[.62,1],[0,1]],
+ [[.49,.48],[.72,.6],[1,.43],[1,1],[.62,1]]
+];
+const shapesMobile=[
+ [[0,0],[.58,0],[.48,.22],[0,.29]],
+ [[.58,0],[1,0],[1,.3],[.48,.22]],
+ [[0,.29],[.48,.22],[.53,.51],[.32,.67],[0,.61]],
+ [[.48,.22],[1,.3],[1,.65],[.68,.58],[.53,.51]],
+ [[0,.61],[.32,.67],[.68,.58],[1,.65],[1,1],[0,1]]
+];
+const mobile=innerWidth<=700,shapes=mobile?shapesMobile:shapesDesktop;
+function panelTexture(){
+ const c=document.createElement('canvas');c.width=1400;c.height=900;const x=c.getContext('2d');
+ x.fillStyle='#18171d';x.fillRect(0,0,c.width,c.height);
+ const g=x.createLinearGradient(0,0,1200,900);g.addColorStop(0,'rgba(196,180,255,.16)');g.addColorStop(.5,'rgba(255,255,255,.015)');g.addColorStop(1,'rgba(100,170,160,.09)');x.fillStyle=g;x.fillRect(0,0,c.width,c.height);
+ x.strokeStyle='rgba(255,255,255,.09)';x.lineWidth=2;x.strokeRect(22,22,1356,856);
+ x.fillStyle='rgba(200,187,236,.78)';x.font='500 20px Inter';x.fillText('AGÊNCIA INTERDIMENSIONAL  /  REGISTRO 001',82,100);
+ x.fillStyle='rgba(255,255,255,.94)';x.font='500 72px Inter';x.fillText('A ORDEM',82,210);
+ x.fillStyle='rgba(255,255,255,.44)';x.font='400 22px Inter';x.fillText('ARQUIVO CENTRAL · NOVA ORDEM',84,255);
+ x.fillStyle='rgba(255,255,255,.12)';x.fillRect(82,292,500,1);
+ x.fillStyle='rgba(232,228,242,.85)';x.font='500 40px Inter';x.fillText('O mundo é maior',82,405);x.fillText('do que parece.',82,455);
+ x.fillStyle='rgba(224,220,234,.58)';x.font='400 20px Inter';x.fillText('Existências, talentos e civilizações coexistem',82,510);x.fillText('em uma realidade além da compreensão comum.',82,542);
+ x.fillStyle='rgba(180,162,231,.9)';x.font='500 16px Inter';x.fillText('INICIAR ACESSO   ↗',82,650);
+ x.fillStyle='rgba(255,255,255,.32)';x.font='400 15px Inter';x.fillText('HISTÓRIA     SISTEMAS     ARQUIVOS',82,815);
+ x.fillText('A ORDEM  ·  PROTOCOLO 001',1080,815);
+ const tex=new THREE.CanvasTexture(c);tex.colorSpace=THREE.SRGBColorSpace;return tex;
+}
+const tex=panelTexture();
+function makePiece(points,index){
+ const pts=points.map(([x,y])=>new THREE.Vector2((x-.5)*W,(.5-y)*H));
+ const shape=new THREE.Shape();shape.moveTo(pts[0].x,pts[0].y);pts.slice(1).forEach(p=>shape.lineTo(p.x,p.y));shape.closePath();
+ const geo=new THREE.ExtrudeGeometry(shape,{depth:.105,bevelEnabled:true,bevelSegments:3,steps:1,bevelSize:.035,bevelThickness:.035});
+ const pos=geo.attributes.position,uv=geo.attributes.uv;
+ for(let i=0;i<pos.count;i++){const u=(pos.getX(i)+W/2)/W,v=(pos.getY(i)+H/2)/H;uv.setXY(i,u,v)}
+ uv.needsUpdate=true;geo.computeVertexNormals();
+ const face=new THREE.MeshPhysicalMaterial({color:0xffffff,map:tex,metalness:.12,roughness:.32,clearcoat:.82,clearcoatRoughness:.12,iridescence:.58,iridescenceIOR:1.3,iridescenceThicknessRange:[260,640],envMapIntensity:1.25});
+ const mesh=new THREE.Mesh(geo,[face,edgeMat]);mesh.userData={index,base:pts.reduce((a,p)=>a.add(p),new THREE.Vector2()).multiplyScalar(1/pts.length),lift:0,rot:0};mesh.position.z=index*.008;group.add(mesh);pieces.push(mesh);
+}
+shapes.forEach(makePiece);
+function resize(){
+ const w=innerWidth,h=innerHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.position.z=mobile?24:27;camera.updateProjectionMatrix();
+ const scale=mobile?Math.min(w/8.5,h/12):Math.min(w/15,h/9);group.scale.setScalar(scale);group.position.y=mobile?.05:-.02;
+}
+resize();addEventListener('resize',resize);
+function setPointer(e){const r=canvas.getBoundingClientRect();pointer.x=((e.clientX-r.left)/r.width)*2-1;pointer.y=-((e.clientY-r.top)/r.height)*2+1;target.x=pointer.x;target.y=pointer.y;lastPointer=performance.now()}
+addEventListener('pointermove',e=>{setPointer(e);if(e.pointerType==='touch')return;});
+addEventListener('pointerdown',e=>{if(e.pointerType==='touch')setPointer(e);});
+function explode(){
+ if(mode!=='home')return;mode='away';document.querySelector('#status').style.opacity=1;
+ pieces.forEach((p,i)=>{const dir=p.userData.base.clone().normalize();p.userData.v=new THREE.Vector3(dir.x* (1.6+Math.random()*1.8),dir.y*(1.4+Math.random()*1.7),2.4+Math.random()*2.6);p.userData.spin=(Math.random()-.5)*2.8;p.userData.delay=i*.035;p.userData.start=clock.elapsedTime;});
+ setTimeout(()=>{document.querySelector('#definitions').classList.add('show');document.querySelector('#definitions').setAttribute('aria-hidden','false');document.querySelector('#status').style.opacity=0;},310);
+}
+function reassemble(){
+ document.querySelector('#definitions').classList.remove('show');document.querySelector('#definitions').setAttribute('aria-hidden','true');mode='return';document.querySelector('#status').style.opacity=1;
+ pieces.forEach((p,i)=>{p.userData.returnAt=clock.elapsedTime+i*.025});
+}
+document.querySelector('#enter').addEventListener('click',explode);document.querySelector('#read').addEventListener('click',explode);document.querySelector('#back').addEventListener('click',()=>{reassemble()});
+function animate(){
+ requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.04),t=clock.elapsedTime;
+ if(mode==='home'){
+  mouse.x+=(target.x-mouse.x)*(1-Math.exp(-dt*5));mouse.y+=(target.y-mouse.y)*(1-Math.exp(-dt*5));
+  group.rotation.y+=(mouse.x*.105-group.rotation.y)*(1-Math.exp(-dt*4));
+  group.rotation.x+=(-mouse.y*.075-group.rotation.x)*(1-Math.exp(-dt*4));
+  raycaster.setFromCamera(pointer,camera);const hits=raycaster.intersectObjects(pieces,false);const next=hits.length?hits[0].object:null;
+  if(hovered!==next){if(hovered)hovered.userData.targetLift=0;hovered=next;if(hovered)hovered.userData.targetLift=.42}
+  pieces.forEach(p=>{p.userData.lift+=( (p.userData.targetLift||0)-p.userData.lift)*(1-Math.exp(-dt*12));p.position.z=p.userData.index*.008+p.userData.lift;p.rotation.x+=(0-p.rotation.x)*(1-Math.exp(-dt*8));});
+ }else if(mode==='away'){
+  pieces.forEach(p=>{const age=t-p.userData.start-p.userData.delay;if(age>0){p.position.x+=p.userData.v.x*dt;p.position.y+=p.userData.v.y*dt-1.7*dt*age;p.position.z+=p.userData.v.z*dt;p.rotation.x+=p.userData.spin*dt;p.rotation.y+=p.userData.spin*.7*dt;p.material&&p.material.opacity!==undefined; }});
+ }else if(mode==='return'){
+  let done=true;pieces.forEach(p=>{if(t<p.userData.returnAt)return;const q=1-Math.exp(-dt*8);p.position.x+=(0-p.position.x)*q;p.position.y+=(0-p.position.y)*q;p.position.z+=(p.userData.index*.008-p.position.z)*q;p.rotation.x+=(0-p.rotation.x)*q;p.rotation.y+=(0-p.rotation.y)*q;if(Math.abs(p.position.x)+Math.abs(p.position.y)+Math.abs(p.position.z-p.userData.index*.008)>.025)done=false;});
+  if(done){mode='home';group.rotation.set(0,0,0);pieces.forEach(p=>{p.userData.targetLift=0;p.rotation.set(0,0,0)});document.querySelector('#status').style.opacity=0;}
+ }
+ if(!reduced&&mode==='home'&&performance.now()-lastPointer>3000){group.rotation.z=Math.sin(t*.22)*.008}else group.rotation.z+=(0-group.rotation.z)*.08;
+ renderer.render(scene,camera);
+}
+if(renderer.capabilities.isWebGL2||renderer.getContext())animate();else{document.querySelector('#status').textContent='MODO DE VISUALIZAÇÃO ESTÁTICA';}
+</script>
+</body></html>
