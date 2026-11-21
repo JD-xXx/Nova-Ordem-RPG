@@ -1,10 +1,10 @@
--- Nova Ordem: autosave parcial, limite progressivo de rascunhos e limite de personagens ativos.
+-- Nova Ordem: autosave parcial, limite permanente de 2 rascunhos por jogador e limite de personagens ativos.
 -- Execute no SQL Editor do projeto Supabase "Nova Ordem - Testes" antes de publicar a nova integração.
 -- Esta migração preserva o histórico de aprovações mesmo se uma ficha aprovada for removida.
 
 begin;
 
--- Histórico permanente de aprovações usado para desbloquear vagas.
+-- Histórico de aprovações preservado para consulta administrativa; não altera o limite de rascunhos.
 create table if not exists public.character_approval_unlocks (
   character_id uuid primary key,
   player_id uuid not null,
@@ -101,6 +101,47 @@ create trigger characters_record_approval_unlock
 after insert or update of status on public.characters
 for each row execute function public.record_character_approval_unlock();
 
+
+-- Limite permanente de dois rascunhos por jogador, validado no próprio banco.
+create or replace function public.enforce_player_draft_limit()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_new_draft boolean := false;
+  v_draft_count integer;
+begin
+  if new.status = 'draft' then
+    if tg_op = 'INSERT' then
+      v_new_draft := true;
+    elsif tg_op = 'UPDATE' then
+      v_new_draft := old.status is distinct from 'draft'
+        or old.player_id is distinct from new.player_id;
+    end if;
+  end if;
+  if v_new_draft then
+    if new.player_id is null then
+      raise exception 'O rascunho precisa pertencer a um jogador.';
+    end if;
+    perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended(new.player_id::text, 0));
+    select pg_catalog.count(*) into v_draft_count
+    from public.characters
+    where player_id = new.player_id and status = 'draft' and id is distinct from new.id;
+    if v_draft_count >= 2 then
+      raise exception 'Cada jogador pode manter no máximo 2 rascunhos ao mesmo tempo.';
+    end if;
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists characters_draft_limit_guard on public.characters;
+create trigger characters_draft_limit_guard
+before insert or update of status, player_id on public.characters
+for each row execute function public.enforce_player_draft_limit();
+
 -- Consulta segura para a interface mostrar a capacidade atual do jogador.
 create or replace function public.get_character_creation_progress()
 returns jsonb
@@ -131,11 +172,7 @@ begin
   from public.characters
   where player_id = v_user_id and status = 'approved';
 
-  v_draft_limit := case
-    when v_approved_count >= 2 then 5
-    when v_approved_count = 1 then 4
-    else 2
-  end;
+  v_draft_limit := 2;
 
   return jsonb_build_object(
     'draft_count', v_draft_count,
@@ -147,7 +184,7 @@ begin
 end;
 $$;
 
--- Criação protegida no servidor: 2 vagas no início, 4 após a primeira aprovação, 5 após a segunda.
+-- Criação protegida no servidor: no máximo 2 rascunhos simultâneos por jogador.
 create or replace function public.create_character_draft()
 returns uuid
 language plpgsql
@@ -156,7 +193,6 @@ set search_path = public, pg_temp
 as $$
 declare
   v_user_id uuid := auth.uid();
-  v_approved_count integer;
   v_draft_count integer;
   v_draft_limit integer;
   v_character_id uuid;
@@ -167,22 +203,14 @@ begin
 
   perform pg_advisory_xact_lock(hashtextextended(v_user_id::text, 0));
 
-  select count(*) into v_approved_count
-  from public.character_approval_unlocks
-  where player_id = v_user_id;
-
-  v_draft_limit := case
-    when v_approved_count >= 2 then 5
-    when v_approved_count = 1 then 4
-    else 2
-  end;
+  v_draft_limit := 2;
 
   select count(*) into v_draft_count
   from public.characters
   where player_id = v_user_id and status = 'draft';
 
   if v_draft_count >= v_draft_limit then
-    raise exception 'Você atingiu seu limite atual de % rascunhos. As vagas adicionais são liberadas após aprovações.', v_draft_limit;
+    raise exception 'Cada jogador pode manter no máximo 2 rascunhos ao mesmo tempo.';
   end if;
 
   insert into public.characters(player_id, status)

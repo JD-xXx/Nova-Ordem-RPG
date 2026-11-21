@@ -8,6 +8,8 @@
   }
 
   const db = window.supabase.createClient(cfg.url, cfg.anonKey);
+  // Evita que o manipulador de prévia processe cliques antes da integração real.
+  window.NOVA_ORDEM_INTEGRATION_ACTIVE = true;
   const raceNames = {1:'Humanos', 2:'Híbridos', 3:'Químios', 4:'Ciborgues'};
   const raceNumbers = {
     'Humanos':1, 'Humano':1, 'Híbridos':2, 'Híbrido':2,
@@ -195,6 +197,11 @@
     return result.data;
   }
 
+  async function waitForCharacterReviewModule() {
+    if (window.NovaOrdemCharacterReview) return;
+    await new Promise(resolve => window.addEventListener('nova-ordem-review-ready', resolve, {once:true}));
+  }
+
   async function authenticate(mode) {
     if (busy) return;
     const email = $('[data-no-email]') && $('[data-no-email]').value.trim();
@@ -208,7 +215,13 @@
     try {
       const result = mode === 'login'
         ? await db.auth.signInWithPassword({email, password})
-        : await db.auth.signUp({email, password});
+        : await db.auth.signUp({
+            email,
+            password,
+            options: {
+              emailRedirectTo: window.location.origin + window.location.pathname
+            }
+          });
 
       if (result.error) throw result.error;
       if (mode === 'signup' && !result.data.session) {
@@ -234,12 +247,12 @@
 
     const progress = await rpc('get_character_creation_progress');
     const draftCount = Number(progress && progress.draft_count);
-    const draftLimit = Number(progress && progress.draft_limit);
+    const draftLimit = 2;
     if (!Number.isInteger(draftCount) || !Number.isInteger(draftLimit)) {
       throw new Error('Não foi possível verificar suas vagas de rascunho. Atualize o banco de dados antes de criar uma ficha.');
     }
     if (draftCount >= draftLimit) {
-      throw new Error('Você atingiu seu limite atual de ' + draftLimit + ' rascunhos. As vagas adicionais são liberadas após aprovações.');
+      throw new Error('Você já mantém o limite de 2 rascunhos. Abra um rascunho existente ou envie uma ficha para análise antes de iniciar outra.');
     }
     const id = await rpc('create_character_draft');
     characterId = typeof id === 'string' ? id : (id && (id.id || id.character_id));
@@ -344,9 +357,16 @@
     try { saved = JSON.parse(sessionStorage.getItem(ACTIVE_DRAFT_KEY) || 'null'); } catch (_) { saved = null; }
     if (!saved || !saved.characterId || !saved.userId || saved.userId !== session.user.id) return false;
     const result = await db.from('characters').select('id,status').eq('id', saved.characterId).maybeSingle();
-    if (result.error || !result.data || result.data.status !== 'draft') { clearActiveDraft(); return false; }
+    if (result.error || !result.data || !['draft','rejected'].includes(result.data.status)) { clearActiveDraft(); return false; }
     characterId = saved.characterId;
     completed = false;
+    await waitForCharacterReviewModule();
+    if (window.NovaOrdemCharacterReview) {
+      if (result.data.status === 'rejected') {
+        const reviews = await rpc('get_my_character_review_status',{p_character_id:saved.characterId});
+        window.NovaOrdemCharacterReview.setContext(result.data.status,reviews || []);
+      } else window.NovaOrdemCharacterReview.clearContext();
+    }
     if (creator() && saved.state) creator().update(saved.state);
     return true;
   }
@@ -363,6 +383,7 @@
         authScreen('Para criar um personagem, primeiro crie seu perfil ou entre na sua conta. Você encontra essa opção na coluna de navegação.');
         return;
       }
+      if (window.NovaOrdemCharacterReview) window.NovaOrdemCharacterReview.clearContext();
       if (window.go) window.go('character-creation');
       if (!characterId) await createDraft();
       if (creator()) creator().render();
@@ -441,7 +462,7 @@
       console.error('[Nova Ordem] Retorno da rolagem de raça:', data);
       throw new Error('Não reconheci o resultado da rolagem de raça retornado pelo banco.');
     }
-    creator().update({rolls:rolls, race:null, secondRoll:null, rarity:null, specializations:[]});
+    creator().update({rolls:rolls, race:null, secondRoll:null, rarity:null, specializations:[], cyberneticModules:[]});
   }
 
   async function chooseRace(number) {
@@ -453,7 +474,7 @@
       p_character_id:characterId,
       p_race:raceNames[number]
     });
-    creator().update({race:number, secondRoll:null, rarity:null, specializations:[]});
+    creator().update({race:number, secondRoll:null, rarity:null, specializations:[], cyberneticModules:[]});
   }
 
   async function rollChi() {
@@ -507,6 +528,13 @@
       }
       if (!String(fields.talentDescription || '').trim()) return 'Descreva o Talento.';
     }
+    if (state.race === 4) {
+      const modules = Array.isArray(state.cyberneticModules) ? state.cyberneticModules : [];
+      if (modules.length > 5) return 'Ciborgues podem propor no máximo cinco módulos.';
+      if (modules.some(module => !String(module && module.name || '').trim() || !String(module && module.description || '').trim())) {
+        return 'Preencha o nome e a descrição de funcionamento de cada módulo cibernético.';
+      }
+    }
     return null;
   }
 
@@ -538,9 +566,7 @@
         p_supernatural_skills:isHybrid(state) ? splitList(fields.supernatural) : []
       });
 
-      const specializations = isHybrid(state)
-        ? state.specializations.map(value => value === 'Transformação' ? 'Transformar' : value)
-        : [];
+      const specializations = isHybrid(state) ? state.specializations : [];
 
       await rpc('save_character_extra_data', {
         p_character_id:characterId,
@@ -550,13 +576,15 @@
           specializations:specializations,
           humanChiEnhancement:state.race === 1
             ? ({1:'Baixa', 2:'Normal', 3:'Alta'}[state.secondRoll] || null)
-            : null
+            : null,
+          cyberneticModules:state.race === 4 ? (state.cyberneticModules || []) : []
         }
       });
 
       await rpc('submit_character', {p_character_id:characterId});
       characterId = null;
       clearActiveDraft();
+      if (window.NovaOrdemCharacterReview) window.NovaOrdemCharacterReview.clearContext();
       completed = true;
       if (root()) {
         root().innerHTML =
@@ -579,14 +607,29 @@
     const value = Number(button.dataset.value);
     const state = creator().getState();
 
+    if (action === 'cybernetic-module-add') {
+      if (state.race !== 4) throw new Error('Módulos cibernéticos são exclusivos de Ciborgues.');
+      const modules = Array.isArray(state.cyberneticModules) ? state.cyberneticModules : [];
+      if (modules.length >= 5) throw new Error('O limite de cinco módulos já foi atingido.');
+      creator().update({cyberneticModules:[...modules,{name:'',description:''}]});
+      return;
+    }
+    if (action === 'cybernetic-module-remove') {
+      const modules = Array.isArray(state.cyberneticModules) ? state.cyberneticModules : [];
+      if (Number.isInteger(value) && value >= 0 && value < modules.length) {
+        creator().update({cyberneticModules:modules.filter((_,index)=>index!==value)});
+      }
+      return;
+    }
     if (action === 'race-roll') return rollRace();
     if (action === 'race-pick') return chooseRace(value);
     if (action === 'second-roll') return rollChi();
     if (action === 'rarity-roll') return rollRarity();
 
     if (action === 'jump') {
-      if (!isHybrid(state) && value >= 3 && value <= 6) {
-        alert('As etapas de Talento não se aplicam à raça selecionada.');
+      const allowedSteps = state.race === 4 ? [0,1,2,3,7] : state.race === 1 ? [0,1,2,7] : [0,1,2,3,4,5,6,7];
+      if (!allowedSteps.includes(value)) {
+        alert('Esta etapa não se aplica à raça selecionada.');
         return;
       }
       creator().update({step:Math.max(0, Math.min(7, value))});
@@ -616,7 +659,17 @@
         alert(error);
         return;
       }
-      creator().update({step:isHybrid(state) ? 3 : 7});
+      creator().update({step:isHybrid(state) || state.race === 4 ? 3 : 7});
+      return;
+    }
+
+    if (state.step === 3 && state.race === 4) {
+      const modules = Array.isArray(state.cyberneticModules) ? state.cyberneticModules : [];
+      if (modules.length > 5 || modules.some(module => !String(module && module.name || '').trim() || !String(module && module.description || '').trim())) {
+        alert('Preencha o nome e a descrição de cada módulo. O limite é de cinco módulos.');
+        return;
+      }
+      creator().update({step:7});
       return;
     }
 
@@ -833,6 +886,7 @@
       .no-draft-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:14px 0 20px;padding:12px;border:1px solid #2a3a4e;border-radius:8px;background:#0b1420}
       .no-draft-actions [data-no-save-draft]{min-height:40px}
       .no-draft-actions [data-no-save-status]{font-size:12px;color:#9fc9a9;line-height:1.5}
+      .cc-module-list{display:grid;gap:12px;margin:16px 0}.cc-module-card{padding:15px;border:1px solid #34465d;border-radius:9px;background:#0b1420}.cc-module-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;color:#bfe0ff;font:700 11px var(--mono)}.cc-module-card textarea,.cc-module-card input{display:block;width:100%;margin-top:6px;padding:11px;border:1px solid #34465d;border-radius:6px;background:#080e17;color:#eef5ff}
     `;
     document.head.appendChild(style);
     button.addEventListener('click', () => {
@@ -873,6 +927,11 @@
       .eq('player_id', user.id)
       .eq('status','draft')
       .order('updated_at',{ascending:false});
+    const rejectedResult = await db.from('characters')
+      .select('id,name,status,created_at,updated_at')
+      .eq('player_id', user.id)
+      .eq('status','rejected')
+      .order('updated_at',{ascending:false});
     let progress = null;
     let progressError = null;
     try {
@@ -880,27 +939,41 @@
     } catch (error) {
       progressError = error;
     }
-    if (draftsResult.error) {
-      el.innerHTML = '<section class="no-profile-card"><h3>Perfil do jogador</h3><p>Não foi possível carregar seus rascunhos: ' + escapeHtml(draftsResult.error.message) + '</p></section>';
+    if (draftsResult.error || rejectedResult.error) {
+      const failure = draftsResult.error || rejectedResult.error;
+      el.innerHTML = '<section class="no-profile-card"><h3>Perfil do jogador</h3><p>Não foi possível carregar suas fichas: ' + escapeHtml(failure.message) + '</p></section>';
       return;
     }
     if (currentPage !== 'profile') return;
     const drafts = draftsResult.data || [];
-    const draftLimit = progress && Number.isInteger(Number(progress.draft_limit)) ? Number(progress.draft_limit) : null;
-    const approvedCount = progress && Number(progress.approved_count) || 0;
+    const rejected = rejectedResult.data || [];
+    const rejectedReviews = await Promise.all(rejected.map(async character => {
+      try { return {character, reviews:await rpc('get_my_character_review_status',{p_character_id:character.id})}; }
+      catch (error) { return {character, reviews:[], error}; }
+    }));
+    const draftLimit = 2;
     const activeCount = progress && Number(progress.active_character_count) || 0;
     const draftHtml = drafts.length ? drafts.map((draft,index) =>
       '<article class="no-draft"><div><b>' + escapeHtml(draft.name || ('Rascunho ' + (index+1))) + '</b><small>Atualizado em ' + escapeHtml(draft.updated_at ? new Date(draft.updated_at).toLocaleString('pt-BR') : 'data indisponível') + '</small></div><button class="save" type="button" data-no-open-draft="' + escapeHtml(draft.id) + '">ABRIR FICHA</button></article>'
     ).join('') : '<p>Você ainda não possui rascunhos. Quando iniciar uma ficha, ela aparecerá aqui.</p>';
     const progressHtml = progress
-      ? '<p>Vagas de rascunho: <b>' + drafts.length + '/' + draftLimit + '</b>. Aprovações acumuladas: <b>' + approvedCount + '/2</b>.</p><p>Personagens aprovados no RPG: <b>' + activeCount + '/2</b>.</p>'
-      : '<p role="alert">As regras progressivas ainda não estão disponíveis no banco. Aplique o arquivo supabase-progressive-drafts-and-autosave.sql no projeto Nova Ordem - Testes antes de criar ou editar rascunhos. ' + escapeHtml(progressError && progressError.message || '') + '</p>';
+      ? '<p>Rascunhos em andamento: <b>' + drafts.length + '/' + draftLimit + '</b>.</p><p>Personagens aprovados no RPG: <b>' + activeCount + '/2</b>.</p>'
+      : '<p role="alert">Não foi possível consultar as regras de limite e salvamento no banco. Verifique se as migrations oficiais do projeto foram aplicadas e se sua sessão está ativa. ' + escapeHtml(progressError && progressError.message || '') + '</p>';
+    const reviewStatusLabels = {pending:'Pendente',approved:'Aprovada',needs_revision:'Devolvida para revisão',not_applicable:'Não se aplica'};
+    const reviewSectionLabels = {profile:'Informações básicas',story:'História e origem',powers:'Talento e poderes'};
+    const reviewHtml = rejectedReviews.length
+      ? '<section class="no-profile-card"><h3>Fichas devolvidas para revisão</h3><p>As partes já aprovadas permanecem bloqueadas. Abra a ficha para corrigir somente as seções ainda não aprovadas.</p><div class="no-draft-list">' + rejectedReviews.map(({character,reviews},index) => {
+          const rows = Array.isArray(reviews) ? reviews : [];
+          const statusHtml = rows.map(item => '<p><b>' + escapeHtml(reviewSectionLabels[item.section_key] || item.section_key) + ':</b> ' + escapeHtml(reviewStatusLabels[item.status] || item.status) + (item.note ? ' — ' + escapeHtml(item.note) : '') + '</p>').join('');
+          return '<article class="no-draft"><div><b>' + escapeHtml(character.name || ('Ficha devolvida ' + (index+1))) + '</b><small>' + escapeHtml(character.updated_at ? new Date(character.updated_at).toLocaleString('pt-BR') : 'Data indisponível') + '</small>' + statusHtml + '</div><button class="save" type="button" data-no-open-draft="' + escapeHtml(character.id) + '">CORRIGIR FICHA</button></article>';
+        }).join('') + '</div></section>'
+      : '';
     el.innerHTML =
       '<section class="no-profile-card"><div class="eyebrow">AGÊNCIA A ORDEM · PORTAL DO JOGADOR</div><h3>Seu perfil</h3><p>Conta conectada: <b>' + escapeHtml(user.email || 'usuário autenticado') + '</b></p>' +
       (message ? '<p role="status">' + escapeHtml(message) + '</p>' : '') +
       '<div class="no-profile-actions"><button class="save" type="button" data-no-start>Criar personagem</button><button class="close" type="button" data-no-logout>Sair da conta</button></div></section>' +
       '<section class="no-profile-card"><h3>Segurança da conta</h3><form data-no-change-password><label class="cc-field">Nova senha<input data-no-change-password-value type="password" minlength="6" autocomplete="new-password" required placeholder="Digite a nova senha"></label><label class="cc-field">Confirmar senha<input data-no-change-password-confirm type="password" minlength="6" autocomplete="new-password" required placeholder="Digite novamente"></label><div class="no-profile-actions"><button class="save" type="submit">ALTERAR SENHA</button></div></form></section>' +
-      '<section class="no-profile-card"><h3>Meus rascunhos <small>(' + drafts.length + '/' + (draftLimit == null ? '—' : draftLimit) + ')</small></h3>' + progressHtml + '<p>As fichas que ainda não foram enviadas ficam disponíveis aqui para você continuar depois.</p><div class="no-draft-list">' + draftHtml + '</div></section>';
+      '<section class="no-profile-card"><h3>Meus rascunhos <small>(' + drafts.length + '/' + (draftLimit == null ? '—' : draftLimit) + ')</small></h3>' + progressHtml + '<p>As fichas que ainda não foram enviadas ficam disponíveis aqui para você continuar depois.</p><div class="no-draft-list">' + draftHtml + '</div></section>' + reviewHtml;
   }
 
   function renderCharacterIntro(message) {
@@ -923,11 +996,18 @@
     if (!alreadyBusy) busy = true;
     try {
       const result = await db.from('characters')
-        .select('id,player_id,name,age,height_cm,weight_kg,gender,personality,appearance,backstory,race,common_skills,supernatural_skills,chi_reserve,talent_rarity,specializations,ficha_data,status')
-        .eq('id',draftId).eq('status','draft').maybeSingle();
+        .select('id,player_id,name,age,height_cm,weight_kg,gender,personality,appearance,backstory,race,common_skills,supernatural_skills,chi_reserve,talent_rarity,specializations,cybernetic_modules,ficha_data,status')
+        .eq('id',draftId).in('status',['draft','rejected']).maybeSingle();
       if (result.error) throw result.error;
-      if (!result.data) throw new Error('Esse rascunho não está mais disponível.');
+      if (!result.data) throw new Error('Essa ficha não está mais disponível para edição.');
       const row = result.data;
+      await waitForCharacterReviewModule();
+      if (window.NovaOrdemCharacterReview) {
+        if (row.status === 'rejected') {
+          const reviews = await rpc('get_my_character_review_status',{p_character_id:row.id});
+          window.NovaOrdemCharacterReview.setContext(row.status,reviews || []);
+        } else window.NovaOrdemCharacterReview.clearContext();
+      }
       let state = row.ficha_data && row.ficha_data.draftState;
       if (!state) {
         try {
@@ -946,6 +1026,7 @@
           secondRoll: chiMap[row.chi_reserve] || chiMap[extra.humanChiEnhancement] || null,
           rarity: row.talent_rarity ? {roll:null,value:row.talent_rarity} : null,
           specializations: Array.isArray(row.specializations) ? row.specializations : [],
+          cyberneticModules: Array.isArray(row.cybernetic_modules) ? row.cybernetic_modules : (Array.isArray(extra.cyberneticModules) ? extra.cyberneticModules : []),
           fields: {
             name:row.name || '', age:row.age == null ? '' : String(row.age),
             height:row.height_cm == null ? '' : String(row.height_cm/100)+' m',
@@ -956,6 +1037,11 @@
             occupation:extra.occupation || '', talentDescription:extra.talentDescription || ''
           }
         };
+      }
+      const storedModules = Array.isArray(row.cybernetic_modules) ? row.cybernetic_modules : [];
+      const extraModules = row.ficha_data && Array.isArray(row.ficha_data.cyberneticModules) ? row.ficha_data.cyberneticModules : [];
+      if (!Array.isArray(state.cyberneticModules) || (!state.cyberneticModules.length && (storedModules.length || extraModules.length))) {
+        state.cyberneticModules = storedModules.length ? storedModules : extraModules;
       }
       characterId = row.id;
       completed = false;
@@ -997,7 +1083,8 @@
         occupation:String(fields.occupation || '').trim(),
         talentDescription:String(fields.talentDescription || '').trim(),
         specializations:Array.isArray(state.specializations) ? state.specializations : [],
-        humanChiEnhancement:state.race === 1 ? ({1:'Baixa',2:'Normal',3:'Alta'}[state.secondRoll] || null) : null
+        humanChiEnhancement:state.race === 1 ? ({1:'Baixa',2:'Normal',3:'Alta'}[state.secondRoll] || null) : null,
+        cyberneticModules:state.race === 4 ? (state.cyberneticModules || []) : []
       }
     });
 
@@ -1035,6 +1122,7 @@
     if (event === 'SIGNED_OUT' || !session) {
       characterId = null;
       completed = false;
+      if (window.NovaOrdemCharacterReview) window.NovaOrdemCharacterReview.clearContext();
     }
   });
 
